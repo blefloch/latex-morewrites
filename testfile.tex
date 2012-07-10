@@ -1,0 +1,152 @@
+\RequirePackage{morewrites}
+\documentclass[a4paper,11pt,twoside,palatino]{report}
+
+\usepackage{minitoc}
+\usepackage{longtable}
+\usepackage{setspace}
+\usepackage{dsfont}
+\usepackage{listings}
+\usepackage{times}
+\usepackage{ifthen,url}
+\usepackage{setspace}
+\usepackage{graphicx}
+\usepackage{boxedminipage}
+
+
+\usepackage{lscape}
+
+
+
+\usepackage[T1]{fontenc}
+\usepackage[sc]{mathpazo}
+\linespread{1.05}
+
+\usepackage{mdwlist}
+
+\def\la{\langle}
+\def\ra{\rangle}
+\def\lb{[\![}
+\def\rb{]\!]}
+\def\f{\hspace{-0.033cm}f\!\hspace{0.013cm}}
+\def\dfn{\mathrel{\mathop{=}\limits^{\textrm{\tiny def}}}}
+
+\doublespacing
+\thispagestyle{empty}
+
+
+
+\begin{document}
+
+Hello
+% \input{title-page}
+% \include{acknowledgements}
+% \include{declaration}
+
+\singlespacing
+\addcontentsline{toc}{chapter}{Abstract}
+% \include{abstractT}
+Hello
+
+\singlespacing
+\dominitoc
+\tableofcontents
+\doublespacing
+
+
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Figures}
+\listoffigures
+
+% \begin{description}
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Tables}
+\listoftables
+% \end{description}
+
+% \include{Abbreviations}
+Hello
+
+%include your chapters here
+
+\faketableofcontents
+\adjustmtc[1]
+\mtcaddchapter
+% \include{chap1}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[2]
+%\stepcounter{mtc} this also works
+\mtcaddchapter
+%\include{chap2}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[3]
+\mtcaddchapter
+%\include{chap3}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[4]
+\mtcaddchapter
+%\include{chap4}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[5]
+\mtcaddchapter
+%\include{chap5}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[6]
+\mtcaddchapter
+%\include{chap6}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[7]
+\mtcaddchapter
+%\include{chap7}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[8]
+\mtcaddchapter
+%\include{chap8}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[9]
+\mtcaddchapter
+%\include{chap9}
+\chapter{Hello}
+
+\faketableofcontents
+\adjustmtc[10]
+\mtcaddchapter
+%\include{chap9}
+\chapter{Hello}
+
+
+\singlespacing
+\addcontentsline{toc}{chapter}{Bibliography}
+\small
+\bibliographystyle{ThesisStyleURL}
+%\bibliography{thesis}
+Hello
+\normalsize
+
+
+\appendix
+\chapter{Hello}
+\chapter{Hello}
+\chapter{Hello}
+\chapter{Hello}
+% \include{AppendixA}
+% \include{AppendixB}
+% \include{AppendixC}
+% \include{AppendixD}
+
+\end{document}
