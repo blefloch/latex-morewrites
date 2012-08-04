@@ -23,6 +23,7 @@
 \ProvidesExplPackage
   {morewrites} {2012/08/04} {0.2b} {Always room for a new write}
 \RequirePackage{expl3, primargs}
+\cs_generate_variant:Nn \prop_gpop:NnNT { NV }
 \cs_new_eq:NN \__morewrites_tex_immediate:w \tex_immediate:D
 \cs_new_eq:NN \__morewrites_tex_openout:w   \tex_openout:D
 \cs_new_eq:NN \__morewrites_tex_write:w     \tex_write:D
@@ -84,8 +85,7 @@
   }
 \cs_new_protected_nopar:Npn \__morewrites_immediate_closeout_aux:
   {
-    \exp_args:NNV \prop_gpop:NnNT \g__morewrites_iow_prop
-        \g__morewrites_stream_int \l__morewrites_internal_tl
+    \prop_gpop:NVNT \g__morewrites_iow_prop \g__morewrites_stream_int \l__morewrites_internal_tl
       {
         \__morewrites_immediate_write_and_close:nn
           { \g__morewrites_stream_int } { \l__morewrites_internal_tl }
@@ -230,13 +230,13 @@
       \tl_map_inline:nn { `(0123456789) }
         { \char_set_catcode_other:n {`##1} }
       \etex_everyeof:D { `() \exp_not:N }
-      \exp_args:NNx
+      \tl_gset:Nx \g__morewrites_internal_tl
+        {
+          \exp_after:wN \__morewrites_after_shipout_loop:ww
+          \tex_input:D \g__morewrites_tmp_file_tl \c_space_tl
+        }
     \group_end:
-    \tl_map_inline:nn
-      {
-        \exp_after:wN \__morewrites_after_shipout_loop:ww
-        \tex_input:D \g__morewrites_tmp_file_tl \c_space_tl %^^A bug?
-      }
+    \tl_map_inline:Nn \g__morewrites_internal_tl
       { \tl_use:c { c__morewrites_late_write_ ##1 _tl } }
   }
 \cs_new:Npn \__morewrites_after_shipout_loop:ww #1 `( #2 )

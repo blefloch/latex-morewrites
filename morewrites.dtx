@@ -182,6 +182,15 @@
 %   assignment of the form \tn{toks}|0=|\meta{general text}.
 % \end{itemize}
 %
+% \subsection{Variants}
+%
+% \begin{macro}[aux]{\prop_gpop:NVNT}
+%   We need this function later.
+%    \begin{macrocode}
+\cs_generate_variant:Nn \prop_gpop:NnNT { NV }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Renaming primitives (again)}
 %
 % \begin{macro}[int]
@@ -394,8 +403,7 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate_closeout_aux:
   {
-    \exp_args:NNV \prop_gpop:NnNT \g_@@_iow_prop
-        \g_@@_stream_int \l_@@_internal_tl
+    \prop_gpop:NVNT \g_@@_iow_prop \g_@@_stream_int \l_@@_internal_tl
       {
         \@@_immediate_write_and_close:nn
           { \g_@@_stream_int } { \l_@@_internal_tl }
@@ -700,13 +708,13 @@
       \tl_map_inline:nn { `(0123456789) }
         { \char_set_catcode_other:n {`##1} }
       \etex_everyeof:D { `() \exp_not:N }
-      \exp_args:NNx
+      \tl_gset:Nx \g_@@_internal_tl
+        {
+          \exp_after:wN \@@_after_shipout_loop:ww
+          \tex_input:D \g_@@_tmp_file_tl \c_space_tl
+        }
     \group_end:
-    \tl_map_inline:nn
-      {
-        \exp_after:wN \@@_after_shipout_loop:ww
-        \tex_input:D \g_@@_tmp_file_tl \c_space_tl %^^A bug?
-      }
+    \tl_map_inline:Nn \g_@@_internal_tl
       { \tl_use:c { c_@@_late_write_ ##1 _tl } }
   }
 \cs_new:Npn \@@_after_shipout_loop:ww #1 `( #2 )
