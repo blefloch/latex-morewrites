@@ -12,7 +12,7 @@
 %% -----------------------------------------------------------------------
 %
 %<*driver|package>
-\RequirePackage{l3names}
+\RequirePackage{expl3}
 %</driver|package>
 %<*driver>
 \documentclass[full]{l3doc}
@@ -25,9 +25,9 @@
 %
 % \title{The \textsf{primargs} package: \\
 %   Parsing arguments of primitives\thanks{This
-%     file has version number v0.1, last revised 2012-07-10.}}
+%     file has version number v0.2b, last revised 2012/08/04.}}
 % \author{Bruno Le Floch}
-% \date{2012-07-10}
+% \date{2012/08/04}
 %
 % \maketitle
 % \tableofcontents
@@ -151,9 +151,9 @@
 %
 %<*package>
 %    \begin{macrocode}
-\ProvidesExplPackage
-  {primargs}{2012/07/10}{0.1}{Parsing~arguments~of~primitives}
 \RequirePackage{expl3}
+\ProvidesExplPackage
+  {primargs}{2012/08/04}{0.2b}{Parsing arguments of primitives}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
