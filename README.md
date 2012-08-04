@@ -17,10 +17,12 @@ welcome!
 The package is extracted by running
 
     make package
+    make clean
 
 The documentation is produced by running
 
     make documentation
+    make clean
 
 
 

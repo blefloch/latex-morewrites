@@ -17,7 +17,9 @@ This is work in progress, all suggestions/comments/bug reports are welcome!
 The package is extracted by running
 
     make package
+    make clean
 
 The documentation is produced by running
 
     make documentation
+    make clean
