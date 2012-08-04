@@ -124,7 +124,7 @@
   }
 \cs_new_protected_nopar:Npn \__morewrites_immediate_write_aux:n
   {
-    \prop_if_in:NVTF \g__morewrites_iow_prop \g__morewrites_stream_int
+    \prop_get:NVNTF \g__morewrites_iow_prop \g__morewrites_stream_int \l__morewrites_internal_tl
       { \__morewrites_immediate_write_open:n }
       { \__morewrites_immediate_write_closed:n }
   }

@@ -480,7 +480,7 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate_write_aux:n
   {
-    \prop_if_in:NVTF \g_@@_iow_prop \g_@@_stream_int
+    \prop_get:NVNTF \g_@@_iow_prop \g_@@_stream_int \l_@@_internal_tl
       { \@@_immediate_write_open:n }
       { \@@_immediate_write_closed:n }
   }
