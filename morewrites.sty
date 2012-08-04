@@ -48,7 +48,7 @@
       \tex_aftergroup:D #1
       \primargs_remove_equals:N \__morewrites_parse_file_name:
   }
-\cs_new_protected:Npn \__morewrites_parse_file_name:
+\cs_new_protected_nopar:Npn \__morewrites_parse_file_name:
   { \primargs_get_file_name:N \group_end: }
 \cs_new_protected_nopar:Npn \__morewrites_immediate:w
   { \primargs_read_x_token:N \__morewrites_immediate_ii: }
@@ -220,7 +220,6 @@
     \__morewrites_tex_immediate:w \__morewrites_tex_openout:w \g__morewrites_iow
       \g__morewrites_tmp_file_tl \scan_stop:
   }
-%% ^^A todo:   \shipout{\immediate\write4{}} => bug.
 \cs_new_protected_nopar:Npn \__morewrites_after_shipout:
   {
     \__morewrites_tex_immediate:w \__morewrites_tex_closeout:w \g__morewrites_iow

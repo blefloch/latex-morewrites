@@ -64,7 +64,7 @@
 % bundle needs to be up to date.  If Heiko Oberdiek's package
 % \pkg{atbegshi} is available, it will be used.
 %
-% \section{Known deficiencies}
+% \section{Known deficiencies and open questions}
 %
 % Some distributions of \TeX{} allow a quoted syntax for file names with
 % spaces. I haven't yet coded that. A temporary fix is to avoid file
@@ -78,6 +78,13 @@
 % command does.  \emph{Do not take this package as an example of how to
 %   code with \pkg{expl3}; go and see Joseph Wright's \pkg{siunitx}
 %   instead.}
+%
+% Things that I need to do.
+% \begin{itemize}
+% \item |\shipout{\immediate\write4{}}| bug?
+% \item redefine the \LaTeX3 functions to use \pkg{morewrites} too?
+% \item should \tn{newwrite} be protected?
+% \end{itemize}
 %
 % \end{documentation}
 %
@@ -315,7 +322,7 @@
       \tex_aftergroup:D #1
       \primargs_remove_equals:N \@@_parse_file_name:
   }
-\cs_new_protected:Npn \@@_parse_file_name:
+\cs_new_protected_nopar:Npn \@@_parse_file_name:
   { \primargs_get_file_name:N \group_end: }
 %    \end{macrocode}
 % \end{macro}
@@ -570,8 +577,6 @@
 % strange delimiters).  After each shipout, we can read the file to see
 % which output operations we need to perform, and in what order.
 %
-% ^^A todo: check "_nopar"?
-%
 % \subsubsection{Replacement for primitives}
 %
 % \begin{macro}[aux]{\@@_late:n}
@@ -679,7 +684,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-%% ^^A todo:   \shipout{\immediate\write4{}} => bug.
 % \begin{macro}[aux]{\@@_after_shipout:}
 % \begin{macro}[aux, rEXP]{\@@_after_shipout_loop:ww}
 %   Immediately after all the \tn{write}s are performed, close the file,
@@ -849,8 +853,8 @@
 %   We need to allow \cs{newwrite} to allocate more than $16$ writes,
 %   but beware that $18$ is reserved, and that packages might expect
 %   $16$ or $17$ to write to the terminal. So instead skip until $20$,
-%   to be on the safe side.
-%   %   ^^A todo: redefine the LaTeX3 things too?
+%   to be on the safe side.  This really ought to be \tn{protected}, but
+%   none of the formats does that.
 %    \begin{macrocode}
 \cs_new:Npn \@@_newwrite:N #1
   {
