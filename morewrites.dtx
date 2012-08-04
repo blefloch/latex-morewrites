@@ -70,6 +70,9 @@
 % spaces. I haven't yet coded that. A temporary fix is to avoid file
 % names with spaces.
 %
+% The current code trims spaces at the end of every line that is written
+% to a file.  I might be able to change the code to avoid this.
+%
 % The package code is not very legible, and definitely uses too many
 % |:D| control sequences, whose name means \enquote{do not use}.  The
 % author does not see a way to avoid using primitives in this package,
@@ -81,9 +84,8 @@
 %
 % Things that I need to do.
 % \begin{itemize}
-% \item |\shipout{\immediate\write4{}}| bug?
-% \item redefine the \LaTeX3 functions to use \pkg{morewrites} too?
-% \item should \tn{newwrite} be protected?
+% \item Redefine the \LaTeX3 functions to use \pkg{morewrites} too?
+% \item Should \tn{newwrite} be protected?
 % \end{itemize}
 %
 % \end{documentation}
@@ -666,6 +668,18 @@
 % \end{macro}
 %
 % \subsubsection{Shipout business}
+%
+% In this section, we hook into the \cs{shipout} primitive, and redefine
+% it to first build a box with the material to ship out, then perform
+% \begin{quote}
+%   \cs{@@_before_shipout:} \\
+%   \meta{primitive shipout} \meta{collected box} \\
+%   \cs{@@_after_shipout:}
+% \end{quote}
+% This is correct even if the values of the \tn{newlinechar} is changed
+% within the user code which builds the shipped out box, because the
+% value that \TeX{} uses is the value in effect immediately after
+% \tn{shipout}.
 %
 % \begin{macro}[aux]{\@@_before_shipout:}
 %   Immediately before the shipout, we must open the writing stream
