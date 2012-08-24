@@ -19,10 +19,10 @@
 %%    http://www.latex-project.org/lppl.txt
 %%
 %% -----------------------------------------------------------------------
-\RequirePackage{expl3}
+\RequirePackage {expl3} [2012/08/14]
+\RequirePackage {primargs} [2012/08/24]
 \ProvidesExplPackage
-  {morewrites} {2012/08/04} {0.2b} {Always room for a new write}
-\RequirePackage{expl3, primargs}
+  {morewrites} {2012/08/24} {0.2c} {Always room for a new write}
 \cs_generate_variant:Nn \prop_gpop:NnNT { NV }
 \cs_new_eq:NN \__morewrites_tex_immediate:w \tex_immediate:D
 \cs_new_eq:NN \__morewrites_tex_openout:w   \tex_openout:D

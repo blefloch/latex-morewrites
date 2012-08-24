@@ -11,9 +11,6 @@
 %%
 %% -----------------------------------------------------------------------
 %
-%<*driver|package>
-\RequirePackage{expl3}
-%</driver|package>
 %<*driver>
 \RequirePackage{morewrites}
 \documentclass[full]{l3doc}
@@ -29,9 +26,9 @@
 %
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \cs{write}\thanks{This
-%     file has version number v0.2b, last revised 2012/08/04.}}
+%     file has version number v0.2c, last revised 2012/08/24.}}
 % \author{Bruno Le Floch}
-% \date{2012/08/04}
+% \date{2012/08/24}
 %
 % \maketitle
 % \tableofcontents
@@ -96,9 +93,10 @@
 %
 %<*package>
 %    \begin{macrocode}
+\RequirePackage {expl3} [2012/08/14]
+\RequirePackage {primargs} [2012/08/24]
 \ProvidesExplPackage
-  {morewrites} {2012/08/04} {0.2b} {Always room for a new write}
-\RequirePackage{expl3, primargs}
+  {morewrites} {2012/08/24} {0.2c} {Always room for a new write}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
