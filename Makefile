@@ -1,7 +1,9 @@
+PACKAGE = morewrites
 INSNAME = morewrites
 DTXNAMES = morewrites primargs
 TESTFILE = testfile
 TESTFILETMP = $(TESTFILE).aux $(TESTFILE).mtc* $(TESTFILE).maf $(TESTFILE).mw $(TESTFILE).lo* $(TESTFILE).toc
+TMPDIR = tmp.$(PACKAGE)
 
 package:
 	pdflatex $(INSNAME).ins
@@ -18,8 +20,21 @@ documentation: package
 testfile:
 	pdflatex $(TESTFILE)
 
-all: package documentation testfile
+tds: package documentation
+	rm -rf $(TMPDIR)
+	mkdir -p $(TMPDIR)/tex/latex/$(PACKAGE)
+	mkdir -p $(TMPDIR)/doc/latex/$(PACKAGE)
+	mkdir -p $(TMPDIR)/source/latex/$(PACKAGE)
+	cp README $(TMPDIR)/doc/latex/$(PACKAGE)/
+	cp $(INSNAME).ins $(TMPDIR)/source/latex/$(PACKAGE)/
+	for D in $(DTXNAMES) ; do \
+	  cp $$D.dtx $(TMPDIR)/source/latex/$(PACKAGE)/ ; \
+	  cp $$D.pdf $(TMPDIR)/doc/latex/$(PACKAGE)/ ; \
+	  cp $$D.sty $(TMPDIR)/tex/latex/$(PACKAGE)/ ; \
+	done
+	(cd $(TMPDIR) && zip -9r ../$(PACKAGE).tds.zip *)
 
+all: package documentation testfile tds clean
 
 clean:
 	@echo \
@@ -34,3 +49,4 @@ delete non-existent files. This is not a problem."
 	  > /dev/null 2>&1 ; \
 	done
 	-rm $(TESTFILETMP) > /dev/null 2>&1
+	-rm -rf $(TMPDIR)
