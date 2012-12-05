@@ -22,7 +22,7 @@
 \RequirePackage {expl3} [2012/08/14]
 \RequirePackage {primargs} [2012/08/24]
 \ProvidesExplPackage
-  {morewrites} {2012/08/24} {0.2c} {Always room for a new write}
+  {morewrites} {2012/12/05} {0.2d} {Always room for a new write}
 \cs_generate_variant:Nn \prop_gpop:NnNT { NV }
 \cs_new_eq:NN \__morewrites_tex_immediate:w \tex_immediate:D
 \cs_new_eq:NN \__morewrites_tex_openout:w   \tex_openout:D
@@ -54,8 +54,9 @@
   { \primargs_read_x_token:N \__morewrites_immediate_ii: }
 \cs_new_protected_nopar:Npn \__morewrites_immediate_ii:
   {
-    \token_if_eq_meaning:NNT \g_primargs_token \s__morewrites
+    \token_if_eq_meaning:NNTF \g_primargs_token \s__morewrites
       { \__morewrites_immediate_iii:N }
+      { \__morewrites_tex_immediate:w }
   }
 \cs_new_protected:Npn \__morewrites_immediate_iii:N #1
   {

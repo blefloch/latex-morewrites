@@ -26,9 +26,9 @@
 %
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \cs{write}\thanks{This
-%     file has version number v0.2c, last revised 2012/08/24.}}
+%     file has version number v0.2d, last revised 2012/12/05.}}
 % \author{Bruno Le Floch}
-% \date{2012/08/24}
+% \date{2012/12/05}
 %
 % \maketitle
 % \tableofcontents
@@ -96,7 +96,7 @@
 \RequirePackage {expl3} [2012/08/14]
 \RequirePackage {primargs} [2012/08/24]
 \ProvidesExplPackage
-  {morewrites} {2012/08/24} {0.2c} {Always room for a new write}
+  {morewrites} {2012/12/05} {0.2d} {Always room for a new write}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -338,8 +338,9 @@
 %
 % \subsubsection{What follows \tn{immediate}}
 %
-% \begin{macro}[aux]{\@@_immediate:w}
-% \begin{macro}[aux]{\@@_immediate_ii:, \@@_immediate_iii:N}
+% \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate:w}
+% \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate_ii:}
+% \begin{macro}[aux]{\@@_immediate_iii:N}
 % \begin{macro}[aux]{\@@_immediate_iv:NN}
 % \begin{macro}[aux, EXP]{\@@_immediate_v:w}
 %   This is a little bit subtle: \TeX{}'s \tn{immediate} primitive
@@ -350,14 +351,19 @@
 %   themselves, but rather for a recognizable marker, \cs{s_@@}, equal
 %   to \tn{relax}.  If present, replace |morewrites| by
 %   |morewrites_immediate| in the csname of the second token after it
-%   (it turns out that this is the correct structure).
+%   (it turns out that this is the correct structure).  If absent, what
+%   follows may be a command that should not appear after
+%   \tn{immediate}, but it may also be a non-\TeX\ primitive such as
+%   \tn{pdfobj} that the \pkg{morewrite} does not know about; hence we
+%   must still call the primitive \tn{immediate}.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate:w
   { \primargs_read_x_token:N \@@_immediate_ii: }
 \cs_new_protected_nopar:Npn \@@_immediate_ii:
   {
-    \token_if_eq_meaning:NNT \g_primargs_token \s_@@
+    \token_if_eq_meaning:NNTF \g_primargs_token \s_@@
       { \@@_immediate_iii:N }
+      { \@@_tex_immediate:w }
   }
 \cs_new_protected:Npn \@@_immediate_iii:N #1
   {
@@ -379,6 +385,7 @@
         ##1 \tl_to_str:n { @@ } { @@_immediate }
   }
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 % \end{macro}
 % \end{macro}
@@ -888,7 +895,8 @@
 %
 % \subsection{Redefining the ``normal'' control sequences}
 %
-% \begin{macro}[aux]{\immediate, \openout, \write, \closeout, \newwrite}
+% \begin{macro}[aux, updated = 2012-12-05]{\immediate}
+% \begin{macro}[aux]{\openout, \write, \closeout, \newwrite}
 %   \tn{shipout} has been redefined earlier.
 %    \begin{macrocode}
 \cs_gset_eq:NN \immediate \@@_immediate:w
@@ -897,6 +905,7 @@
 \cs_gset_eq:NN \closeout  \@@_closeout:w
 \cs_gset_eq:NN \newwrite  \@@_newwrite:N
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 %</package>
