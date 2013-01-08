@@ -22,9 +22,9 @@
 %
 % \title{The \textsf{primargs} package: \\
 %   Parsing arguments of primitives\thanks{This
-%     file has version number v0.2c, last revised 2012/08/24.}}
+%     file has version number v0.2d, last revised 2012/12/05.}}
 % \author{Bruno Le Floch}
-% \date{2012/08/24}
+% \date{2012/12/05}
 %
 % \maketitle
 % \tableofcontents
@@ -150,7 +150,7 @@
 %    \begin{macrocode}
 \RequirePackage {expl3} [2012/08/14]
 \ProvidesExplPackage
-  {primargs} {2012/08/24} {0.2c} {Parsing arguments of primitives}
+  {primargs} {2012/12/05} {0.2d} {Parsing arguments of primitives}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -561,7 +561,8 @@
 %   removes the first two words, and duplicates the remainder (either
 %   one character, or a word and a character), and the second auxiliary
 %   leaves the second piece in the definition (in both cases, the
-%   character).  Then loop with expansion.
+%   character).  Then loop with expansion.  This technique would fail if
+%   the character could be a space (character code~$32$).
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_get_file_name_char:
   {
