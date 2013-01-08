@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: morewrites.dtx Copyright (C) 2011-2012 Bruno Le Floch
+%% File: morewrites.dtx Copyright (C) 2011-2013 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -26,9 +26,9 @@
 %
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \cs{write}\thanks{This
-%     file has version number v0.2d, last revised 2012/12/05.}}
+%     file has version number v0.2e, last revised 2013/01/08.}}
 % \author{Bruno Le Floch}
-% \date{2012/12/05}
+% \date{2013/01/08}
 %
 % \maketitle
 % \tableofcontents
@@ -94,9 +94,9 @@
 %<*package>
 %    \begin{macrocode}
 \RequirePackage {expl3} [2012/08/14]
-\RequirePackage {primargs} [2012/08/24]
+\RequirePackage {primargs} [2013/01/08]
 \ProvidesExplPackage
-  {morewrites} {2012/12/05} {0.2d} {Always room for a new write}
+  {morewrites} {2013/01/08} {0.2e} {Always room for a new write}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -517,7 +517,7 @@
 \cs_new_protected:Npn \@@_immediate_write_closed:n #1
   {
     \@@_tex_immediate:w \@@_tex_write:w
-      \if_num:w \g_@@_stream_int < \c_zero
+      \if_int_compare:w \g_@@_stream_int < \c_zero
         -1
       \else:
         16
@@ -878,7 +878,7 @@
 \cs_new:Npn \@@_newwrite:N #1
   {
     \int_gincr:N \g_@@_alloc_int
-    \if_num:w \g_@@_alloc_int = \c_sixteen
+    \if_int_compare:w \g_@@_alloc_int = \c_sixteen
       \int_gset:Nn \g_@@_alloc_int { 20 }
     \fi:
     \int_set_eq:NN \allocationnumber \g_@@_alloc_int
