@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: morewrites.dtx Copyright (C) 2011-2013 Bruno Le Floch
+%% File: morewrites.dtx Copyright (C) 2011-2014 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -26,9 +26,9 @@
 %
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \cs{write}\thanks{This
-%     file has version number v0.2e, last revised 2013/01/08.}}
+%     file has version number v0.2f, last revised 2014/07/26.}}
 % \author{Bruno Le Floch}
-% \date{2013/01/08}
+% \date{2014/07/26}
 %
 % \maketitle
 % \tableofcontents
@@ -61,16 +61,33 @@
 % bundle needs to be up to date.  If Heiko Oberdiek's package
 % \pkg{atbegshi} is available, it will be used.
 %
-% \section{Commands altered by \pkg{morewrites}}
+% \section{Commands defined or altered by \pkg{morewrites}}
+%
+% \begin{function}[added = 2014-07-26]{\morewritessetup}
+%   \begin{syntax}
+%     \cs{morewritessetup} \Arg{key--value list}
+%   \end{syntax}
+%   Set options.
+% \end{function}
+%
+% \begin{function}[added = 2014-07-26]{file}
+%   \begin{syntax}
+%     \cs{morewritessetup} |{| |file| |=| \meta{file name} |}|
+%   \end{syntax}
+%   Sets (globally) the name of the file which will be used by internal
+%   processes of \pkg{morewrites}.  This is |\jobname.mw| by default.
+% \end{function}
 %
 % \begin{function}{\newwrite}
-%   Since \pkg{morewrites} allows for more than~$16$ write streams, this
-%   restriction in \tn{newwrite} becomes artificial and we remove it.
+%   This command is altered by \pkg{morewrites}.  Since more than~$16$
+%   write streams are now allowed, the restriction in \tn{newwrite}
+%   becomes artificial and we remove it.
 % \end{function}
 %
 % \begin{function}[updated = 2012-12-05]{\immediate}
 % \begin{function}{\openout, \write, \closeout, \shipout}
-%   These five primitives are altered by \pkg{morewrites}.
+%   These five primitives are altered by \pkg{morewrites} in complicated
+%   ways.
 % \end{function}
 % \end{function}
 %
@@ -78,14 +95,15 @@
 %
 % Some distributions of \TeX{} allow a quoted syntax for file names with
 % spaces. I haven't yet coded that. A temporary fix is to avoid file
-% names with spaces.
+% names with spaces.  The package may not work with \LuaTeX{} when the
+% primitive \tn{input} is used with a braced argument.
 %
 % The current code trims spaces at the end of every line that is written
 % to a file.  I might be able to change the code to avoid this.
 %
 % The package code is not very legible, and definitely uses too many
-% |:D| control sequences, whose name means \enquote{do not use}.  The
-% author does not see a way to avoid using primitives in this package,
+% |:D| control sequences, whose name means \enquote{do not use}.  I do
+% not see a way to avoid using primitives in this package,
 % since hooking into the primitives \tn{immediate}, \tn{write},
 % \emph{etc.} requires having a very strong control on what every
 % command does.  \emph{Do not take this package as an example of how to
@@ -109,7 +127,7 @@
 \RequirePackage {expl3} [2012/08/14]
 \RequirePackage {primargs} [2013/01/08]
 \ProvidesExplPackage
-  {morewrites} {2013/01/08} {0.2e} {Always room for a new write}
+  {morewrites} {2014/07/26} {0.2f} {Always room for a new write}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -211,6 +229,34 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \subsection{Options}
+%
+% \begin{variable}[aux]{\g_@@_tmp_file_tl}
+%   Temporary file used to do the correct expansion for each \tn{write}.
+%    \begin{macrocode}
+\tl_new:N \g_@@_tmp_file_tl
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{macro}[added = 2014-07-26]{file}
+%   Sets \cs{g_@@_tmp_file_tl}.  This is |\jobname.mw| by default.
+%    \begin{macrocode}
+\keys_define:nn { @@ }
+  {
+    file .tl_gset:N = \g_@@_tmp_file_tl ,
+    file .initial:n = \jobname.mw
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[added = 2014-07-26]{\morewritessetup}
+%   Set whatever keys the user passes to \cs{morewritessetup}.
+%    \begin{macrocode}
+\cs_new_protected:Npn \morewritessetup #1
+  { \keys_set:nn { @@ } {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{Renaming primitives (again)}
 %
 % \begin{macro}[aux]
@@ -266,7 +312,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_iow, \g_@@_ior, \g_@@_tmp_file_tl}
+% \begin{variable}[aux]{\g_@@_iow, \g_@@_ior}
 %   The expansion that \tn{write} performs is impossible to emulate with
 %   anything else than \tn{write}.  We will write on the stream
 %   \cs{g_@@_iow} to the file \cs{g_@@_tmp_file_tl} and read back from
@@ -276,8 +322,6 @@
 %    \begin{macrocode}
 \newwrite \g_@@_iow
 \newread \g_@@_ior
-\tl_new:N \g_@@_tmp_file_tl
-\tl_gset:Nn \g_@@_tmp_file_tl { \jobname.mw }
 %    \end{macrocode}
 % \end{variable}
 %
