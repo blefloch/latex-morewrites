@@ -65,22 +65,24 @@
 %
 % \subsection{Grabbing arguments}
 %
-% A whole lot of functions have the same syntax:
-% \begin{syntax}
-%   \cs{primargs_get_\meta{foo}:N} \meta{function}
-% \end{syntax}
-% Finds what \TeX{}'s grammar calls a \meta{foo} in the input stream,
-% and feeds its value as a braced argument to the \meta{function}.  Here
-% is a list of the functions currently defined:
-% \begin{itemize}
-%   \item \cs{primargs_get_number:N}
-%   \item \cs{primargs_get_dimen:N}
-%   \item \cs{primargs_get_glue:N}
-%   \item \cs{primargs_get_mudimen:N} (\emph{not implemented properly})
-%   \item \cs{primargs_get_muglue:N}
-%   \item \cs{primargs_get_general_text:N}
-%   \item \cs{primargs_get_file_name:N}
-% \end{itemize}
+% \begin{function}
+%   {
+%     \primargs_get_number:N,
+%     \primargs_get_dimen:N,
+%     \primargs_get_glue:N,
+%     \primargs_get_mudimen:N,
+%     \primargs_get_muglue:N,
+%     \primargs_get_general_text:N,
+%     \primargs_get_file_name:N
+%   }
+%   A whole lot of functions have the same syntax:
+%   \begin{syntax}
+%     \cs{primargs_get_\meta{foo}:N} \meta{function}
+%   \end{syntax}
+%   Finds what \TeX{}'s grammar calls a \meta{foo} in the input stream,
+%   and feeds its value as a braced argument to the \meta{function}.
+%   Here is a list of the functions currently defined:
+% \end{function}
 %
 % \subsection{Discarding tokens}
 %
@@ -495,7 +497,7 @@
 %
 % ^^A todo: Figure out when \group_align_safe_begin: is needed.
 %
-% \begin{variable}{\g_@@_file_name_tl}
+% \begin{variable}[int]{\g_@@_file_name_tl}
 %   Token list used to build a file name, one character at a time.
 %    \begin{macrocode}
 \tl_new:N \g_@@_file_name_tl

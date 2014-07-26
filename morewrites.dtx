@@ -61,6 +61,19 @@
 % bundle needs to be up to date.  If Heiko Oberdiek's package
 % \pkg{atbegshi} is available, it will be used.
 %
+% \section{Commands altered by \pkg{morewrites}}
+%
+% \begin{function}{\newwrite}
+%   Since \pkg{morewrites} allows for more than~$16$ write streams, this
+%   restriction in \tn{newwrite} becomes artificial and we remove it.
+% \end{function}
+%
+% \begin{function}[updated = 2012-12-05]{\immediate}
+% \begin{function}{\openout, \write, \closeout, \shipout}
+%   These five primitives are altered by \pkg{morewrites}.
+% \end{function}
+% \end{function}
+%
 % \section{Known deficiencies and open questions}
 %
 % Some distributions of \TeX{} allow a quoted syntax for file names with
@@ -200,7 +213,7 @@
 %
 % \subsection{Renaming primitives (again)}
 %
-% \begin{macro}[int]
+% \begin{macro}[aux]
 %   {
 %     \@@_tex_immediate:w ,
 %     \@@_tex_openout:w   ,
@@ -216,7 +229,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[int]{\@@_tex_shipout:w}
+% \begin{macro}[aux]{\@@_tex_shipout:w}
 %   Since the non-\tn{immediate} output primitives act at \tn{shipout}
 %   time, we need to alter this primitive too.
 %   %^^A Not sure if the shipout primitive is done right.
@@ -227,7 +240,7 @@
 %
 % \subsection{Variables}
 %
-% \begin{variable}{\g_@@_late_write_int}
+% \begin{variable}[aux]{\g_@@_late_write_int}
 %   The integer \cs{g_@@_late_write_int} labels the various
 %   non-immediate operations in the order in which they appear in the
 %   source.  We can never reuse a number because there is no way to know
@@ -245,7 +258,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_iow_prop}
+% \begin{variable}[aux]{\g_@@_iow_prop}
 %   The property list \cs{g_@@_iow_prop} associates a file name to each
 %   open stream.
 %    \begin{macrocode}
@@ -253,7 +266,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_iow, \g_@@_ior, \g_@@_tmp_file_tl}
+% \begin{variable}[aux]{\g_@@_iow, \g_@@_ior, \g_@@_tmp_file_tl}
 %   The expansion that \tn{write} performs is impossible to emulate with
 %   anything else than \tn{write}.  We will write on the stream
 %   \cs{g_@@_iow} to the file \cs{g_@@_tmp_file_tl} and read back from
@@ -268,7 +281,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}{\g_@@_reserved_iow_clist}
+% \begin{variable}[aux]{\g_@@_reserved_iow_clist}
 %   Some of the writing streams are already allocated when loading this
 %   package, and we let the engine manage them.  This variable is a
 %   clist because it only contains integers and the main task is to test
@@ -281,7 +294,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[int]{\g_@@_stream_int}
+% \begin{variable}[aux]{\g_@@_stream_int}
 %   An integer holding the \meta{number} argument of various primitives,
 %   namely a writing stream.
 %    \begin{macrocode}
@@ -289,7 +302,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[int]{\s_@@}
+% \begin{macro}[aux]{\s_@@}
 %   A recognizable version of \cs{scan_stop:}.  This is inspired
 %   from\footnote{Historically, this might have happened the other way
 %     around, since the author of this package is also on the \LaTeX3
@@ -301,7 +314,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{variable}[int]{\l_@@_internal_tl}
+% \begin{variable}[aux]{\l_@@_internal_tl}
 %   Temporary token list, used for scratch purposes.
 %    \begin{macrocode}
 \tl_new:N  \l_@@_internal_tl
@@ -752,9 +765,9 @@
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}[aux]{\shipout}
+% \begin{macro}{\shipout}
 % \begin{macro}[aux]{\@@_shipout:w}
-% \begin{variable}{\g_@@_group_level_int, \g_@@_shipout_box}
+% \begin{variable}[aux]{\g_@@_group_level_int, \g_@@_shipout_box}
 %   If \pkg{atbegshi} is available, patch it by adding
 %   \cs{@@_before_shipout:} and \cs{@@_after_shipout:} at the right
 %   place: the two transformations are needed to cover several versions
@@ -810,7 +823,7 @@
 %
 % \subsection{Hook at the very end}
 %
-% \begin{variable}{\g_@@_at_end_int}
+% \begin{variable}[aux]{\g_@@_at_end_int}
 %   At the end of the run, we try very hard to put some material at the
 %   |\@@end|.  This integer controls how many times to call
 %   \cs{@@_close_all_at_end:w}, to avoid infinite loops in case two
@@ -861,7 +874,7 @@
 %
 % \subsection{Modified \cs{newwrite}}
 %
-% \begin{variable}{\g_@@_alloc_int}
+% \begin{variable}[aux]{\g_@@_alloc_int}
 %   The counter that \LaTeXe{} uses to allocate \tn{write} registers.
 %    \begin{macrocode}
 \tex_countdef:D \g_@@_alloc_int 17 \scan_stop:
@@ -873,7 +886,7 @@
 %   but beware that $18$ is reserved, and that packages might expect
 %   $16$ or $17$ to write to the terminal. So instead skip until $20$,
 %   to be on the safe side.  This really ought to be \tn{protected}, but
-%   none of the formats does that.
+%   none of the formats do that.
 %    \begin{macrocode}
 \cs_new:Npn \@@_newwrite:N #1
   {
@@ -895,8 +908,8 @@
 %
 % \subsection{Redefining the ``normal'' control sequences}
 %
-% \begin{macro}[aux, updated = 2012-12-05]{\immediate}
-% \begin{macro}[aux]{\openout, \write, \closeout, \newwrite}
+% \begin{macro}[updated = 2012-12-05]{\immediate}
+% \begin{macro}{\openout, \write, \closeout, \newwrite}
 %   \tn{shipout} has been redefined earlier.
 %    \begin{macrocode}
 \cs_gset_eq:NN \immediate \@@_immediate:w
