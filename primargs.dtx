@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: primargs.dtx Copyright (C) 2012-2013 Bruno Le Floch
+%% File: primargs.dtx Copyright (C) 2012-2014 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -22,9 +22,9 @@
 %
 % \title{The \textsf{primargs} package: \\
 %   Parsing arguments of primitives\thanks{This
-%     file has version number v0.2e, last revised 2013/01/08.}}
+%     file has version number v0.3, last revised 2014/08/05.}}
 % \author{Bruno Le Floch}
-% \date{2013/01/08}
+% \date{2014/08/05}
 %
 % \maketitle
 % \tableofcontents
@@ -33,34 +33,39 @@
 %
 % \section{\pkg{primargs} documentation}
 %
-% This \LaTeX{} package is currently used by \pkg{morewrites} when
-% redefining primitives: it allows to read arguments of primitives in
-% place of \TeX{}.  Of course, this is much slower than letting \TeX{}
-% do things directly, but it may not be possible.
+% This \TeX{} and \LaTeX{} package is currently used by \pkg{morewrites}
+% when redefining primitives: it allows to read arguments of primitives
+% in place of \TeX{}, which is useful to add hooks to primitives.  Of
+% course, this is much slower than letting \TeX{} do things directly.
 %
 % \subsection{Read one token}
 %
 % \begin{variable}{\g_primargs_token}
-%   The result of \cs{primargs_read_x_token:N} and
-%   \cs{primargs_read_token:N}.
+%   The token read by \cs{primargs_read_token:N} or
+%   \cs{primargs_read_x_token:N}.  Its value is always set globally.
 % \end{variable}
 %
-% \begin{function}{\primargs_read_x_token:N}
+% \begin{function}[tested=primargs001]{\primargs_read_token:N}
+%   \begin{syntax}
+%     \cs{primargs_read_token:N} \meta{function}
+%   \end{syntax}
+%   Sets \cs{g_primargs_token} equal to the token following the
+%   \meta{function}, then calls the \meta{function}.  The token
+%   following the \meta{function} is not removed.
+%   \begin{texnote}
+%     This is essentially \tn{global} \tn{futurelet}
+%     \cs{g_primargs_token} \meta{function}.
+%   \end{texnote}
+% \end{function}
+%
+% \begin{function}[tested=primargs001]{\primargs_read_x_token:N}
 %   \begin{syntax}
 %     \cs{primargs_read_x_token:N} \meta{function}
 %   \end{syntax}
 %   Expands tokens recursively with \cs{exp_after:wN}, until
 %   encountering a non-expandable token, and calls the \meta{function}
-%   afterwards.  The non-expandable token found is stored as
-%   \cs{g_primargs_token}.
-% \end{function}
-%
-% \begin{function}{\primargs_read_token:N}
-%   \begin{syntax}
-%     \cs{primargs_read_token:N} \meta{function}
-%   \end{syntax}
-%   Sets \cs{g_primargs_token} globally to the value of the next token,
-%   then calls the \meta{function}.
+%   afterwards.  The non-expandable token follows the \meta{function},
+%   and \cs{g_primargs_token} is also set equal to that token.
 % \end{function}
 %
 % \subsection{Grabbing arguments}
@@ -72,16 +77,40 @@
 %     \primargs_get_glue:N,
 %     \primargs_get_mudimen:N,
 %     \primargs_get_muglue:N,
-%     \primargs_get_general_text:N,
-%     \primargs_get_file_name:N
 %   }
-%   A whole lot of functions have the same syntax:
 %   \begin{syntax}
-%     \cs{primargs_get_\meta{foo}:N} \meta{function}
+%     \cs{primargs_get_number:N} \meta{function}
 %   \end{syntax}
-%   Finds what \TeX{}'s grammar calls a \meta{foo} in the input stream,
-%   and feeds its value as a braced argument to the \meta{function}.
-%   Here is a list of the functions currently defined:
+%   Reads a number/dimension/glue/math dimension/math glue following the
+%   \meta{function}, then calls the \meta{function} with a braced
+%   argument containing the value found.  For instance,
+%   \begin{verbatim}
+%     \primargs_get_glue:N \test 3sp plus \numexpr 2-3 fill X
+%   \end{verbatim}
+%   yields
+%   \begin{verbatim}
+%     \test {3sp plus -1fill}X
+%   \end{verbatim}
+% \end{function}
+%
+% \begin{function}{\primargs_get_general_text:N}
+%   \begin{syntax}
+%     \cs{primargs_get_general_text:N} \meta{function}
+%   \end{syntax}
+%   Finds what \TeX{}'s grammar calls a \meta{general text} following
+%   the \meta{function}, and calls the \meta{function} with this
+%   \meta{general text} as a braced argument.
+% \end{function}
+%
+% \begin{function}{\primargs_get_file_name:N}
+%   \begin{syntax}
+%     \cs{primargs_get_file_name:N} \meta{function}
+%   \end{syntax}
+%   Reads a \meta{file name} following the \meta{function} and calls the
+%   \meta{function} with this \meta{file name} as a braced argument.
+%   The code is currently not aware of the special role of the quote
+%   (|"|) character used to escape spaces in file names, nor of braced
+%   file names allowed by \LuaTeX{}.
 % \end{function}
 %
 % \subsection{Discarding tokens}
@@ -90,8 +119,8 @@
 %   \begin{syntax}
 %     \cs{primargs_remove_token:N} \meta{function}
 %   \end{syntax}
-%   Removes one \meta{token} following the \meta{function}, which is
-%   performed next.
+%   Removes the \meta{token} which follows the \meta{function}, then
+%   calls the \meta{function}.
 % \end{function}
 %
 % \begin{function}{\primargs_remove_one_optional_space:N}
@@ -118,10 +147,8 @@
 %
 % \subsection{Afterassignment and \tn{globaldefs}}
 %
-% The \tn{globaldefs} parameter is not taken into account yet, and
-% setting it to a non-zero value may make everything crash.  It is
-% straightforward to fix that for negative \tn{globaldefs}, but positive
-% \tn{globaldefs} make things complicated.
+% Setting the \tn{globaldefs} parameter to a non-zero value may make
+% some parts of this package crash.
 %
 % Tokens inserted using \tn{afterassignment} may be lost when using this
 % package, since it uses \tn{afterassignment} internally.
@@ -152,7 +179,7 @@
 %    \begin{macrocode}
 \RequirePackage {expl3} [2012/08/14]
 \ProvidesExplPackage
-  {primargs} {2013/01/08} {0.2e} {Parsing arguments of primitives}
+  {primargs} {2014/08/05} {0.3} {Parsing arguments of primitives}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -177,14 +204,19 @@
 % \end{macro}
 %
 % \begin{macro}[aux]{\@@_no_localdefs:}
-%   This function, which must be called in a group, ensures that
-%   \tn{global} indeed makes definitions global.
+%   This function, which must be called in a group, cancels any
+%   \tn{afterassignment} token and makes the \tn{globaldefs} parameter
+%   non-negative.  This ensures that assignments prefixed with
+%   \tn{global} are indeed global.  When \tn{globaldefs} is positive,
+%   every assignment is global, and it is not possible to safely
+%   (locally) set it to zero.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_no_localdefs:
   {
     \@@_no_afterassignment:
-    \int_compare:nNnF \tex_globaldefs:D > \c_zero
-      { \tex_globaldefs:D = \c_zero }
+    \if_int_compare:w \tex_globaldefs:D < \c_zero
+      \tex_globaldefs:D = \c_zero
+    \fi:
   }
 %    \end{macrocode}
 % \end{macro}
@@ -193,15 +225,16 @@
 %
 % \TeX{} often calls the \proc{get_x_token} procedure when parsing
 % various parts of its grammar.  This expands tokens recursively until
-% reaching a non-expandable token.  We emulate this by expanding with
-% \tn{expandafter}, then checking whether the upcoming token is
-% expandable or not using \tn{futurelet}, and if it is, expanding again.
+% reaching a non-expandable token.  We emulate this by reading the next
+% token with \tn{futurelet}, checking whether it is expandable or not by
+% comparing its meaning to its meaning when acted upon by \tn{noexpand},
+% and expanding it with \tn{expandafter} if it is expandable.
 %
 % One thing to be careful about is that
 % \begin{quote}
 %   \tn{expandafter} \tn{show} \tn{noexpand} \cs{space}
 % \end{quote}
-% shows the \tn{meaning} of the \tn{notexpanded:} \cs{space},
+% shows the \tn{meaning} of the |\notexpanded: \space|,
 % namely \tn{relax} (frozen, in fact, hence a bit different from the
 % normal \tn{relax}), while expanding twice with
 % \begin{quote}
@@ -219,7 +252,7 @@
 % to see how \cs{next} changes from \tn{relax} to becoming a macro.
 %
 % \begin{macro}{\primargs_read_x_token:N}
-% \begin{macro}[aux]{\@@_read_x_token:N, \@@_read_x_token_ii:N}
+% \begin{macro}[aux]{\@@_read_x_token:N, \@@_read_x_token_aux:N}
 %   First query the following token.  Then test whether it is
 %   expandable, using a variant of the \cs{token_if_expandable:NTF}
 %   test.\footnote{This \LaTeX3 test returns \texttt{false} for
@@ -227,26 +260,28 @@
 %     expands those undefined tokens, causing errors, so we should as
 %     well.}  If the token is expandable, \cs{exp_not:N} will change its
 %   \tn{meaning} to \tn{relax}, the test is \texttt{false}, we expand,
-%   and call the loop.  Otherwise, we stop.  Interestingly, we don't
-%   ever need to take the user's function as an argument.
+%   and call the loop.  Otherwise, we stop.  Note the \tn{aftergroup}
+%   construction which inserts \cs{use_i:nnnn} to remove the last three
+%   tokens of \cs{@@_read_x_token_aux:N} once a non-expandable token is
+%   found.  This is a minor speed improvement.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \primargs_read_x_token:N
   {
     \group_begin:
       \@@_no_localdefs:
+      \tex_aftergroup:D \use_i:nnnn
       \@@_read_x_token:N
   }
 \cs_new_protected_nopar:Npn \@@_read_x_token:N
   {
-    \tex_afterassignment:D \@@_read_x_token_ii:N
+    \tex_afterassignment:D \@@_read_x_token_aux:N
     \tex_global:D \tex_futurelet:D \g_primargs_token
   }
-\cs_new_protected_nopar:Npn \@@_read_x_token_ii:N
+\cs_new_protected_nopar:Npn \@@_read_x_token_aux:N
   {
     \exp_after:wN
     \if_meaning:w \exp_not:N \g_primargs_token \g_primargs_token
       \group_end:
-      \exp_after:wN \use_none:nnn
     \fi:
     \exp_after:wN \@@_read_x_token:N \exp_after:wN
   }
@@ -255,8 +290,9 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_read_token:N}
-%   The same without expansion, for use when we already know that what
-%   follows is expanded.
+%   The same without expansion, useful for instance when we already know
+%   that what follows is expanded.  Interestingly, we don't ever need to
+%   take the user's function as an argument.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \primargs_read_token:N
   {
@@ -270,12 +306,10 @@
 %
 % \subsection{Removing tokens}
 %
-% \subsubsection{One token}
-%
 % \begin{macro}{\primargs_remove_token:N}
 %   Remove token using \tn{let} (note the presence of |=| and a space,
 %   to correctly remove explicit space characters), then insert the
-%   \meta{function} with \tn{afterassignment}.
+%   \meta{function} after closing the group.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_token:N #1
   {
@@ -287,8 +321,6 @@
   }
 %    \end{macrocode}
 % \end{macro}
-%
-% \subsubsection{Optional space token}
 %
 % ^^A Not sure of the interaction with \notexpanded:
 %
