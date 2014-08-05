@@ -1,0 +1,84 @@
+\input regression-test
+\RequirePackage{morewrites}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\TEST {Immediate writing}
+  {
+    \newwrite \testwrite
+    \immediate \openout \testwrite = tm\string p.tmp\space
+    \immediate \write \testwrite {\noexpand \TYPE {This is written
+        to the file `tmp.tmp'.}}
+    \immediate \write \testwrite {\noexpand \TYPE {Trying out
+        \noexpand \noexpand \noexpand \noexpand ...}}
+    \immediate \closeout \testwrite
+    \input tmp.tmp %
+    \immediate \write -1 {}% Avoid space diffs in LuaTeX
+    \immediate \openout \testwrite = tmp.tmp %
+    \input tmp.tmp %
+    \immediate \write -1 {}%
+    \immediate \write \testwrite {\noexpand \TYPE {File tmp.tmp again.}}
+    \input tmp.tmp %
+    \immediate \write -1 {}%
+    \immediate \closeout \testwrite
+    \input tmp.tmp %
+  }
+
+% Non-immediate writes only happen at shipout time, so we need to
+% produce pages.  With LaTeX2e, typesetting can only occur after a
+% document class and begin document, so naively we'd need separate tests
+% for plain TeX.  Instead, we build pages from some boxes and ship them
+% out directly.
+%
+\TEST {Delayed writing}
+  {
+    \newwrite \firstwrite
+    \newwrite \secondwrite
+    \newwrite \thirdwrite
+    \shipout \vbox {%
+      \hbox {}%
+      \openout \firstwrite = tmp.tmp %
+      \write \firstwrite {\noexpand \TYPE {First!}}
+      \write \secondwrite {\noexpand \TYPE {Second!}}
+      \write \thirdwrite {\noexpand \TYPE {Third!}}
+      \immediate \openout \secondwrite = tmp2.tmp %
+      \openout \thirdwrite = tmp3.tmp %
+      \hbox {}%
+    }
+    \shipout \vbox {%
+      \hbox {}%
+      \closeout \firstwrite
+      \write \firstwrite {\noexpand \TYPE {First again.}}
+      \write \secondwrite {\noexpand \TYPE {Second again.}}
+      \write \thirdwrite {\noexpand \TYPE {Third again.}}
+      \immediate \closeout \secondwrite
+      \closeout \thirdwrite
+      \hbox {}%
+    }
+    \input tmp.tmp %
+    \input tmp2.tmp %
+    \input tmp3.tmp %
+  }
+
+% We use a csname construction for newwrite because it is outer in
+% plain TeX.
+%
+\TEST {Many write streams in parallel}
+  {
+    \def \testall #1{%
+      \def \test ##1##2{#1}%
+      \test A\Aw \test B\Bw \test C\Cw \test D\Dw
+      \test E\Ew \test F\Fw \test G\Gw \test H\Hw
+      \test I\Iw \test J\Jw \test K\Kw \test L\Lw
+      \test M\Mw \test N\Nw \test O\Ow \test P\Pw}
+    \testall {\csname newwrite\endcsname #2}
+    \testall {\immediate \openout #2 = #1.tmp }
+    \def \foo {}
+    \testall {\immediate \write #2 {\noexpand \TYPE {\foo #1}}}
+    \def \foo {abc}
+    \testall {\immediate \closeout #2}
+    \testall {\input #1.tmp }
+  }
+
+\END

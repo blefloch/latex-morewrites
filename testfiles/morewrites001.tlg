@@ -1,0 +1,111 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+Author: Bruno Le Floch
+============================================================
+TEST 1: Immediate writing
+============================================================
+\testwrite=\write5
+(tmp.tmp
+This is written to the file `tmp.tmp'.
+Trying out \noexpand ...
+)
+(tmp.tmp
+This is written to the file `tmp.tmp'.
+Trying out \noexpand ...
+)
+(tmp.tmp
+This is written to the file `tmp.tmp'.
+Trying out \noexpand ...
+)
+(tmp.tmp
+File tmp.tmp again.
+)
+============================================================
+============================================================
+TEST 2: Delayed writing
+============================================================
+\firstwrite=\write6
+\secondwrite=\write7
+\thirdwrite=\write8
+[1] (.mw)
+\TYPE {Third!}
+[1] (.mw)
+\TYPE {First again.}
+\TYPE {Second again.}
+(tmp.tmp
+First!
+) (tmp2.tmp
+Second!
+) (tmp3.tmp
+Third again.
+)
+============================================================
+============================================================
+TEST 3: Many write streams in parallel
+============================================================
+\Aw=\write9
+\Bw=\write10
+\Cw=\write11
+\Dw=\write12
+\Ew=\write13
+\Fw=\write14
+\Gw=\write15
+\Hw=\write20
+\Iw=\write21
+\Jw=\write22
+\Kw=\write23
+\Lw=\write24
+\Mw=\write25
+\Nw=\write26
+\Ow=\write27
+\Pw=\write28
+(A.tmp
+A
+) (B.tmp
+B
+) (C.tmp
+C
+) (D.tmp
+D
+) (E.tmp
+E
+) (F.tmp
+F
+) (G.tmp
+G
+) (H.tmp
+H
+) (I.tmp
+I
+) (J.tmp
+J
+) (K.tmp
+K
+) (L.tmp
+L
+) (M.tmp
+M
+) (N.tmp
+N
+) (O.tmp
+O
+) (P.tmp
+P
+)
+============================================================
