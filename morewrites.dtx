@@ -276,15 +276,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_tex_shipout:w}
-%   Since the non-\tn{immediate} output primitives act at \tn{shipout}
-%   time, we need to alter this primitive too.
-%   %^^A Not sure if the shipout primitive is done right.
-%    \begin{macrocode}
-\cs_new_eq:NN \@@_tex_shipout:w   \tex_shipout:D
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{Variables}
 %
 % \begin{variable}[aux]{\g_@@_late_write_int}
@@ -296,8 +287,8 @@
 %   \begin{quote}
 %     \cs{vbox_set:Nn} \cs{l_my_box} \\
 %     ~~|{| \cs{iow_shipout_x:Nn} \cs{c_term_iow} \Arg{text} |}|
-%     \cs{tex_shipout:D} \cs{tex_copy:D} \cs{l_my_box}
-%     \cs{tex_shipout:D} \cs{tex_copy:D} \cs{l_my_box}
+%     \tn{shipout} \tn{copy} \cs{l_my_box}
+%     \tn{shipout} \tn{copy} \cs{l_my_box}
 %   \end{quote}
 %   will print \meta{text} to the terminal twice.
 %    \begin{macrocode}
@@ -810,60 +801,84 @@
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}{\shipout}
-% \begin{macro}[aux]{\@@_shipout:w}
 % \begin{variable}[aux]{\g_@@_group_level_int, \g_@@_shipout_box}
-%   If \pkg{atbegshi} is available, patch it by adding
-%   \cs{@@_before_shipout:} and \cs{@@_after_shipout:} at the right
-%   place: the two transformations are needed to cover several versions
-%   of the package.  Otherwise, redefine \tn{shipout} to add a hook (see
-%   Heiko's \pkg{atbegshi} for details).
+%   Store the page to be shipped out in a box.  Store the group level
+%   when \tn{shipout} is called: this is used to distinguish between
+%   explicit boxes and box registers.
 %    \begin{macrocode}
-\IfFileExists{atbegshi.sty}
+\int_new:N \g_@@_group_level_int
+\box_new:N \g_@@_shipout_box
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{macro}[aux]{\@@_shipout:w}
+% \begin{macro}[aux]{\@@_shipout_i:, \@@_shipout_ii:}
+%   Store the group level
+%    \begin{macrocode}
+\cs_new_protected_nopar:Npn \@@_shipout:w
   {
-    \RequirePackage{atbegshi}
-    \tl_replace_once:Nnn \AtBegShi@Output
-      { \AtBegShi@OrgShipout \box \AtBeginShipoutBox }
-      {
-        \@@_before_shipout:
-        \AtBegShi@OrgShipout \box \AtBeginShipoutBox
-        \@@_after_shipout:
-      }
-    \tl_replace_once:Nnn \AtBegShi@Output
-      { \AtBeginShipoutOriginalShipout \box \AtBeginShipoutBox }
-      {
-        \@@_before_shipout:
-        \AtBeginShipoutOriginalShipout \box \AtBeginShipoutBox
-        \@@_after_shipout:
-      }
+    \int_gset_eq:NN \g_@@_group_level_int \etex_currentgrouplevel:D
+    \tex_afterassignment:D \@@_shipout_i:
+    \tex_global:D \tex_setbox:D \g_@@_shipout_box
+  }
+\cs_new_protected_nopar:Npn \@@_shipout_i:
+  {
+    \int_compare:nNnTF { \g_@@_group_level_int }
+                     = { \etex_currentgrouplevel:D }
+      { \@@_shipout_ii: }
+      { \tex_aftergroup:D \@@_shipout_ii: }
+  }
+\cs_new_protected_nopar:Npn \@@_shipout_ii:
+  {
+    \@@_before_shipout:
+    \@@_tex_shipout:w \tex_box:D \g_@@_shipout_box
+    \@@_after_shipout:
+  }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
+% \begin{macro}[aux]{\shipout, \@@_tex_shipout:w}
+%   The task is now to locate the shipout primitive, which may have been
+%   renamed and hooked into by many different packages loaded before
+%   \pkg{morewrites}.  Any of those control sequences which are equal to
+%   the primitive are redefined to do \cs{@@_shipout:w} instead.  If the
+%   primitive is not located at all, the fallback is to hook into the
+%   control sequence \cs{shipout}.
+%    \begin{macrocode}
+\tl_map_inline:nn
+  {
+    \xyrealshipout@
+    \org@shipout
+    \PDFSYNCship@ut@ld
+    \CROP@shipout
+    \@soORI
+    \tex_shipout:D
+    \zwpl@Hship
+    \o@shipout@TP
+    \LL@shipout
+    \Shipout
+    \GXTorg@shipout
+    \AtBegShi@OrgShipout
+    \AtBeginShipoutOriginalShipout
+    \shipout
   }
   {
-    \int_new:N \g_@@_group_level_int
-    \box_new:N \g_@@_shipout_box
-    \cs_new_protected_nopar:Npn \@@_shipout:w
+    \str_if_eq_x:nnT
+      { \cs_meaning:N #1 }
+      { \token_to_str:N \shipout }
       {
-        \int_gset_eq:NN \g_@@_group_level_int \etex_currentgrouplevel:D
-        \tex_afterassignment:D \@@_shipout_i:
-        \tex_global:D \tex_setbox:D \g_@@_shipout_box
+        \cs_if_exist:NF \@@_tex_shipout:w
+          { \cs_new_eq:NN \@@_tex_shipout:w #1 }
+        \cs_gset_eq:NN #1 \@@_shipout:w
       }
-    \cs_new_protected_nopar:Npn \@@_shipout_i:
-      {
-        \int_compare:nNnTF { \g_@@_group_level_int }
-                         = { \etex_currentgrouplevel:D }
-          { \@@_shipout_ii: }
-          { \tex_aftergroup:D \@@_shipout_ii: }
-      }
-    \cs_new_protected_nopar:Npn \@@_shipout_ii:
-      {
-        \@@_before_shipout:
-        \@@_tex_shipout:w \tex_box:D \g_@@_shipout_box
-        \@@_after_shipout:
-      }
+  }
+\cs_if_exist:NF \@@_tex_shipout:w
+  {
+    \cs_new_eq:NN \@@_tex_shipout:w \shipout
     \cs_gset_eq:NN \shipout \@@_shipout:w
   }
 %    \end{macrocode}
-% \end{variable}
-% \end{macro}
 % \end{macro}
 %
 % \subsection{Hook at the very end}
