@@ -1,0 +1,49 @@
+%
+% Copyright (C) 2014 `primargs' maintainer
+%
+
+\input regression-test
+\RequirePackage{primargs}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\ExplSyntaxOn
+
+\OMIT
+\cs_new:Npn \test:w
+  { \TYPE { \cs_meaning:N \g_primargs_token } \show }
+\cs_set_eq:NN \par \tex_par:D % Avoid spurious diffs between formats
+\TIMO
+
+\TEST { Read~token }
+  {
+    \primargs_read_token:N \test:w \undefined \scan_stop:
+    \primargs_read_token:N \test:w \par
+    \primargs_read_token:N \test:w #
+    \primargs_read_token:N \test:w {
+    \primargs_read_token:N \test:w }
+    \primargs_read_token:N \test:w \c_space_tl
+    \exp_after:wN \primargs_read_token:N
+      \exp_after:wN \test:w \c_space_tl
+    \primargs_read_token:N \test:w \exp_not:N \c_empty_tl
+    \exp_after:wN \primargs_read_token:N
+      \exp_after:wN \test:w \exp_not:N \c_empty_tl \scan_stop:
+  }
+
+\TEST { Read~expanded~token }
+  {
+    \primargs_read_x_token:N \test:w \undefined \scan_stop:
+    \primargs_read_x_token:N \test:w \par
+    \primargs_read_x_token:N \test:w #
+    \primargs_read_x_token:N \test:w {
+    \primargs_read_x_token:N \test:w }
+    \primargs_read_x_token:N \test:w \c_space_tl
+    \exp_after:wN \primargs_read_x_token:N
+      \exp_after:wN \test:w \c_space_tl
+    \primargs_read_x_token:N \test:w \exp_not:N \c_empty_tl
+    \exp_after:wN \primargs_read_x_token:N
+      \exp_after:wN \test:w \exp_not:N \c_empty_tl \scan_stop:
+  }
+
+\END
