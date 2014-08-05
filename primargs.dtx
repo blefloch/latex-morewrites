@@ -70,7 +70,7 @@
 %
 % \subsection{Grabbing arguments}
 %
-% \begin{function}
+% \begin{function}[tested=primargs002]
 %   {
 %     \primargs_get_number:N,
 %     \primargs_get_dimen:N,
@@ -91,6 +91,8 @@
 %   \begin{verbatim}
 %     \test {3sp plus -1fill}X
 %   \end{verbatim}
+%   A word of warning: the \cs{primargs_get_mudimen:N} function
+%   currently parses a \meta{muskip} instead of a \meta{mudimen}.
 % \end{function}
 %
 % \begin{function}{\primargs_get_general_text:N}
