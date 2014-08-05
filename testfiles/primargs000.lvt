@@ -1,0 +1,14 @@
+%
+% Copyright (C) 2014 `primargs' maintainer
+%
+
+\input regression-test
+
+\RequirePackage{expl3}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\RequirePackage{primargs}
+
+\END
