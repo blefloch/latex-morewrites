@@ -9,6 +9,6 @@
 \START
 \AUTHOR{Bruno Le Floch}
 
-\RequirePackage{primargs}
+\RequirePackage{morewrites}
 
 \END
