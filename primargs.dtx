@@ -355,7 +355,7 @@
 %
 % \begin{macro}{\primargs_remove_optional_spaces:N}
 % \begin{macro}[aux]
-%   {\@@_remove_optional_spaces:, \@@_remove_optional_spaces_ii:}
+%   {\@@_remove_optional_spaces:, \@@_remove_optional_spaces_aux:}
 %   Start a group: we will insert the \meta{function} at its end.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_optional_spaces:N #1
@@ -366,8 +366,8 @@
       \@@_remove_optional_spaces:
   }
 \cs_new_protected_nopar:Npn \@@_remove_optional_spaces:
-  { \primargs_read_x_token:N \@@_remove_optional_spaces_ii: }
-\cs_new_protected_nopar:Npn \@@_remove_optional_spaces_ii:
+  { \primargs_read_x_token:N \@@_remove_optional_spaces_aux: }
+\cs_new_protected_nopar:Npn \@@_remove_optional_spaces_aux:
   {
     \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
@@ -381,6 +381,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_equals:N}
+% \begin{macro}[aux]{\@@_remove_equals:, \@@_remove_equals_ii:NN}
 %   Remove \meta{optional spaces}, then test for an explicit |=|, both
 %   in \tn{meaning} and as a token list (once we know its \tn{meaning},
 %   we can grab it safely).
@@ -401,6 +402,7 @@
 \cs_new_protected:Npn \@@_remove_equals_ii:NN #1#2
   { \tl_if_eq:nnTF { #2 } { = } { #1 } { #1 #2 } }
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_filler:N}
