@@ -45,7 +45,7 @@
 %   \cs{primargs_read_x_token:N}.  Its value is always set globally.
 % \end{variable}
 %
-% \begin{function}[tested=primargs001]{\primargs_read_token:N}
+% \begin{function}[tested = primargs001]{\primargs_read_token:N}
 %   \begin{syntax}
 %     \cs{primargs_read_token:N} \meta{function}
 %   \end{syntax}
@@ -58,7 +58,7 @@
 %   \end{texnote}
 % \end{function}
 %
-% \begin{function}[tested=primargs001]{\primargs_read_x_token:N}
+% \begin{function}[tested = primargs001]{\primargs_read_x_token:N}
 %   \begin{syntax}
 %     \cs{primargs_read_x_token:N} \meta{function}
 %   \end{syntax}
@@ -70,7 +70,7 @@
 %
 % \subsection{Grabbing arguments}
 %
-% \begin{function}[tested=primargs002]
+% \begin{function}[tested = primargs002]
 %   {
 %     \primargs_get_number:N,
 %     \primargs_get_dimen:N,
@@ -95,13 +95,16 @@
 %   currently parses a \meta{muskip} instead of a \meta{mudimen}.
 % \end{function}
 %
-% \begin{function}{\primargs_get_general_text:N}
+% \begin{function}[updated = 2014-08-06, tested = primargs003]
+%   {\primargs_get_general_text:N}
 %   \begin{syntax}
 %     \cs{primargs_get_general_text:N} \meta{function}
 %   \end{syntax}
-%   Finds what \TeX{}'s grammar calls a \meta{general text} following
-%   the \meta{function}, and calls the \meta{function} with this
-%   \meta{general text} as a braced argument.
+%   Finds what \TeX{}'s grammar calls a \meta{general text} (that is, a
+%   \meta{filler}, a catcode~$1$ token, a \meta{balanced text}, and an
+%   explicit catcode~$2$ token) following the \meta{function}, and calls
+%   the \meta{function} with the \meta{balanced text} as a braced
+%   argument.
 % \end{function}
 %
 % \begin{function}{\primargs_get_file_name:N}
@@ -145,6 +148,14 @@
 %   \end{syntax}
 %   Removes \meta{equals}, namely \meta{optional spaces} followed
 %   optionally by an explicit |=| character with category other.
+% \end{function}
+%
+% \begin{function}[added = 2014-08-06]{\primargs_remove_filler:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_filler:N} \meta{function}
+%   \end{syntax}
+%   Removes a \meta{filler}, which is any combination of tokens
+%   expanding to tokens with category code~$10$ or equal to \tn{relax}.
 % \end{function}
 %
 % \subsection{Afterassignment and \tn{globaldefs}}
@@ -193,7 +204,7 @@
 % \begin{macro}[aux]{\g_@@_code_tl}
 %   Used to contain temporary code.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \g_@@_code_tl { }
+\tl_new:N \g_@@_code_tl
 %    \end{macrocode}
 % \end{macro}
 %
@@ -337,9 +348,9 @@
       \tex_aftergroup:D #1
       \primargs_read_x_token:N \@@_remove_one_optional_space:
   }
-\exp_args:NNo \cs_new_protected_nopar:Npn \@@_remove_one_optional_space:
+\cs_new_protected_nopar:Npn \@@_remove_one_optional_space:
   {
-    \use:n { \if_catcode:w } ~ \exp_not:N \g_primargs_token
+    \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
     \fi:
     \group_end:
@@ -362,9 +373,9 @@
   }
 \cs_new_protected_nopar:Npn \@@_remove_optional_spaces:
   { \primargs_read_x_token:N \@@_remove_optional_spaces_ii: }
-\exp_args:NNo \cs_new_protected_nopar:Npn \@@_remove_optional_spaces_ii:
+\cs_new_protected_nopar:Npn \@@_remove_optional_spaces_ii:
   {
-    \use:n { \if_catcode:w } ~ \exp_not:N \g_primargs_token
+    \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
       \exp_after:wN \@@_remove_optional_spaces:
     \else:
@@ -398,6 +409,46 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}{\primargs_remove_filler:N}
+% \begin{macro}[aux]
+%   {
+%     \@@_remove_filler:,
+%     \@@_remove_filler_aux:,
+%     \@@_remove_filler_end:NNNNN
+%   }
+%   Within a group remove a \meta{filler}, and insert the user's |#1|
+%   after closing the group.
+%    \begin{macrocode}
+\cs_new_protected:Npn \primargs_remove_filler:N #1
+  {
+    \group_begin:
+      \@@_no_localdefs:
+      \tex_aftergroup:D #1
+      \@@_remove_filler:
+  }
+\cs_new_protected_nopar:Npn \@@_remove_filler:
+  { \primargs_read_x_token:N \@@_remove_filler_aux: }
+\cs_new_protected_nopar:Npn \@@_remove_filler_aux:
+  {
+    \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
+    \else:
+      \if_meaning:w \tex_relax:D \g_primargs_token
+      \else:
+        \exp_after:wN
+        \if_meaning:w \exp_not:N \prg_do_nothing: \g_primargs_token
+        \else:
+          \@@_remove_filler_end:NNNNN
+        \fi:
+      \fi:
+    \fi:
+    \primargs_remove_token:N \@@_remove_filler:
+  }
+\cs_new_protected:Npn \@@_remove_filler_end:NNNNN #1#2#3#4#5
+  { #1 #2 #3 \group_end: }
+%    \end{macrocode}
+% \end{macro}
+% \end{macro}
+%
 % \subsection{Right-hand sides of assignments}
 %
 % The naive approach to reading an integer, or a general text, is to let
@@ -418,9 +469,7 @@
 %
 % For integers, we will use \tn{deadcycles}, a parameter which is
 % automatically assigned globally, and we revert it to its previous
-% value afterwards.  For general text, we will use \tn{errhelp}, which
-% we will assign locally if possible (\tn{globaldefs} negative or zero),
-% and otherwise reset to be empty.
+% value afterwards.
 %
 % \begin{macro}[int]{\@@_get_rhs:NnN, \@@_get_rhs:NoN}
 %   The last two lines of this function are the key: assign to |#1|,
@@ -515,16 +564,45 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_get_general_text:N}
-%   For a general text, use \tn{errhelp}, since it shouldn't be a big
-%   problem if that's changed.  We don't revert it to its value, but to
-%   be empty (note the extra braces, though, since it's a token
-%   register), because it is probably better to have no help than the
-%   wrong help hanging around.  Besides, \tn{errhelp} is always set
-%   for immediate use.
+% \begin{macro}[aux]
+%   {\@@_get_general_text:, \@@_get_general_text_error:n}
+%   Getting a \meta{general text} is more tricky, as an assignment to
+%   \tn{errhelp} (for instance) would also allow constructions such as
+%   |\toks0|.  Instead, we remove a \meta{filler} then test whether the
+%   next token (already expanded) is a catcode~$1$ token, in which case
+%   we replace it by an explicit left brace before calling the function.
+%   When the next token is not of catcode~$1$, we produce an error,
+%   attempting to imitate as closely as possible the \TeX{} error.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_general_text:N
-  { \@@_get_rhs:NoN \tex_errhelp:D { { } } }
+\cs_new_protected:Npn \primargs_get_general_text:N #1
+  {
+    \group_begin:
+      \@@_no_localdefs:
+      \tex_aftergroup:D #1
+      \tex_aftergroup:D { \if_false: } \fi:
+      \primargs_remove_filler:N \@@_get_general_text:
+  }
+\cs_new_protected_nopar:Npn \@@_get_general_text:
+  {
+    \if_catcode:w \c_group_begin_token \g_primargs_token
+      \exp_after:wN \primargs_remove_token:N
+    \else:
+      \group_begin:
+        \tex_aftergroup:D \@@_get_general_text_error:n
+        \if_catcode:w \c_group_end_token \g_primargs_token
+          \tex_aftergroup:D {
+          \tex_aftergroup:D }
+        \fi:
+    \fi:
+    \group_end:
+  }
+\cs_new_protected:Npn \@@_get_general_text_error:n #1
+  {
+    \exp_after:wN \group_end:
+    \etex_unexpanded:D \if_int_compare:w `{ = \c_zero \fi: #1 }
+  }
 %    \end{macrocode}
+% \end{macro}
 % \end{macro}
 %
 % \subsection{Get file name}
