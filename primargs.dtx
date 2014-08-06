@@ -93,23 +93,30 @@
 %   \begin{syntax}
 %     \cs{primargs_remove_optional_spaces:N} \meta{function}
 %   \end{syntax}
-%   Removes \meta{optional spaces} after the \meta{function}.
+%   Expands tokens following the \meta{function}, removing any token
+%   with catcode~$10$ (space), then sets \cs{g_primargs_token} equal to
+%   the first non-space token and calls the \meta{function}.
 % \end{function}
 %
 % \begin{function}{\primargs_remove_equals:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_equals:N} \meta{function}
 %   \end{syntax}
-%   Removes \meta{equals}, namely \meta{optional spaces} followed
-%   optionally by an explicit |=| character with category other.
+%   Expands tokens following the \meta{function}, removing any token
+%   with catcode~$10$ (space), then sets \cs{g_primargs_token} equal to
+%   the first non-space token.  If this token is an explicit~|=|
+%   character token with catcode~$12$ (other), then it is removed as
+%   well.  Finally, calls the \meta{function}.
 % \end{function}
 %
 % \begin{function}[added = 2014-08-06]{\primargs_remove_filler:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_filler:N} \meta{function}
 %   \end{syntax}
-%   Removes a \meta{filler}, which is any combination of tokens
-%   expanding to tokens with category code~$10$ or equal to \tn{relax}.
+%   Expands tokens following the \meta{function}, removing any token
+%   with catcode~$10$ (space) or equal to \tn{relax}, then sets
+%   \cs{g_primargs_token} equal to the first non-space non-\tn{relax}
+%   token.  Finally, calls the \meta{function}.
 % \end{function}
 %
 % \subsection{Grabbing arguments}
@@ -183,6 +190,21 @@
 %
 % Tokens inserted using \tn{afterassignment} may be lost when using this
 % package, since it uses \tn{afterassignment} internally.
+%
+% The following needs to be done.
+% \begin{itemize}
+% \item Test all functions, in particular their interaction with
+%   \tn{noexpand}.
+% \item Test all functions within alignments and understand their
+%   interaction with the master counter.
+% \item Implement |"| for quoting file names.
+% \item Provide two functions for file names, to allow for the braced
+%   syntax of some primitives in \LuaTeX{}.
+% \item Correct the parsing of \meta{mudimen}.
+% \item Perhaps parse \meta{muglue} and \meta{glue} by hand to avoid bad
+%   interactions with \tn{globaldefs}.  Otherwise put up a warning about
+%   \tn{globaldefs} when relevant.
+% \end{itemize}
 %
 % \end{documentation}
 %
@@ -329,8 +351,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% ^^A Not sure of the interaction with \notexpanded:
-%
 % \begin{macro}{\primargs_remove_one_optional_space:N}
 % \begin{macro}[aux]{\@@_remove_one_optional_space:}
 %   Start a group: we will insert the \meta{function} at its end.
@@ -356,7 +376,9 @@
 % \begin{macro}{\primargs_remove_optional_spaces:N}
 % \begin{macro}[aux]
 %   {\@@_remove_optional_spaces:, \@@_remove_optional_spaces_aux:}
-%   Start a group: we will insert the \meta{function} at its end.
+%   Start a group, make assignments safe, then recursively expand tokens
+%   and remove any token with catcode~$10$ (space).  Once another token
+%   is found, close the group hence insert the \meta{function}~|#1|.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_optional_spaces:N #1
   {
@@ -381,10 +403,10 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_equals:N}
-% \begin{macro}[aux]{\@@_remove_equals:, \@@_remove_equals_ii:NN}
-%   Remove \meta{optional spaces}, then test for an explicit |=|, both
-%   in \tn{meaning} and as a token list (once we know its \tn{meaning},
-%   we can grab it safely).
+% \begin{macro}[aux]{\@@_remove_equals:, \@@_remove_equals_aux:NN}
+%   Remove \meta{optional spaces}, then test for an explicit~|=|, both
+%   in \tn{meaning} and as a token list: once we know its \tn{meaning},
+%   we can grab it safely.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_equals:N #1
   {
@@ -395,11 +417,11 @@
 \cs_new_protected_nopar:Npn \@@_remove_equals:
   {
       \if_meaning:w = \g_primargs_token
-        \exp_after:wN \@@_remove_equals_ii:NN
+        \exp_after:wN \@@_remove_equals_aux:NN
       \fi:
     \group_end:
   }
-\cs_new_protected:Npn \@@_remove_equals_ii:NN #1#2
+\cs_new_protected:Npn \@@_remove_equals_aux:NN #1#2
   { \tl_if_eq:nnTF { #2 } { = } { #1 } { #1 #2 } }
 %    \end{macrocode}
 % \end{macro}
@@ -413,7 +435,9 @@
 %     \@@_remove_filler_end:NNNNN
 %   }
 %   Within a group remove a \meta{filler}, and insert the user's |#1|
-%   after closing the group.
+%   after closing the group.  A \meta{filler} consists of tokens with
+%   catcode~$10$ (space) or equal to \tn{relax} or to the
+%   \enquote{frozen \tn{relax}} command.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_filler:N #1
   {
@@ -602,8 +626,6 @@
 % \end{macro}
 %
 % \subsection{Get file name}
-%
-% ^^A todo: Figure out when \group_align_safe_begin: is needed.
 %
 % \begin{variable}[int]{\g_@@_file_name_tl}
 %   Token list used to build a file name, one character at a time.
