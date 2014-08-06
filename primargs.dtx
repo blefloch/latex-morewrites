@@ -38,7 +38,7 @@
 % in place of \TeX{}, which is useful to add hooks to primitives.  Of
 % course, this is much slower than letting \TeX{} do things directly.
 %
-% \subsection{Read one token}
+% \subsection{Reading one token without removing it}
 %
 % \begin{variable}{\g_primargs_token}
 %   The token read by \cs{primargs_read_token:N} or
@@ -66,6 +66,50 @@
 %   encountering a non-expandable token, and calls the \meta{function}
 %   afterwards.  The non-expandable token follows the \meta{function},
 %   and \cs{g_primargs_token} is also set equal to that token.
+% \end{function}
+%
+% \subsection{Removing tokens}
+%
+% \begin{function}{\primargs_remove_token:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_token:N} \meta{function}
+%   \end{syntax}
+%   Removes the \meta{token} which follows the \meta{function}, then
+%   calls the \meta{function}.  This also sets \cs{g_primargs_token}
+%   equal to the removed token.
+% \end{function}
+%
+% \begin{function}{\primargs_remove_one_optional_space:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_one_optional_space:N} \meta{function}
+%   \end{syntax}
+%   Expands tokens following the \meta{function} until a non-expandable
+%   token is found, and sets \cs{g_primargs_token} equal to this token,
+%   then removes the token if it has catcode~$10$ (space).  Finally,
+%   call the \meta{function}.
+% \end{function}
+%
+% \begin{function}{\primargs_remove_optional_spaces:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_optional_spaces:N} \meta{function}
+%   \end{syntax}
+%   Removes \meta{optional spaces} after the \meta{function}.
+% \end{function}
+%
+% \begin{function}{\primargs_remove_equals:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_equals:N} \meta{function}
+%   \end{syntax}
+%   Removes \meta{equals}, namely \meta{optional spaces} followed
+%   optionally by an explicit |=| character with category other.
+% \end{function}
+%
+% \begin{function}[added = 2014-08-06]{\primargs_remove_filler:N}
+%   \begin{syntax}
+%     \cs{primargs_remove_filler:N} \meta{function}
+%   \end{syntax}
+%   Removes a \meta{filler}, which is any combination of tokens
+%   expanding to tokens with category code~$10$ or equal to \tn{relax}.
 % \end{function}
 %
 % \subsection{Grabbing arguments}
@@ -118,55 +162,7 @@
 %   file names allowed by \LuaTeX{}.
 % \end{function}
 %
-% \subsection{Discarding tokens}
-%
-% \begin{function}{\primargs_remove_token:N}
-%   \begin{syntax}
-%     \cs{primargs_remove_token:N} \meta{function}
-%   \end{syntax}
-%   Removes the \meta{token} which follows the \meta{function}, then
-%   calls the \meta{function}.
-% \end{function}
-%
-% \begin{function}{\primargs_remove_one_optional_space:N}
-%   \begin{syntax}
-%     \cs{primargs_remove_one_optional_space:N} \meta{function}
-%   \end{syntax}
-%   Removes \meta{one optional space} after the \meta{function}.
-% \end{function}
-%
-% \begin{function}{\primargs_remove_optional_spaces:N}
-%   \begin{syntax}
-%     \cs{primargs_remove_optional_spaces:N} \meta{function}
-%   \end{syntax}
-%   Removes \meta{optional spaces} after the \meta{function}.
-% \end{function}
-%
-% \begin{function}{\primargs_remove_equals:N}
-%   \begin{syntax}
-%     \cs{primargs_remove_equals:N} \meta{function}
-%   \end{syntax}
-%   Removes \meta{equals}, namely \meta{optional spaces} followed
-%   optionally by an explicit |=| character with category other.
-% \end{function}
-%
-% \begin{function}[added = 2014-08-06]{\primargs_remove_filler:N}
-%   \begin{syntax}
-%     \cs{primargs_remove_filler:N} \meta{function}
-%   \end{syntax}
-%   Removes a \meta{filler}, which is any combination of tokens
-%   expanding to tokens with category code~$10$ or equal to \tn{relax}.
-% \end{function}
-%
-% \subsection{Afterassignment and \tn{globaldefs}}
-%
-% Setting the \tn{globaldefs} parameter to a non-zero value may make
-% some parts of this package crash.
-%
-% Tokens inserted using \tn{afterassignment} may be lost when using this
-% package, since it uses \tn{afterassignment} internally.
-%
-% \subsection{Internal functions}
+% \subsection{Internal functions and comments}
 %
 % \begin{function}{\@@_get_rhs:NnN, \@@_get_rhs:NoN}
 %   \begin{syntax}
@@ -181,6 +177,12 @@
 %   group, but some are automatically global, and \tn{globaldefs} may
 %   cause trouble with others.
 % \end{function}
+%
+% Setting the \tn{globaldefs} parameter to a non-zero value may make
+% some parts of this package crash.
+%
+% Tokens inserted using \tn{afterassignment} may be lost when using this
+% package, since it uses \tn{afterassignment} internally.
 %
 % \end{documentation}
 %
@@ -208,15 +210,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_no_afterassignment:}
-%   Supersedes any \tn{afterassignment} token.
-%    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_no_afterassignment:
-  { \tex_afterassignment:D \tex_relax:D }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux]{\@@_no_localdefs:}
+% \begin{macro}[aux]{\@@_safe:}
 %   This function, which must be called in a group, cancels any
 %   \tn{afterassignment} token and makes the \tn{globaldefs} parameter
 %   non-negative.  This ensures that assignments prefixed with
@@ -224,9 +218,9 @@
 %   every assignment is global, and it is not possible to safely
 %   (locally) set it to zero.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_no_localdefs:
+\cs_new_protected_nopar:Npn \@@_safe:
   {
-    \@@_no_afterassignment:
+    \tex_afterassignment:D \tex_relax:D
     \if_int_compare:w \tex_globaldefs:D < \c_zero
       \tex_globaldefs:D = \c_zero
     \fi:
@@ -281,7 +275,7 @@
 \cs_new_protected_nopar:Npn \primargs_read_x_token:N
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D \use_i:nnnn
       \@@_read_x_token:N
   }
@@ -310,7 +304,7 @@
 \cs_new_protected_nopar:Npn \primargs_read_token:N
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_afterassignment:D \group_end:
       \tex_global:D \tex_futurelet:D \g_primargs_token
   }
@@ -327,7 +321,7 @@
 \cs_new_protected:Npn \primargs_remove_token:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \tex_afterassignment:D \group_end:
       \tex_global:D \tex_let:D \g_primargs_token = ~
@@ -344,7 +338,7 @@
 \cs_new_protected:Npn \primargs_remove_one_optional_space:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \primargs_read_x_token:N \@@_remove_one_optional_space:
   }
@@ -367,7 +361,7 @@
 \cs_new_protected:Npn \primargs_remove_optional_spaces:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \@@_remove_optional_spaces:
   }
@@ -422,7 +416,7 @@
 \cs_new_protected:Npn \primargs_remove_filler:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \@@_remove_filler:
   }
@@ -463,7 +457,7 @@
 % assignments to the parameter itself, preventing us from setting it to
 % zero locally; hence, we are stuck with global assignments (if
 % \tn{globaldefs} is negative, we can change it, locally, to whatever
-% value pleases us, as done by \cs{@@_no_localdefs:}).  We may thus not
+% value pleases us, as done by \cs{@@_safe:}).  We may thus not
 % use scratch registers to parse integers, general texts, and other
 % pieces of \TeX{}'s grammar.
 %
@@ -482,7 +476,7 @@
 \cs_new_protected:Npn \@@_get_rhs:NnN #1#2#3
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #3
       \tl_gset:Nn \g_@@_code_tl
         {
@@ -577,7 +571,7 @@
 \cs_new_protected:Npn \primargs_get_general_text:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \tex_aftergroup:D { \if_false: } \fi:
       \primargs_remove_filler:N \@@_get_general_text:
@@ -628,7 +622,7 @@
 \cs_new_protected:Npn \primargs_get_file_name:N #1
   {
     \group_begin:
-      \@@_no_localdefs:
+      \@@_safe:
       \tex_aftergroup:D #1
       \tl_gclear:N \g_@@_file_name_tl
       \primargs_remove_optional_spaces:N \@@_get_file_name_test:
@@ -694,37 +688,6 @@
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
-%
-% \section{Examples}
-%
-% [Old text which I don't want to remove yet.]  A few examples of what
-% this package can parse.
-% \begin{itemize}
-%   \item \meta{integer} denotes an integer in any form that \TeX{}
-%     accepts as the right-hand side of a primitive integer assignment
-%     of the form \tn{count}|0=|\meta{integer};
-%   \item \meta{equals} is an arbitrary (optional) number of explicit or
-%     implicit space characters, an optional explicit equal sign of
-%     category other, and further (optional) explicit or implicit space
-%     characters;
-%   \item \meta{file name} is an arbitrary sequence of explicit or
-%     implicit characters with arbitrary category codes (except active
-%     characters, which are expanded before reaching \TeX{}'s mouth),
-%     ending either with a space character (character code $32$,
-%     arbitrary non-active category code, explicit or implicit), which
-%     is removed, or with a non-expandable token, with some care needed
-%     for the case of a \tn{notexpanded:} expandable token;
-%   \item \meta{filler} is an arbitrary combination of tokens each of
-%     whose meaning is \tn{relax} or a character with category code
-%     $10$;
-%   \item \meta{general text} is a \meta{filler}, followed by braced
-%     tokens, starting with an explicit or implicit begin-group
-%     character, and ending with the matching explicit end-group
-%     character (both with any character code), with an equal number of
-%     explicit begin-group and end-group characters in between: this is
-%     precisely the right-hand side of an assignment of the form
-%     \tn{toks}|0=|\meta{general text}.
-% \end{itemize}
 %
 %</package>
 %
