@@ -30,7 +30,7 @@ TEST 2: Get general text errors
 ! Missing { inserted.
 <to be read again> 
 }
-l.40   }
+l.45   }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
@@ -39,7 +39,7 @@ so that I will find a matching right brace soon.
 ! Missing { inserted.
 <to be read again> 
 }
-l.40   }
+l.45   }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
@@ -48,10 +48,19 @@ so that I will find a matching right brace soon.
 ! Missing { inserted.
 <to be read again> 
 1
-l.40   }
+l.45   }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
 (If you're confused by all this, try typing `I}' now.)
 |123||
+! Missing { inserted.
+<to be read again> 
+\tex_toks:D 
+l.45   }
+A left brace was mandatory here, so I've put one in.
+You might want to delete and/or insert some corrections
+so that I will find a matching right brace soon.
+(If you're confused by all this, try typing `I}' now.)
+|\tex_toks:D 123||
 ============================================================

@@ -31,12 +31,17 @@
 \TEST { Get~general~text~errors }
   {
     \if_false: { \fi:
-      \primargs_get_general_text:N \test:nw } \scan_stop:
+      \primargs_get_general_text:N \test:nw }
+    \scan_stop:
     \if_false: { \fi:
       \primargs_get_general_text:N \test:nw \c_group_end_token }
     \scan_stop:
     \if_false: { \fi:
-      \primargs_get_general_text:N \test:nw 123 } \scan_stop:
+      \primargs_get_general_text:N \test:nw 123 }
+    \scan_stop:
+    \if_false: { \fi:
+      \primargs_get_general_text:N \test:nw \tex_toks:D 123 }
+    \scan_stop:
   }
 
 \END
