@@ -5,6 +5,7 @@
 \input regression-test
 
 \RequirePackage[check-declarations,log-functions]{expl3}
+\RequirePackage{primargs}
 
 \START
 \AUTHOR{Bruno Le Floch}
