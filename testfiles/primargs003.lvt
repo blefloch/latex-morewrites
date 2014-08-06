@@ -1,0 +1,42 @@
+%
+% Copyright (C) 2014 `primargs' maintainer
+%
+
+\input regression-test
+\RequirePackage{primargs}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\ExplSyntaxOn
+
+\OMIT
+\cs_new:Npn \test:nw #1#2 \scan_stop:
+  { \TYPE { \exp_not:n { | #1 | #2 | } } }
+\TIMO
+
+\TEST { Get~general~text }
+  {
+    \primargs_get_general_text:N \test:nw { } \scan_stop:
+    \if_false: { \fi:
+      \primargs_get_general_text:N \test:nw
+      \c_space_tl \scan_stop:
+      \prg_replicate:nn { 101 } { \exp_not:N }
+      \undefined
+      \c_group_begin_token \undefined \c_group_end_token } \scan_stop:
+    \primargs_get_general_text:N \test:nw
+      { \fi: ... { ... } ... } \scan_stop:
+  }
+
+\TEST { Get~general~text~errors }
+  {
+    \if_false: { \fi:
+      \primargs_get_general_text:N \test:nw } \scan_stop:
+    \if_false: { \fi:
+      \primargs_get_general_text:N \test:nw \c_group_end_token }
+    \scan_stop:
+    \if_false: { \fi:
+      \primargs_get_general_text:N \test:nw 123 } \scan_stop:
+  }
+
+\END
