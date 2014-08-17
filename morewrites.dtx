@@ -481,7 +481,7 @@
 %
 % \begin{macro}[aux]{\@@_closeout_now:nn}
 %   The code to write the material collected so far for a given output
-%   \meta{stream} is in the token list \cs{g_@@_iow_\meta{stream}_tl}.
+%   \meta{stream} is in the token list |\g_@@_iow_\meta{stream}_tl|.
 %   We do this writing in the actual stream \cs{g_@@_iow}, briefly
 %   opened and closed on the file |#2|.
 %    \begin{macrocode}
@@ -601,7 +601,7 @@
 %   read one at a time using \eTeX{}'s \tn{readline} with
 %   \tn{endlinechar} set to $-1$ to avoid spurious characters.  Each
 %   line becomes a \tn{immediate} \tn{write} statement added to the
-%   token list \cs{g_@@_iow_\meta{stream}_tl}.  This token list will be
+%   token list |\g_@@_iow_\meta{stream}_tl|.  This token list will be
 %   called when it is time to actually write to the file.  At that time,
 %   \tn{newlinechar} will be $-1$, so that writing each line will
 %   produce no extra line.
@@ -646,7 +646,7 @@
 % non-immediate \tn{write} takes place immediately after the page
 % containing it is shipped out.  We store each non-immediate
 % \tn{openout}, \tn{write}, or \tn{closeout} without expansion in
-% separate token lists \cs{g_@@_later_\meta{stream}_tl} to be used
+% separate token lists |\g_@@_later_\meta{stream}_tl| to be used
 % later, and instead write |`(|\meta{stream}|)| to a file (including the
 % strange delimiters).  After each shipout, we can read the file to see
 % which output operations we need to perform, and in what order.
