@@ -389,10 +389,9 @@
 % \subsubsection{What follows \tn{immediate}}
 %
 % \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate:w}
-% \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate_ii:}
-% \begin{macro}[aux]{\@@_immediate_iii:N}
-% \begin{macro}[aux]{\@@_immediate_iv:NN}
-% \begin{macro}[aux, EXP]{\@@_immediate_v:w}
+% \begin{macro}[aux]
+%   {\@@_immediate_auxii:, \@@_immediate_auxiii:N, \@@_immediate_auxiv:NN}
+% \begin{macro}[aux, EXP]{\@@_immediate_auxv:w}
 %   This is a little bit subtle: \TeX{}'s \tn{immediate} primitive
 %   raises a flag which is cancelled once \TeX{} sees a non-expandable
 %   token.  We use \pkg{primargs}'s \texttt{read_x_token} function to
@@ -408,35 +407,33 @@
 %   must still call the primitive \tn{immediate}.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate:w
-  { \primargs_read_x_token:N \@@_immediate_ii: }
-\cs_new_protected_nopar:Npn \@@_immediate_ii:
+  { \primargs_read_x_token:N \@@_immediate_auxii: }
+\cs_new_protected_nopar:Npn \@@_immediate_auxii:
   {
     \token_if_eq_meaning:NNTF \g_primargs_token \s_@@
-      { \@@_immediate_iii:N }
+      { \@@_immediate_auxiii:N }
       { \@@_tex_immediate:w }
   }
-\cs_new_protected:Npn \@@_immediate_iii:N #1
+\cs_new_protected:Npn \@@_immediate_auxiii:N #1
   {
     \tl_if_eq:nnTF { #1 } { \s_@@ }
-      { \@@_immediate_iv:NN }
+      { \@@_immediate_auxiv:NN }
       { #1 }
   }
-\cs_new_protected:Npn \@@_immediate_iv:NN #1 #2
+\cs_new_protected:Npn \@@_immediate_auxiv:NN #1 #2
   {
     \exp_args:Nc #1
       {
-        \exp_after:wN \@@_immediate_v:w
+        \exp_after:wN \@@_immediate_auxv:w
         \token_to_str:N #2
       }
   }
 \use:x
   {
-    \cs_new:Npn \exp_not:N \@@_immediate_v:w
+    \cs_new:Npn \exp_not:N \@@_immediate_auxv:w
         ##1 \tl_to_str:n { @@ } { @@_immediate }
   }
 %    \end{macrocode}
-% \end{macro}
-% \end{macro}
 % \end{macro}
 % \end{macro}
 % \end{macro}
