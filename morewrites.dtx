@@ -75,7 +75,8 @@
 %     \cs{morewritessetup} |{| |file| |=| \meta{file name} |}|
 %   \end{syntax}
 %   Sets (globally) the name of the file which will be used by internal
-%   processes of \pkg{morewrites}.  This is |\jobname.mw| by default.
+%   processes of \pkg{morewrites}.  This is |\c_job_name_tl.mw| by
+%   default.
 % \end{function}
 %
 % \begin{function}{\newwrite}
@@ -240,12 +241,12 @@
 % \end{variable}
 %
 % \begin{macro}[added = 2014-07-26]{file}
-%   Sets \cs{g_@@_tmp_file_tl}.  This is |\jobname.mw| by default.
+%   Sets \cs{g_@@_tmp_file_tl}.  This is |\c_job_name_tl.mw| by default.
 %    \begin{macrocode}
 \keys_define:nn { @@ }
   {
     file .tl_gset:N = \g_@@_tmp_file_tl ,
-    file .initial:n = \jobname.mw
+    file .initial:n = \c_job_name_tl .mw
   }
 %    \end{macrocode}
 % \end{macro}
@@ -278,8 +279,8 @@
 %
 % \subsection{Variables}
 %
-% \begin{variable}[aux]{\g_@@_late_write_int}
-%   The integer \cs{g_@@_late_write_int} labels the various
+% \begin{variable}[aux]{\g_@@_late_int}
+%   The integer \cs{g_@@_late_int} labels the various
 %   non-immediate operations in the order in which they appear in the
 %   source.  We can never reuse a number because there is no way to know
 %   if a whatsit was recorded in a box register, which could be reused
@@ -292,7 +293,7 @@
 %   \end{quote}
 %   will print \meta{text} to the terminal twice.
 %    \begin{macrocode}
-\int_new:N \g_@@_late_write_int
+\int_new:N \g_@@_late_int
 %    \end{macrocode}
 % \end{variable}
 %
@@ -646,7 +647,7 @@
 % non-immediate \tn{write} takes place immediately after the page
 % containing it is shipped out.  We store each non-immediate
 % \tn{openout}, \tn{write}, or \tn{closeout} without expansion in
-% separate token lists \cs{g_@@_late_write_\meta{stream}_tl} to be used
+% separate token lists \cs{g_@@_late_\meta{stream}_tl} to be used
 % later, and instead write |`(|\meta{stream}|)| to a file (including the
 % strange delimiters).  After each shipout, we can read the file to see
 % which output operations we need to perform, and in what order.
@@ -655,18 +656,18 @@
 %
 % \begin{macro}[aux]{\@@_late:n}
 %   Store the action to be done at shipout in a token list, and
-%   non-immediately write the label \cs{g_@@_late_write_int} of the
+%   non-immediately write the label \cs{g_@@_late_int} of the
 %   output operation to the temporary file.  Here, |#1| holds an
 %   assignment similar to the lines above it, and |#2| holds the
 %   relevant immediate action to be performed after shipout.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_late:n #1
   {
-    \int_gincr:N \g_@@_late_write_int
+    \int_gincr:N \g_@@_late_int
     \tl_const:cx
       {
-        c_@@_late_write_
-        \int_use:N \g_@@_late_write_int
+        c_@@_late_
+        \int_use:N \g_@@_late_int
         _tl
       }
       {
@@ -675,7 +676,7 @@
         \exp_not:n {#1}
       }
     \exp_args:NNx \@@_tex_write:w \g_@@_iow
-      { `( \int_use:N \g_@@_late_write_int ) }
+      { `( \int_use:N \g_@@_late_int ) }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -806,7 +807,7 @@
         }
     \group_end:
     \tl_map_inline:Nn \g_@@_internal_tl
-      { \tl_use:c { c_@@_late_write_ ##1 _tl } }
+      { \tl_use:c { c_@@_late_ ##1 _tl } }
   }
 \cs_new:Npn \@@_after_shipout_loop:ww #1 `( #2 )
   {
