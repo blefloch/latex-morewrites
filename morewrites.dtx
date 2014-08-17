@@ -391,7 +391,7 @@
 % \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate:w}
 % \begin{macro}[aux]
 %   {\@@_immediate_auxii:, \@@_immediate_auxiii:N, \@@_immediate_auxiv:NN}
-% \begin{macro}[aux, EXP]{\@@_immediate_auxv:w}
+% \begin{macro}[aux, EXP]{\@@_immediate_auxv:ww}
 %   This is a little bit subtle: \TeX{}'s \tn{immediate} primitive
 %   raises a flag which is cancelled once \TeX{} sees a non-expandable
 %   token.  We use \pkg{primargs}'s \texttt{read_x_token} function to
@@ -424,14 +424,16 @@
   {
     \exp_args:Nc #1
       {
-        \exp_after:wN \@@_immediate_auxv:w
+        \exp_after:wN \@@_immediate_auxv:ww
         \token_to_str:N #2
       }
   }
 \use:x
   {
-    \cs_new:Npn \exp_not:N \@@_immediate_auxv:w
-        ##1 \tl_to_str:n { @@ } { @@_immediate }
+    \cs_new:Npn \exp_not:N \@@_immediate_auxv:ww
+        ##1 \tl_to_str:n { @@ _ }
+        ##2 \token_to_str:N _
+      { @@_##2_now_ }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -440,12 +442,12 @@
 %
 % \subsubsection{Immediate closeout}
 %
-% \begin{macro}[aux]{\@@_immediate_closeout_test:n}
+% \begin{macro}[aux]{\@@_closeout_now_test:n}
 %   When the user requests to close a stream, we look in
 %   \cs{g_@@_reserved_iow_clist} to see if it is a reserved
 %   stream: in this case, we simply use the primitive.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_closeout_test:n #1
+\cs_new_protected:Npn \@@_closeout_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
@@ -453,37 +455,37 @@
         \@@_tex_immediate:w \@@_tex_closeout:w
           \g_@@_stream_int
       }
-      { \@@_immediate_closeout_aux: }
+      { \@@_closeout_now_aux: }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_closeout_aux:}
+% \begin{macro}[aux]{\@@_closeout_now_aux:}
 %   We then look in \cs{g_@@_iow_prop} to find the file name
 %   corresponding to that stream number.  If the stream does not appear
 %   as a key in the property list, then it was not open yet, and we do
 %   nothing.  Otherwise, the key is removed, and we write the collected
 %   material to the file.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_immediate_closeout_aux:
+\cs_new_protected_nopar:Npn \@@_closeout_now_aux:
   {
     \prop_gpop:NVNT \g_@@_iow_prop \g_@@_stream_int
       \l_@@_internal_tl
       {
-        \@@_immediate_closeout:nn
+        \@@_closeout_now:nn
           { \g_@@_stream_int } { \l_@@_internal_tl }
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_closeout:nn}
+% \begin{macro}[aux]{\@@_closeout_now:nn}
 %   The code to write the material collected so far for a given output
 %   \meta{stream} is in the token list \cs{g_@@_iow_\meta{stream}_tl}.
 %   We do this writing in the actual stream \cs{g_@@_iow}, briefly
 %   opened and closed on the file |#2|.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_closeout:nn #1#2
+\cs_new_protected:Npn \@@_closeout_now:nn #1#2
   {
     \@@_tex_immediate:w \@@_tex_openout:w
       \g_@@_iow #2 \scan_stop:
@@ -500,12 +502,12 @@
 %
 % \subsubsection{Immediate openout}
 %
-% \begin{macro}[aux]{\@@_immediate_openout_test:n}
+% \begin{macro}[aux]{\@@_openout_now_test:n}
 %   Read the stream number.  If it is one of the reserved streams, we
 %   use the primitive.  Otherwise, parse an optional equal sign,
 %   followed by the file name.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_openout_test:n #1
+\cs_new_protected:Npn \@@_openout_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
@@ -515,13 +517,13 @@
       }
       {
         \@@_equals_file_name:N
-          \@@_immediate_openout_aux:n
+          \@@_openout_now_aux:n
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_openout_aux:n}
+% \begin{macro}[aux]{\@@_openout_now_aux:n}
 %   When the user requests to open a stream, it might already be open,
 %   with another file as its destination. We thus need to first close
 %   the stream, writing all that we collected so far to that other
@@ -530,9 +532,9 @@
 %   We then put the stream and its associated file name in the property
 %   list, and empty/create the corresponding token list.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_openout_aux:n #1
+\cs_new_protected:Npn \@@_openout_now_aux:n #1
   {
-    \@@_immediate_closeout_aux:
+    \@@_closeout_now_aux:
     \prop_gput:NVn \g_@@_iow_prop \g_@@_stream_int {#1}
     \tl_gclear_new:c
       { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
@@ -542,11 +544,11 @@
 %
 % \subsubsection{Immediate write}
 %
-% \begin{macro}[aux]{\@@_immediate_write_test:n}
+% \begin{macro}[aux]{\@@_write_now_test:n}
 %   Read the stream number.  If it is one of the reserved streams, we
 %   use the primitive.  Otherwise, parse the text.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_write_test:n #1
+\cs_new_protected:Npn \@@_write_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
@@ -554,30 +556,30 @@
         \@@_tex_immediate:w \@@_tex_write:w
           \g_@@_stream_int
       }
-      { \primargs_get_general_text:N \@@_immediate_write_aux:n }
+      { \primargs_get_general_text:N \@@_write_now_aux:n }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_write_aux:n}
+% \begin{macro}[aux]{\@@_write_now_aux:n}
 %   Test whether the stream is allocated or not.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_immediate_write_aux:n
+\cs_new_protected_nopar:Npn \@@_write_now_aux:n
   {
     \prop_get:NVNTF \g_@@_iow_prop \g_@@_stream_int
       \l_@@_internal_tl
-      { \@@_immediate_write_open:n }
-      { \@@_immediate_write_closed:n }
+      { \@@_write_now_open:n }
+      { \@@_write_now_closed:n }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_write_closed:n}
+% \begin{macro}[aux]{\@@_write_now_closed:n}
 %   If the stream \cs{g_@@_stream_int} is not allocated, then write
 %   either to the terminal or only to the log file, depending on the
 %   sign.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_write_closed:n #1
+\cs_new_protected:Npn \@@_write_now_closed:n #1
   {
     \@@_tex_immediate:w \@@_tex_write:w
       \if_int_compare:w \g_@@_stream_int < \c_zero
@@ -590,8 +592,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_write_open:n}
-% \begin{macro}[aux]{\@@_immediate_write_loop:}
+% \begin{macro}[aux]{\@@_write_now_open:n}
+% \begin{macro}[aux]{\@@_write_now_loop:}
 %   Only \tn{write} itself can emulate how \tn{write} expands tokens,
 %   because |#| don't have to be doubled, and because the
 %   \tn{newlinechar} has to be changed to new lines.  Hence, we start by
@@ -604,7 +606,7 @@
 %   \tn{newlinechar} will be $-1$, so that writing each line will
 %   produce no extra line.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_write_open:n #1
+\cs_new_protected:Npn \@@_write_now_open:n #1
   {
     \@@_tex_immediate:w \@@_tex_openout:w
       \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
@@ -615,11 +617,11 @@
     \group_begin:
       \int_set_eq:NN \tex_endlinechar:D \c_minus_one
       \tex_openin:D \g_@@_ior \g_@@_tmp_file_tl \scan_stop:
-      \@@_immediate_write_loop:
+      \@@_write_now_loop:
       \tex_closein:D \g_@@_ior
     \group_end:
   }
-\cs_new_protected_nopar:Npn \@@_immediate_write_loop:
+\cs_new_protected_nopar:Npn \@@_write_now_loop:
   {
     \etex_readline:D \g_@@_ior to \l_@@_internal_tl
     \ior_if_eof:NF \g_@@_ior
@@ -630,7 +632,7 @@
             \@@_tex_immediate:w \@@_tex_write:w
               \g_@@_iow { \l_@@_internal_tl }
           }
-        \@@_immediate_write_loop:
+        \@@_write_now_loop:
       }
   }
 %    \end{macrocode}
@@ -693,7 +695,7 @@
       { \@@_equals_file_name:N \@@_openout_aux:n }
   }
 \cs_new_protected:Npn \@@_openout_aux:n #1
-  { \@@_late:n { \@@_immediate_openout_aux:n {#1} } }
+  { \@@_late:n { \@@_openout_now_aux:n {#1} } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -712,7 +714,7 @@
       { \primargs_get_general_text:N \@@_write_aux:n }
   }
 \cs_new_protected:Npn \@@_write_aux:n #1
-  { \@@_late:n { \@@_immediate_write_aux:n {#1} } }
+  { \@@_late:n { \@@_write_now_aux:n {#1} } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -732,7 +734,7 @@
       { \@@_closeout_aux: }
   }
 \cs_new_protected_nopar:Npn \@@_closeout_aux:
-  { \@@_late:n { \@@_immediate_closeout_aux: } }
+  { \@@_late:n { \@@_closeout_now_aux: } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -917,7 +919,7 @@
 \cs_new_protected_nopar:Npn \@@_close_all:
   {
     \prop_map_function:NN \g_@@_iow_prop
-      \@@_immediate_closeout:nn
+      \@@_closeout_now:nn
     \prop_gclear:N \g_@@_iow_prop
   }
 %    \end{macrocode}
