@@ -261,16 +261,16 @@
 %
 % One thing to be careful about is that
 % \begin{quote}
-%   \tn{expandafter} \tn{show} \tn{noexpand} \cs{space}
+%   \tn{expandafter} \tn{show} \tn{noexpand} \tn{space}
 % \end{quote}
 % shows the \tn{meaning} of the |\notexpanded: \space|,
 % namely \tn{relax} (frozen, in fact, hence a bit different from the
 % normal \tn{relax}), while expanding twice with
 % \begin{quote}
 %   \tn{expandafter} \tn{expandafter} \tn{expandafter} \tn{show}
-%   \tn{noexpand} \cs{space}
+%   \tn{noexpand} \tn{space}
 % \end{quote}
-% expands the \cs{space} to the underlying space character token.
+% expands the \tn{space} to the underlying space character token.
 % What this means is that we must first check if the token is expandable
 % or not, and only then expand, and that the token should not be queried
 % again using \tn{futurelet}.  On this latter point, run
@@ -278,7 +278,7 @@
 %   \def \test { \show \next \futurelet \next \test }
 %   \expandafter \test \noexpand \space
 % \end{verbatim}
-% to see how \cs{next} changes from \tn{relax} to becoming a macro.
+% to see how \tn{next} changes from \tn{relax} to becoming a macro.
 %
 % \begin{macro}{\primargs_read_x_token:N}
 % \begin{macro}[aux]{\@@_read_x_token:N, \@@_read_x_token_aux:N}
@@ -717,4 +717,4 @@
 %
 % \end{implementation}
 %
-% \endinput
+% \PrintIndex

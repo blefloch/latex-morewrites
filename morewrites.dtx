@@ -25,7 +25,7 @@
 % \fi
 %
 % \title{The \textsf{morewrites} package: \\
-%   Always room for a new \cs{write}\thanks{This
+%   Always room for a new \tn{write}\thanks{This
 %     file has version number v0.3, last revised 2014/08/05.}}
 % \author{Bruno Le Floch}
 % \date{2014/08/05}
@@ -38,14 +38,14 @@
 % \section{\pkg{morewrites} documentation}
 %
 % This \LaTeX{} package is meant to be a solution for the error
-% \enquote{no room for a new \cs{write}}, which occurs when too many
+% \enquote{no room for a new \tn{write}}, which occurs when too many
 % macro packages reserve streams to write data to various auxiliary
 % files.  It is in principle possible to rewrite packages so that they
 % are less greedy on resources, but that is often unpractical for the
 % end-user.  Instead, \pkg{morewrites} hooks at the lowest level (\TeX{}
 % primitives).  If I did my job correctly, you simply need to add the
 % line |\usepackage{morewrites}| somewhere near the beginning of your
-% \LaTeX{} file, and the \enquote{no room for a new \cs{write}} error
+% \LaTeX{} file, and the \enquote{no room for a new \tn{write}} error
 % should vanish.
 %
 % I have tried to make the code as robust as possible, but there may
@@ -140,7 +140,7 @@
 % The aim of the \pkg{morewrites} package is to lift \TeX{}'s
 % restriction of only having $16$ files open for writing at the same
 % time.  We must thus patch $4$ primitives, \tn{openout}, \tn{write},
-% \tn{closeout} and \tn{immediate}, and the \cs{newwrite} macro, defined
+% \tn{closeout} and \tn{immediate}, and the \tn{newwrite} macro, defined
 % by \LaTeX{} (and plain \TeX{}).  Each of those commands must be made
 % to accept numbers outside the range $[0,15]$.  Let us review the
 % syntax of the various commands we need to alter (see Chapter~24 of the
@@ -188,7 +188,7 @@
 % too.  It expects to be followed by a box specification such as
 % \tn{box}\meta{integer}, or \tn{hbox}\Arg{material to typeset}.
 %
-% Finally, the \cs{newwrite} macro expects one token as its argument,
+% Finally, the \tn{newwrite} macro expects one token as its argument,
 % and defines this token (with \tn{chardef}) to be an integer
 % corresponding to the first available writing stream.  We must extend
 % it to let it allocate higher (virtual) write registers.
@@ -451,7 +451,10 @@
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_immediate:w \@@_tex_closeout:w \g_@@_stream_int }
+      {
+        \@@_tex_immediate:w \@@_tex_closeout:w
+          \g_@@_stream_int
+      }
       { \@@_immediate_closeout_aux: }
   }
 %    \end{macrocode}
@@ -466,22 +469,23 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate_closeout_aux:
   {
-    \prop_gpop:NVNT \g_@@_iow_prop \g_@@_stream_int \l_@@_internal_tl
+    \prop_gpop:NVNT \g_@@_iow_prop \g_@@_stream_int
+      \l_@@_internal_tl
       {
-        \@@_immediate_write_and_close:nn
+        \@@_immediate_closeout:nn
           { \g_@@_stream_int } { \l_@@_internal_tl }
       }
   }
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_immediate_write_and_close:nn}
+% \begin{macro}[aux]{\@@_immediate_closeout:nn}
 %   The code to write the material collected so far for a given output
 %   \meta{stream} is in the token list \cs{g_@@_iow_\meta{stream}_tl}.
 %   We do this writing in the actual stream \cs{g_@@_iow}, briefly
 %   opened and closed on the file |#2|.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_immediate_write_and_close:nn #1#2
+\cs_new_protected:Npn \@@_immediate_closeout:nn #1#2
   {
     \@@_tex_immediate:w \@@_tex_openout:w
       \g_@@_iow #2 \scan_stop:
@@ -490,7 +494,8 @@
       \tl_use:c { g_@@_iow_ \int_eval:n {#1} _tl }
       \tl_gclear:c { g_@@_iow_ \int_eval:n {#1} _tl }
     \group_end:
-    \@@_tex_immediate:w \@@_tex_closeout:w \g_@@_iow
+    \@@_tex_immediate:w \@@_tex_closeout:w
+      \g_@@_iow
   }
 %    \end{macrocode}
 % \end{macro}
@@ -506,8 +511,14 @@
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_immediate:w \@@_tex_openout:w \g_@@_stream_int }
-      { \@@_equals_file_name:N \@@_immediate_openout_aux:n }
+      {
+        \@@_tex_immediate:w \@@_tex_openout:w
+          \g_@@_stream_int
+      }
+      {
+        \@@_equals_file_name:N
+          \@@_immediate_openout_aux:n
+      }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -525,7 +536,8 @@
   {
     \@@_immediate_closeout_aux:
     \prop_gput:NVn \g_@@_iow_prop \g_@@_stream_int {#1}
-    \tl_gclear_new:c { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
+    \tl_gclear_new:c
+      { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -540,7 +552,10 @@
   {
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_immediate:w \@@_tex_write:w \g_@@_stream_int }
+      {
+        \@@_tex_immediate:w \@@_tex_write:w
+          \g_@@_stream_int
+      }
       { \primargs_get_general_text:N \@@_immediate_write_aux:n }
   }
 %    \end{macrocode}
@@ -551,7 +566,8 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_immediate_write_aux:n
   {
-    \prop_get:NVNTF \g_@@_iow_prop \g_@@_stream_int \l_@@_internal_tl
+    \prop_get:NVNTF \g_@@_iow_prop \g_@@_stream_int
+      \l_@@_internal_tl
       { \@@_immediate_write_open:n }
       { \@@_immediate_write_closed:n }
   }
@@ -577,7 +593,7 @@
 % \end{macro}
 %
 % \begin{macro}[aux]{\@@_immediate_write_open:n}
-% \begin{macro}[aux]{\@@_immediate_write_readlines_loop:}
+% \begin{macro}[aux]{\@@_immediate_write_loop:}
 %   Only \tn{write} itself can emulate how \tn{write} expands tokens,
 %   because |#| don't have to be doubled, and because the
 %   \tn{newlinechar} has to be changed to new lines.  Hence, we start by
@@ -592,18 +608,20 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_immediate_write_open:n #1
   {
-    \@@_tex_immediate:w \@@_tex_openout:w \g_@@_iow
-      \g_@@_tmp_file_tl \scan_stop:
-    \@@_tex_immediate:w \@@_tex_write:w \g_@@_iow {#1}
-    \@@_tex_immediate:w \@@_tex_closeout:w \g_@@_iow
+    \@@_tex_immediate:w \@@_tex_openout:w
+      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
+    \@@_tex_immediate:w \@@_tex_write:w
+      \g_@@_iow {#1}
+    \@@_tex_immediate:w \@@_tex_closeout:w
+      \g_@@_iow
     \group_begin:
       \int_set_eq:NN \tex_endlinechar:D \c_minus_one
       \tex_openin:D \g_@@_ior \g_@@_tmp_file_tl \scan_stop:
-      \@@_immediate_write_readlines_loop:
+      \@@_immediate_write_loop:
       \tex_closein:D \g_@@_ior
     \group_end:
   }
-\cs_new_protected_nopar:Npn \@@_immediate_write_readlines_loop:
+\cs_new_protected_nopar:Npn \@@_immediate_write_loop:
   {
     \etex_readline:D \g_@@_ior to \l_@@_internal_tl
     \ior_if_eof:NF \g_@@_ior
@@ -611,10 +629,10 @@
         \tl_gput_right:cx
           { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
           {
-            \@@_tex_immediate:w \@@_tex_write:w \g_@@_iow
-              { \l_@@_internal_tl }
+            \@@_tex_immediate:w \@@_tex_write:w
+              \g_@@_iow { \l_@@_internal_tl }
           }
-        \@@_immediate_write_readlines_loop:
+        \@@_immediate_write_loop:
       }
   }
 %    \end{macrocode}
@@ -723,7 +741,7 @@
 %
 % \subsubsection{Shipout business}
 %
-% In this section, we hook into the \cs{shipout} primitive, and redefine
+% In this section, we hook into the \tn{shipout} primitive, and redefine
 % it to first build a box with the material to ship out, then perform
 % \begin{quote}
 %   \cs{@@_before_shipout:} \\
@@ -746,8 +764,8 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_before_shipout:
   {
-    \@@_tex_immediate:w \@@_tex_openout:w \g_@@_iow
-      \g_@@_tmp_file_tl \scan_stop:
+    \@@_tex_immediate:w \@@_tex_openout:w
+      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
   }
 %    \end{macrocode}
 % \end{macro}
@@ -773,7 +791,8 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_after_shipout:
   {
-    \@@_tex_immediate:w \@@_tex_closeout:w \g_@@_iow
+    \@@_tex_immediate:w \@@_tex_closeout:w
+      \g_@@_iow
     \group_begin:
       \int_set_eq:NN \tex_endlinechar:D \tex_newlinechar:D
       \char_set_catcode_other:n { \tex_endlinechar:D }
@@ -844,7 +863,7 @@
 %   \pkg{morewrites}.  Any of those control sequences which are equal to
 %   the primitive are redefined to do \cs{@@_shipout:w} instead.  If the
 %   primitive is not located at all, the fallback is to hook into the
-%   control sequence \cs{shipout}.
+%   control sequence \tn{shipout}.
 %    \begin{macrocode}
 \tl_map_inline:nn
   {
@@ -900,7 +919,7 @@
 \cs_new_protected_nopar:Npn \@@_close_all:
   {
     \prop_map_function:NN \g_@@_iow_prop
-      \@@_immediate_write_and_close:nn
+      \@@_immediate_closeout:nn
     \prop_gclear:N \g_@@_iow_prop
   }
 %    \end{macrocode}
@@ -932,7 +951,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Modified \cs{newwrite}}
+% \subsection{Modified \tn{newwrite}}
 %
 % \begin{variable}[aux]{\g_@@_alloc_int}
 %   The counter that \LaTeXe{} uses to allocate \tn{write} registers.
@@ -942,7 +961,7 @@
 % \end{variable}
 %
 % \begin{macro}[aux]{\newwrite}
-%   We need to allow \cs{newwrite} to allocate more than $16$ writes,
+%   We need to allow \tn{newwrite} to allocate more than $16$ writes,
 %   but beware that $18$ is reserved, and that packages might expect
 %   $16$ or $17$ to write to the terminal. So instead skip until $20$,
 %   to be on the safe side.  This really ought to be \tn{protected}, but
@@ -985,4 +1004,4 @@
 %
 % \end{implementation}
 %
-% \endinput
+% \PrintIndex
