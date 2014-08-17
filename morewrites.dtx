@@ -279,8 +279,8 @@
 %
 % \subsection{Variables}
 %
-% \begin{variable}[aux]{\g_@@_late_int}
-%   The integer \cs{g_@@_late_int} labels the various
+% \begin{variable}[aux]{\g_@@_later_int}
+%   The integer \cs{g_@@_later_int} labels the various
 %   non-immediate operations in the order in which they appear in the
 %   source.  We can never reuse a number because there is no way to know
 %   if a whatsit was recorded in a box register, which could be reused
@@ -293,7 +293,7 @@
 %   \end{quote}
 %   will print \meta{text} to the terminal twice.
 %    \begin{macrocode}
-\int_new:N \g_@@_late_int
+\int_new:N \g_@@_later_int
 %    \end{macrocode}
 % \end{variable}
 %
@@ -646,27 +646,27 @@
 % non-immediate \tn{write} takes place immediately after the page
 % containing it is shipped out.  We store each non-immediate
 % \tn{openout}, \tn{write}, or \tn{closeout} without expansion in
-% separate token lists \cs{g_@@_late_\meta{stream}_tl} to be used
+% separate token lists \cs{g_@@_later_\meta{stream}_tl} to be used
 % later, and instead write |`(|\meta{stream}|)| to a file (including the
 % strange delimiters).  After each shipout, we can read the file to see
 % which output operations we need to perform, and in what order.
 %
 % \subsubsection{Replacement for primitives}
 %
-% \begin{macro}[aux]{\@@_late:n}
+% \begin{macro}[aux]{\@@_later:n}
 %   Store the action to be done at shipout in a token list, and
-%   non-immediately write the label \cs{g_@@_late_int} of the
+%   non-immediately write the label \cs{g_@@_later_int} of the
 %   output operation to the temporary file.  Here, |#1| holds an
 %   assignment similar to the lines above it, and |#2| holds the
 %   relevant immediate action to be performed after shipout.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_late:n #1
+\cs_new_protected:Npn \@@_later:n #1
   {
-    \int_gincr:N \g_@@_late_int
+    \int_gincr:N \g_@@_later_int
     \tl_const:cx
       {
-        c_@@_late_
-        \int_use:N \g_@@_late_int
+        c_@@_later_
+        \int_use:N \g_@@_later_int
         _tl
       }
       {
@@ -675,7 +675,7 @@
         \exp_not:n {#1}
       }
     \exp_args:NNx \@@_tex_write:w \g_@@_iow
-      { `( \int_use:N \g_@@_late_int ) }
+      { `( \int_use:N \g_@@_later_int ) }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -695,7 +695,7 @@
       { \@@_equals_file_name:N \@@_openout_aux:n }
   }
 \cs_new_protected:Npn \@@_openout_aux:n #1
-  { \@@_late:n { \@@_openout_now_aux:n {#1} } }
+  { \@@_later:n { \@@_openout_now_aux:n {#1} } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -714,7 +714,7 @@
       { \primargs_get_general_text:N \@@_write_aux:n }
   }
 \cs_new_protected:Npn \@@_write_aux:n #1
-  { \@@_late:n { \@@_write_now_aux:n {#1} } }
+  { \@@_later:n { \@@_write_now_aux:n {#1} } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -734,7 +734,7 @@
       { \@@_closeout_aux: }
   }
 \cs_new_protected_nopar:Npn \@@_closeout_aux:
-  { \@@_late:n { \@@_closeout_now_aux: } }
+  { \@@_later:n { \@@_closeout_now_aux: } }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
@@ -806,7 +806,7 @@
         }
     \group_end:
     \tl_map_inline:Nn \g_@@_internal_tl
-      { \tl_use:c { c_@@_late_ ##1 _tl } }
+      { \tl_use:c { c_@@_later_ ##1 _tl } }
   }
 \cs_new:Npn \@@_after_shipout_loop:ww #1 `( #2 )
   {
