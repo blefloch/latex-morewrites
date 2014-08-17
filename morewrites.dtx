@@ -148,15 +148,15 @@
 % \TeX{}book).
 %
 % We start with the three \enquote{actions}.
-% \begin{syntax}
+% \begin{quote}
 %   \tn{openout} \meta{integer} \meta{equals} \meta{file name}
-% \end{syntax}
+% \end{quote}
 % \TeX{} searches the path for a file with a name given by
 % \meta{file name}.  If found, this file is opened in the writing stream
 % \meta{integer}, which must be a number in the range $[0,15]$.
-% \begin{syntax}
+% \begin{quote}
 %   \tn{write} \meta{integer} \meta{filler} \meta{general text}
-% \end{syntax}
+% \end{quote}
 % \TeX{} expands the \meta{general text} as for an \texttt{x}-type
 % expansion, with the caveat that macro parameter characters do not need
 % to be doubled; converts the result to a string, and writes it in the
@@ -167,9 +167,9 @@
 % \meta{integer} writes to the terminal.  One exception: if the
 % \meta{integer} is $18$, the text is sent to a shell to be run as shell
 % code.
-% \begin{syntax}
+% \begin{quote}
 %   \tn{closeout} \meta{integer}
-% \end{syntax}
+% \end{quote}
 % If the writing stream \meta{integer} is open, it is closed.
 % Otherwise, if the \meta{integer} is not in the range $[0,15]$ an error
 % may be raised, or nothing happens.
