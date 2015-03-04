@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: morewrites.dtx Copyright (C) 2011-2014 Bruno Le Floch
+%% File: morewrites.dtx Copyright (C) 2011-2015 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -26,9 +26,9 @@
 %
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \tn{write}\thanks{This
-%     file has version number v0.3, last revised 2014/08/05.}}
+%     file has version number v0.4, last revised 2015/03/04.}}
 % \author{Bruno Le Floch}
-% \date{2014/08/05}
+% \date{2015/03/04}
 %
 % \maketitle
 % \tableofcontents
@@ -37,10 +37,10 @@
 %
 % \section{\pkg{morewrites} documentation}
 %
-% This \LaTeX{} package is meant to be a solution for the error
-% \enquote{no room for a new \tn{write}}, which occurs when too many
-% macro packages reserve streams to write data to various auxiliary
-% files.  It is in principle possible to rewrite packages so that they
+% This \LaTeX{} package is a solution for the error
+% \enquote{no room for a new \tn{write}}, which occurs when a document
+% reserves too many streams to write data to various auxiliary files.
+% It is in principle possible to rewrite other packages so that they
 % are less greedy on resources, but that is often unpractical for the
 % end-user.  Instead, \pkg{morewrites} hooks at the lowest level (\TeX{}
 % primitives).  If I did my job correctly, you simply need to add the
@@ -52,10 +52,10 @@
 % still be bugs lurking as this package has not been tested very
 % thoroughly yet.  I thus encourage you to check that references are
 % correct after loading that package: if they are correct without
-% \pkg{morewrites}, but wrong with, please send me a minimal file
-% showing the problem, or post a question on the
-% \url{tex.stackexchange.com} question and answers website, or the
-% \url{comp.text.tex} newsgroup.
+% \pkg{morewrites}, but wrong with, please post a question on the
+% \url{tex.stackexchange.com} question and answers website, send me
+% a minimal file showing the problem, or log an issue on GitHub
+% (\url{github.com/blefloch/latex-morewrites}).
 %
 % This package loads the \pkg{expl3} package, hence the \pkg{l3kernel}
 % bundle needs to be up to date.  If Heiko Oberdiek's package
@@ -75,43 +75,58 @@
 %     \cs{morewritessetup} |{| |file| |=| \meta{file name} |}|
 %   \end{syntax}
 %   Sets (globally) the name of the file which will be used by internal
-%   processes of \pkg{morewrites}.  This is |\c_job_name_tl.mw| by
-%   default.
+%   processes of \pkg{morewrites}.  This is |\c_job_name_tl.mw| (or
+%   equivalently |\jobname.mw|) by default.
 % \end{function}
 %
 % \begin{function}{\newwrite}
 %   This command is altered by \pkg{morewrites}.  Since more than~$16$
-%   write streams are now allowed, the restriction in \tn{newwrite}
-%   becomes artificial and we remove it.
+%   write streams are now allowed, the corresponding restriction in
+%   \tn{newwrite} becomes artificial and we remove it.
+%   \begin{texnote}
+%     The \tn{write} stream~$18$ is used by \TeX{} to access the
+%     command line, and the stream~$16$ is often used for outputting
+%     to the terminal, thus the revised \tn{newwrite} skips directly
+%     from $15$ to~$20$ or so.  This might break some code that
+%     expects \tn{newwrite} to allocate streams consecutively.
+%   \end{texnote}
 % \end{function}
 %
 % \begin{function}[updated = 2012-12-05]{\immediate}
 %   This primitive is altered by \pkg{morewrites} in a complicated way.
 % \end{function}
 %
-% \begin{function}{\openout, \write, \closeout, \shipout}
+% \begin{function}{\openout, \write, \closeout}
 %   These four primitives are altered by \pkg{morewrites} in complicated
-%   ways.
+%   ways, so that they accept stream numbers outside the normal range
+%   $[0,15]$ and open/write/close files as appropriate.
+% \end{function}
+%
+% \begin{function}{\shipout}
+%   This primitive is altered by \pkg{morewrites} in a complicated way
+%   which ensures that delayed \tn{write} commands, which are to be
+%   performed at \tn{shipout} time, indeed are, and in the correct
+%   order.
 % \end{function}
 %
 % \section{Known deficiencies and open questions}
 %
 % Some distributions of \TeX{} allow a quoted syntax for file names with
 % spaces. I haven't yet coded that. A temporary fix is to avoid file
-% names with spaces.  The package may not work with \LuaTeX{} when the
-% primitive \tn{input} is used with a braced argument.
+% names with spaces.  The package may not work with \LuaTeX{} when file
+% names are given within braces.
 %
 % The current code trims spaces at the end of every line that is written
-% to a file.  I might be able to change the code to avoid this.
+% to a file.  This might be fixable with enough work.
 %
 % The package code is not very legible, and definitely uses too many
 % |:D| control sequences, whose name means \enquote{do not use}.  I do
 % not see a way to avoid using primitives in this package,
 % since hooking into the primitives \tn{immediate}, \tn{write},
 % \emph{etc.} requires having a very strong control on what every
-% command does.  \emph{Do not take this package as an example of how to
-%   code with \pkg{expl3}; go and see Joseph Wright's \pkg{siunitx}
-%   instead.}
+% command does.  As a result, \emph{do not take this package as an
+%   example of how to code with \pkg{expl3}; go and see Joseph Wright's
+%   \pkg{siunitx} instead.}
 %
 % Things that I need to do.
 % \begin{itemize}
@@ -131,7 +146,7 @@
 \RequirePackage {expl3} [2012/08/14]
 \RequirePackage {primargs} [2014/08/05]
 \ProvidesExplPackage
-  {morewrites} {2014/08/05} {0.3} {Always room for a new write}
+  {morewrites} {2015/03/04} {0.4} {Always room for a new write}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
@@ -142,12 +157,13 @@
 %
 % The aim of the \pkg{morewrites} package is to lift \TeX{}'s
 % restriction of only having $16$ files open for writing at the same
-% time.  We must thus patch $4$ primitives, \tn{openout}, \tn{write},
-% \tn{closeout} and \tn{immediate}, and the \tn{newwrite} macro, defined
-% by \LaTeX{} (and plain \TeX{}).  Each of those commands must be made
-% to accept numbers outside the range $[0,15]$.  Let us review the
-% syntax of the various commands we need to alter (see Chapter~24 of the
-% \TeX{}book).
+% time.  We must thus patch the primitives \tn{openout}, \tn{write},
+% and \tn{closeout} to accept numbers outside the range $[0,15]$,
+% hence also \tn{immediate} to apply to the altered primitives, as
+% well as \tn{special} for deferred actions.  Finally, the \TeX{}
+% and \LaTeX{} macro \tn{newwrite} must allocate streams beyond~$15$.
+% Let us review the syntax of the various commands we need to alter
+% (see Chapter~24 of the \TeX{}book).
 %
 % We start with the three \enquote{actions}.
 % \begin{quote}
@@ -188,8 +204,8 @@
 %
 % Since the \tn{openout}, \tn{write}, and \tn{closeout} primitives
 % operate at \tn{shipout} time, we will have to hook into this primitive
-% too.  It expects to be followed by a box specification such as
-% \tn{box}\meta{integer}, or \tn{hbox}\Arg{material to typeset}.
+% too.  It expects to be followed by a box specification, for instance
+% \tn{box}\meta{integer} or \tn{hbox}\Arg{material to typeset}.
 %
 % Finally, the \tn{newwrite} macro expects one token as its argument,
 % and defines this token (with \tn{chardef}) to be an integer
@@ -270,7 +286,7 @@
 %     \@@_tex_write:w     ,
 %     \@@_tex_closeout:w
 %   }
-%   First save the output-related primitives.
+%   Save the output-related primitives.
 %    \begin{macrocode}
 \cs_new_eq:NN \@@_tex_immediate:w \tex_immediate:D
 \cs_new_eq:NN \@@_tex_openout:w   \tex_openout:D
@@ -280,6 +296,13 @@
 % \end{macro}
 %
 % \subsection{Variables}
+%
+% \begin{variable}[aux]{\@@_tmp:w}
+%   Used for temporary definitions.
+%    \begin{macrocode}
+\cs_new_eq:NN \@@_tmp:w ?
+%    \end{macrocode}
+% \end{variable}
 %
 % \begin{variable}[aux]{\g_@@_later_int}
 %   The integer \cs{g_@@_later_int} labels the various
@@ -343,7 +366,7 @@
 %
 % \begin{macro}[aux]{\s_@@}
 %   A recognizable version of \cs{scan_stop:}.  This is inspired
-%   from\footnote{Historically, this might have happened the other way
+%   by\footnote{Historically, this might have happened the other way
 %     around, since the author of this package is also on the \LaTeX3
 %     Team.} scan marks (see the \pkg{l3quark} module of \LaTeX3), but
 %   note that we don't use \cs{__scan_new:N} directly, since it is
@@ -362,19 +385,19 @@
 %
 % \subsection{Parsing}
 %
-% \begin{macro}[aux]{\@@_equals_file_name:N}
+% \begin{macro}[aux]{\@@_equals_file:N, \@@_equals_file_aux:}
 %   Most of the parsing for primitive arguments is done using
 %   \pkg{primargs}, except for one case we care about: after its
 %   \meta{number} argument, the \tn{openout} primitive expects an
 %   \meta{equals} (optional spaces and |=|) and a \meta{file name}.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_equals_file_name:N #1
+\cs_new_protected:Npn \@@_equals_file:N #1
   {
     \group_begin:
       \tex_aftergroup:D #1
-      \primargs_remove_equals:N \@@_parse_file_name:
+      \primargs_remove_equals:N \@@_equals_file_aux:
   }
-\cs_new_protected_nopar:Npn \@@_parse_file_name:
+\cs_new_protected_nopar:Npn \@@_equals_file_aux:
   { \primargs_get_file_name:N \group_end: }
 %    \end{macrocode}
 % \end{macro}
@@ -401,7 +424,7 @@
 %   \tn{write}, or \tn{closeout}.  We don't test for the primitives
 %   themselves, but rather for a recognizable marker, \cs{s_@@}, equal
 %   to \tn{relax}.  If present, replace |morewrites| by
-%   |morewrites_immediate| in the csname of the second token after it
+%   |morewrites_now| in the csname of the second token after it
 %   (it turns out that this is the correct structure).  If absent, what
 %   follows may be a command that should not appear after
 %   \tn{immediate}, but it may also be a non-\TeX\ primitive such as
@@ -519,7 +542,7 @@
           \g_@@_stream_int
       }
       {
-        \@@_equals_file_name:N
+        \@@_equals_file:N
           \@@_openout_now_aux:n
       }
   }
@@ -582,15 +605,10 @@
 %   either to the terminal or only to the log file, depending on the
 %   sign.
 %    \begin{macrocode}
-\cs_new_protected:Npn \@@_write_now_closed:n #1
+\cs_new_protected_nopar:Npn \@@_write_now_closed:n
   {
     \@@_tex_immediate:w \@@_tex_write:w
-      \if_int_compare:w \g_@@_stream_int < \c_zero
-        -1
-      \else:
-        16
-      \fi:
-      {#1}
+      \int_compare:nNnTF \g_@@_stream_int < \c_zero { -1 } { 16 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -695,7 +713,7 @@
     \int_gset:Nn \g_@@_stream_int {#1}
     \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
       { \@@_tex_openout:w \g_@@_stream_int }
-      { \@@_equals_file_name:N \@@_openout_aux:n }
+      { \@@_equals_file:N \@@_openout_aux:n }
   }
 \cs_new_protected:Npn \@@_openout_aux:n #1
   { \@@_later:n { \@@_openout_now_aux:n {#1} } }
@@ -868,6 +886,12 @@
 %   primitive is not located at all, the fallback is to hook into the
 %   control sequence \tn{shipout}.
 %    \begin{macrocode}
+\cs_gset_protected:Npn \@@_tmp:w #1
+  {
+    \cs_if_exist:NF \@@_tex_shipout:w
+      { \cs_new_eq:NN \@@_tex_shipout:w #1 }
+    \cs_gset_eq:NN #1 \@@_shipout:w
+  }
 \tl_map_inline:nn
   {
     \xyrealshipout@
@@ -883,38 +907,18 @@
     \GXTorg@shipout
     \AtBegShi@OrgShipout
     \AtBeginShipoutOriginalShipout
-    \shipout
   }
   {
     \str_if_eq_x:nnT
       { \cs_meaning:N #1 }
       { \token_to_str:N \shipout }
-      {
-        \cs_if_exist:NF \@@_tex_shipout:w
-          { \cs_new_eq:NN \@@_tex_shipout:w #1 }
-        \cs_gset_eq:NN #1 \@@_shipout:w
-      }
+      { \@@_tmp:w #1 }
   }
-\cs_if_exist:NF \@@_tex_shipout:w
-  {
-    \cs_new_eq:NN \@@_tex_shipout:w \shipout
-    \cs_gset_eq:NN \shipout \@@_shipout:w
-  }
+\@@_tmp:w \shipout
 %    \end{macrocode}
 % \end{macro}
 %
 % \subsection{Hook at the very end}
-%
-% \begin{variable}[aux]{\g_@@_at_end_int}
-%   At the end of the run, we try very hard to put some material at the
-%   \tn{@@end}.  This integer controls how many times to call
-%   \cs{@@_close_all_at_end:w}, to avoid infinite loops in case two
-%   packages compete for that last place.
-%    \begin{macrocode}
-\int_new:N \g_@@_at_end_int
-\int_gset:Nn \g_@@_at_end_int { 10 }
-%    \end{macrocode}
-% \end{variable}
 %
 % \begin{macro}[aux]{\@@_close_all:}
 %   At the end of the document, close all the files.
@@ -928,29 +932,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_close_all_at_end:w}
-%   This pushes its first argument to the very end of the \LaTeX{} run,
-%   recursively (at most $10$ times, initial value of
-%   \cs{g_@@_at_end_int}), just in case some other code adds things
-%   there.
+% \begin{macro}[aux]{\@@_close_all_at_end:nw}
+%   At the end of the run, we try very hard to put some material at the
+%   \tn{@@end}, just in case some other very late code writes to files
+%   that are not yet closed.  This is tried at most $5$~times, to avoid
+%   infinite loops in case two packages compete for that last place.
+%   The definition is performed using \cs{@@_tmp:w} because the
+%   \LaTeXe{} command \tn{@@end} would otherwise be messed up by
+%   \pkg{l3docstrip}.
 %    \begin{macrocode}
-\cs_set:Npn \@@_tmp:w #1
+\cs_gset_protected:Npn \@@_tmp:w #1
   {
-    \cs_new_protected:Npn \@@_close_all_at_end:w ##1 #1
+    \cs_new_protected:Npn \@@_close_all_at_end:nw ##1##2 #1
       {
-        \int_gdecr:N \g_@@_at_end_int
-        \int_compare:nNnTF \g_@@_at_end_int > \c_zero
-          {
-            \tl_if_empty:nTF {##1}
-              { ##1 \@@_close_all: }
-              { ##1 \@@_close_all_at_end:w }
-          }
-          { \@@_close_all: ##1 }
+        \int_compare:nNnTF {##1} > \c_zero
+          { ##2 \@@_close_all_at_end:nw { ##1 - 1 } }
+          { \@@_close_all: ##2 }
         #1
       }
   }
 \exp_args:Nc \@@_tmp:w { @ @ end }
-\AtEndDocument { \@@_close_all_at_end:w }
+\AtEndDocument { \@@_close_all_at_end:nw { 5 } }
 %    \end{macrocode}
 % \end{macro}
 %
