@@ -342,24 +342,27 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_reserved_iow_clist}
+% \begin{variable}[aux]{\g_@@_reserved_iow_prop}
 %   Some of the writing streams are already allocated when loading this
-%   package, and we let the engine manage them.  This variable is a
-%   clist because it only contains integers and the main task is to test
-%   if a given integer is in the comma list.
+%   package, and we let the engine manage them.  This variable currently
+%   maps these writing streams to themselves, but will eventually be used
+%   with keys different from the values.
 %    \begin{macrocode}
-\clist_new:N \g_@@_reserved_iow_clist
+\prop_new:N \g_@@_reserved_iow_prop
 \int_step_inline:nnnn {0} {1} { \g_@@_iow - 1 }
-  { \clist_gput_right:Nn \g_@@_reserved_iow_clist {#1} }
-\clist_gput_right:Nn \g_@@_reserved_iow_clist {18}
+  { \prop_gput:Nnn \g_@@_reserved_iow_prop {#1} {#1} }
+\prop_gput:Nnn \g_@@_reserved_iow_prop {18} {18}
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_stream_int}
+%^^A todo: is g_@@_stream_int needed?
+% \begin{variable}[aux]{\g_@@_stream_int, \l_@@_stream_tl}
 %   An integer holding the \meta{number} argument of various primitives,
-%   namely a writing stream.
+%   namely a writing stream.  Also a token list occasionally containing
+%   the same information, for use in |..._get| functions.
 %    \begin{macrocode}
 \int_new:N \g_@@_stream_int
+\tl_new:N \l_@@_stream_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -468,16 +471,17 @@
 %
 % \begin{macro}[aux]{\@@_closeout_now_test:n}
 %   When the user requests to close a stream, we look in
-%   \cs{g_@@_reserved_iow_clist} to see if it is a reserved
+%   \cs{g_@@_reserved_iow_prop} to see if it is a reserved
 %   stream: in this case, we simply use the primitive.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_closeout_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
       {
         \@@_tex_immediate:w \@@_tex_closeout:w
-          \g_@@_stream_int
+          \l_@@_stream_tl
       }
       { \@@_closeout_now_aux: }
   }
@@ -535,10 +539,11 @@
 \cs_new_protected:Npn \@@_openout_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
       {
         \@@_tex_immediate:w \@@_tex_openout:w
-          \g_@@_stream_int
+          \l_@@_stream_tl
       }
       {
         \@@_equals_file:N
@@ -576,10 +581,11 @@
 \cs_new_protected:Npn \@@_write_now_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
       {
         \@@_tex_immediate:w \@@_tex_write:w
-          \g_@@_stream_int
+          \l_@@_stream_tl
       }
       { \primargs_get_general_text:N \@@_write_now_aux:n }
   }
@@ -710,8 +716,9 @@
 \cs_new_protected:Npn \@@_openout_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_openout:w \g_@@_stream_int }
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
+      { \@@_tex_openout:w \l_@@_stream_tl }
       { \@@_equals_file:N \@@_openout_aux:n }
   }
 \cs_new_protected:Npn \@@_openout_aux:n #1
@@ -729,8 +736,9 @@
 \cs_new_protected:Npn \@@_write_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_write:w \g_@@_stream_int }
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
+      { \@@_tex_write:w \l_@@_stream_tl }
       { \primargs_get_general_text:N \@@_write_aux:n }
   }
 \cs_new_protected:Npn \@@_write_aux:n #1
@@ -749,8 +757,9 @@
 \cs_new_protected:Npn \@@_closeout_test:n #1
   {
     \int_gset:Nn \g_@@_stream_int {#1}
-    \clist_if_in:NnTF \g_@@_reserved_iow_clist {#1}
-      { \@@_tex_closeout:w \g_@@_stream_int }
+    \prop_get:NnNTF \g_@@_reserved_iow_prop {#1}
+        \l_@@_stream_tl
+      { \@@_tex_closeout:w \l_@@_stream_tl }
       { \@@_closeout_aux: }
   }
 \cs_new_protected_nopar:Npn \@@_closeout_aux:
