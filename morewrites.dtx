@@ -239,16 +239,6 @@
 %   assignment of the form \tn{toks}|0=|\meta{general text}.
 % \end{itemize}
 %
-% \subsection{User command}
-%
-% \begin{macro}[added = 2014-07-26]{\morewritessetup}
-%   Set whatever keys the user passes to \cs{morewritessetup}.
-%    \begin{macrocode}
-\cs_new_protected:Npn \morewritessetup #1
-  { \keys_set:nn { @@ } {#1} }
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{Variants}
 %
 % \begin{macro}[aux]{\prop_gpop:NVNT}
@@ -399,18 +389,15 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[added = 2014-07-26]{file}
+% \begin{macro}{\@@_set_file:n}
 %   Sets \cs{g_@@_tmp_file_tl} to the given value (|\c_job_name_tl.mw|
 %   by default), and sets a boolean to indicate that the file has not
 %   been tested for emptyness.
 %    \begin{macrocode}
-\keys_define:nn { @@ }
+\cs_new_protected:Npn \@@_set_file:n #1
   {
-    file .code:n = {
-      \tl_gset:Nn \g_@@_tmp_file_tl {#1}
-      \bool_gset_false:N \g_@@_tmp_file_bool
-    } ,
-    file .initial:n = \c_job_name_tl .mw
+    \tl_gset:Nn \g_@@_tmp_file_tl {#1}
+    \bool_gset_false:N \g_@@_tmp_file_bool
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1099,7 +1086,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsubsection{Redefining the ``normal'' control sequences}
+% \subsection{User commands and keys}
+%
+% \begin{macro}[added = 2014-07-26]{\morewritessetup}
+%   Set whatever keys the user passes to \cs{morewritessetup}.
+%    \begin{macrocode}
+\cs_new_protected:Npn \morewritessetup #1
+  { \keys_set:nn { @@ } {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[added = 2014-07-26]{file}
+%   Because of our use of |.initial:n|, this code must appear after
+%   \cs{@@_set_file:n} is defined.
+%    \begin{macrocode}
+\keys_define:nn { @@ }
+  {
+    file .code:n = \@@_set_file:n {#1} ,
+    file .initial:n = \c_job_name_tl .mw
+  }
+%    \end{macrocode}
+% \end{macro}
 %
 % \begin{macro}[updated = 2012-12-05]{\immediate}
 % \begin{macro}{\openout, \write, \closeout, \newwrite}
