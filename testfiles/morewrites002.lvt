@@ -33,4 +33,27 @@
     \input tmp.tmp.mw\relax
   }
 
+\OMIT
+\morewritessetup { file = \jobname.mw }
+\TIMO
+
+\ExplSyntaxOn
+\TEST {Change~newlinechar}
+  {
+    \immediate \openout \testwrite = tmp.tmp\relax
+    \int_set:Nn \newlinechar { `- }
+    \immediate \write \testwrite { Foo-bar*ba+z }
+    \int_set:Nn \newlinechar { `* }
+    \immediate \write \testwrite { Foo-bar*ba+z }
+    \int_set:Nn \newlinechar { `+ }
+    \immediate \closeout \testwrite
+    \ior_new:N \l_test_ior
+    \ior_open:Nn \l_test_ior { tmp.tmp }
+    \ior_str_map_inline:Nn \l_test_ior
+      {
+        \TYPE {|#1|}
+      }
+  }
+\ExplSyntaxOff
+
 \END
