@@ -296,26 +296,25 @@
 % \begin{macro}[aux]{\@@_chk_file:}
 %   Check that the file \cs{g_@@_tmp_file_tl} does not exist or is empty
 %   (the \tn{endlinechar} assignment is important).
+%   If not, try the file name obtained by adding |.mw|.
 %   This avoids clobbering files that the user would not want to lose.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_chk_file:
   {
     \group_begin:
       \int_set_eq:NN \tex_endlinechar:D \c_minus_one
-      \bool_until_do:nn { \g_@@_tmp_file_bool }
+      \tex_openin:D \g_@@_ior \g_@@_tmp_file_tl \scan_stop:
+      \ior_if_eof:NTF \g_@@_ior
+        { \bool_gset_true:N \g_@@_tmp_file_bool }
         {
-          \tex_openin:D \g_@@_ior \g_@@_tmp_file_tl \scan_stop:
-          \ior_if_eof:NTF \g_@@_ior
-            { \bool_gset_true:N \g_@@_tmp_file_bool }
-            {
-              \msg_error:nnxx { @@ } { file-exists }
-                { \g_@@_tmp_file_tl }
-                { \g_@@_tmp_file_tl .mw }
-              \tl_gput_right:Nn \g_@@_tmp_file_tl { .mw }
-            }
-          \tex_closein:D \g_@@_ior
+          \msg_error:nnxx { @@ } { file-exists }
+            { \g_@@_tmp_file_tl }
+            { \g_@@_tmp_file_tl .mw }
+          \tl_gput_right:Nn \g_@@_tmp_file_tl { .mw }
         }
+      \tex_closein:D \g_@@_ior
     \group_end:
+    \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
   }
 \msg_new:nnnn { @@ } { file-exists }
   { File~'#1'~exists,~using~'#2'~instead. }
