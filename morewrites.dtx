@@ -454,7 +454,7 @@
     \@@_if_file_trivial:nTF { \g_@@_tmp_file_tl }
       { \bool_gset_true:N \g_@@_tmp_file_bool }
       {
-        \msg_error:nnxx { morewrites } { file-exists }
+        \msg_warning:nnxx { morewrites } { file-exists }
           { \g_@@_tmp_file_tl }
           { \g_@@_tmp_file_tl .mw }
         \tl_gput_right:Nn \g_@@_tmp_file_tl { .mw }

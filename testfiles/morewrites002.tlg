@@ -24,26 +24,11 @@ TEST 1: Change temporary file
 This is in `tmp.tmp'
 Some more in `tmp.tmp'
 )  No error yet! 
-!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-!
-! morewrites error: "file-exists"
-! 
-! File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
-! 
-! See the morewrites documentation for further information.
-! 
-! For immediate help type H <return>.
-!...............................................  
-l.34   }
-|'''''''''''''''''''''''''''''''''''''''''''''''
-| The file `tmp.tmp' exists and was not created by this version of the
-| `morewrites' package. Please move or delete that file, or provide another
-| file name by adding
-| 
-|     \morewritessetup { file = other-name }
-| 
-| to your source file. In the meantime, the file `tmp.tmp.mw' will be used.
-|...............................................
+*************************************************
+* morewrites warning: "file-exists"
+* 
+* File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
+*************************************************
 [1] (tmp.tmp.mw)
 \TYPE {Log}
 (tmp.tmp
