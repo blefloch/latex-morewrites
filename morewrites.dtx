@@ -405,7 +405,7 @@
 \cs_new_protected:Npn \@@_empty_file:n #1
   {
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow #1 \scan_stop:
+      \g_@@_iow = #1 \scan_stop:
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
   }
@@ -588,7 +588,7 @@
 \cs_new_protected:Npn \@@_closeout_now:nn #1#2
   {
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow #2 \scan_stop:
+      \g_@@_iow = #2 \scan_stop:
     \group_begin:
       \int_set_eq:NN \tex_newlinechar:D \c_minus_one
       \tl_use:c { g_@@_iow_ \int_eval:n {#1} _tl }
@@ -708,14 +708,14 @@
   {
     \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
+      \g_@@_iow = \g_@@_tmp_file_tl \scan_stop:
     \@@_tex_immediate:w \@@_tex_write:w
       \g_@@_iow {#1}
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
     \group_begin:
       \int_set_eq:NN \tex_endlinechar:D \c_minus_one
-      \tex_openin:D \g_@@_ior \g_@@_tmp_file_tl \scan_stop:
+      \tex_openin:D \g_@@_ior = \g_@@_tmp_file_tl \scan_stop:
       \@@_write_now_loop:
       \tex_closein:D \g_@@_ior
     \group_end:
@@ -870,7 +870,7 @@
   {
     \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
+      \g_@@_iow = \g_@@_tmp_file_tl \scan_stop:
   }
 %    \end{macrocode}
 % \end{macro}
