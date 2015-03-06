@@ -281,24 +281,33 @@
 % to see how \tn{next} changes from \tn{relax} to becoming a macro.
 %
 % \begin{macro}{\primargs_read_x_token:N}
-% \begin{macro}[aux]{\@@_read_x_token:N, \@@_read_x_token_aux:N}
+% \begin{macro}[aux]
+%   {
+%     \@@_read_x_token:N, \@@_read_x_token_aux:N,
+%     \@@_read_x_token_std:N, \@@_read_x_token_file:N
+%   }
+%   This is a bit messy, because we need to support the fact that
+%   \TeX{} does not consider \tn{input} as expandable when it is
+%   looking for a file name.  This variation is encapsulated by
+%   letting \cs{@@_read_x_token_aux:N} equal to either a standard
+%   (\texttt{std}) version or a version specific to file names
+%   (\texttt{file}).
+%
 %   First query the following token.  Then test whether it is
 %   expandable, using a variant of the \cs{token_if_expandable:NTF}
 %   test.\footnote{This \LaTeX3 test returns \texttt{false} for
 %     undefined tokens (by design), but \TeX{}'s \proc{get_x_token}
 %     expands those undefined tokens, causing errors, so we should as
-%     well.}  If the token is expandable, \cs{exp_not:N} will change its
+%     well.} If the token is expandable, \cs{exp_not:N} will change its
 %   \tn{meaning} to \tn{relax}, the test is \texttt{false}, we expand,
-%   and call the loop.  Otherwise, we stop.  Note the \tn{aftergroup}
-%   construction which inserts \cs{use_i:nnnn} to remove the last three
-%   tokens of \cs{@@_read_x_token_aux:N} once a non-expandable token is
-%   found.  This is a minor speed improvement.
+%   and call the loop.  Otherwise, we stop.  In the \texttt{file}
+%   version there is an extra test for \cs{tex_input:D}.  By default
+%   use the standard version.
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \primargs_read_x_token:N
   {
     \group_begin:
       \@@_safe:
-      \tex_aftergroup:D \use_i:nnnn
       \@@_read_x_token:N
   }
 \cs_new_protected_nopar:Npn \@@_read_x_token:N
@@ -306,13 +315,22 @@
     \tex_afterassignment:D \@@_read_x_token_aux:N
     \tex_global:D \tex_futurelet:D \g_primargs_token
   }
-\cs_new_protected_nopar:Npn \@@_read_x_token_aux:N
+\cs_new_protected_nopar:Npn \@@_read_x_token_std:N
   {
     \exp_after:wN
     \if_meaning:w \exp_not:N \g_primargs_token \g_primargs_token
-      \group_end:
+      \group_end: \use_i:nnnn
     \fi:
     \exp_after:wN \@@_read_x_token:N \exp_after:wN
+  }
+\cs_new_eq:NN \@@_read_x_token_aux:N
+              \@@_read_x_token_std:N
+\cs_new_protected_nopar:Npn \@@_read_x_token_file:N
+  {
+    \if_meaning:w \tex_input:D \g_primargs_token
+      \use_i_ii:nnn \group_end:
+    \fi:
+    \@@_read_x_token_std:N
   }
 %    \end{macrocode}
 % \end{macro}
