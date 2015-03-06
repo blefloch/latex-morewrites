@@ -239,130 +239,22 @@
 %   assignment of the form \tn{toks}|0=|\meta{general text}.
 % \end{itemize}
 %
-% \subsection{Variants}
-%
-% \begin{macro}[aux]{\prop_gpop:NVNT}
-%   We need this function later.
-%    \begin{macrocode}
-\cs_generate_variant:Nn \prop_gpop:NnNT { NV }
-%    \end{macrocode}
-% \end{macro}
-%
-% \subsection{Auxiliary file}
-%
-% \begin{variable}[aux]{\g_@@_tmp_file_tl, \g_@@_tmp_file_bool}
-%   Temporary file used to do the correct expansion for each \tn{write}.
-%   Boolean indicating whether that file has been checked to be empty:
-%   the \pkg{morewrites} package will only use the file if it is indeed
-%   empty, so as to avoid clobbering user data.
-%    \begin{macrocode}
-\tl_new:N \g_@@_tmp_file_tl
-\bool_new:N \g_@@_tmp_file_bool
-%    \end{macrocode}
-% \end{variable}
-%
-% \begin{macro}[added = 2014-07-26]{file}
-%   Sets \cs{g_@@_tmp_file_tl} to the given value (|\c_job_name_tl.mw|
-%   by default), and sets a boolean to indicate that the file has not
-%   been tested for emptyness.
-%    \begin{macrocode}
-\keys_define:nn { @@ }
-  {
-    file .code:n = {
-      \tl_gset:Nn \g_@@_tmp_file_tl {#1}
-      \bool_gset_false:N \g_@@_tmp_file_bool
-    } ,
-    file .initial:n = \c_job_name_tl .mw
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux]{\@@_empty_file:}
-%   Empties the file \cs{g_@@_tmp_file_tl} by opening it and closing it
-%   right away.  This ensures that the file used by \pkg{morewrites} is
-%   left empty (and we do this every time the auxiliary file is used,
-%   in case that file is changed by \cs{morewritessetup} mid-document).
-%    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_empty_file:
-  {
-    \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
-    \@@_tex_immediate:w \@@_tex_closeout:w
-      \g_@@_iow
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux,TF]{\@@_if_file_trivial:n}
-%   True if the file does not exist, or if it only contains spaces and
-%   tabs (no newline).  Only the TF variant exists.  We set
-%   \cs{@@_tmp:w} to \cs{prg_return_true:} or \cs{prg_return_false:}
-%   within the group and use it after cleaning up.  The first
-%   \texttt{eof} test is \texttt{true} if the file does not exist.
-%   Then we read one line, the second \texttt{eof} test is
-%   \texttt{true} if the file contains a single line (no newline), and
-%   we further test that this line is empty.
-%    \begin{macrocode}
-\prg_new_conditional:Npnn \@@_if_file_trivial:n #1 { TF }
-  {
-    \group_begin:
-      \tex_openin:D \g_@@_ior = #1 \scan_stop:
-      \if_eof:w \g_@@_ior
-        \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
-      \else:
-        \int_set_eq:NN \tex_endlinechar:D \c_minus_one
-        \etex_readline:D \g_@@_ior to \l_@@_internal_tl
-        \if_eof:w \g_@@_ior
-          \tl_if_empty:NTF \l_@@_internal_tl
-            { \cs_gset_eq:NN \@@_tmp:w \prg_return_true: }
-            { \cs_gset_eq:NN \@@_tmp:w \prg_return_false: }
-        \else:
-          \cs_gset_eq:NN \@@_tmp:w \prg_return_false:
-        \fi:
-      \fi:
-      \tex_closein:D \g_@@_ior
-    \group_end:
-    \@@_tmp:w
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux]{\@@_chk_file:}
-%   Check that the file \cs{g_@@_tmp_file_tl} does not exist or is blank.
-%   If not, try the file name obtained by adding |.mw|.
-%   This avoids clobbering files that the user would not want to lose.
-%    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_chk_file:
-  {
-    \@@_if_file_trivial:nTF { \g_@@_tmp_file_tl }
-      { \bool_gset_true:N \g_@@_tmp_file_bool }
-      {
-        \msg_error:nnxx { @@ } { file-exists }
-          { \g_@@_tmp_file_tl }
-          { \g_@@_tmp_file_tl .mw }
-        \tl_gput_right:Nn \g_@@_tmp_file_tl { .mw }
-        \@@_chk_file:
-      }
-  }
-\msg_new:nnnn { @@ } { file-exists }
-  { File~'#1'~exists,~using~'#2'~instead. }
-  {
-    The~morewrites~package~needs~an~auxiliary~file.~
-    The~file~'#1'~exists~and~it~seems~that~it~was~not~created~by~
-    the~morewrites~package.~Please~get~rid~of~that~file,~or~
-    provide~an~alternate~file~name~by~adding\\
-    \iow_char:N\\morewritessetup~{~file~=~some-file-name~}\\
-    to~your~source~file.~
-    In~the~meantime,~the~file~'#2'~will~be~used.
-  }
-%    \end{macrocode}
-% \end{macro}
+% \subsection{User command}
 %
 % \begin{macro}[added = 2014-07-26]{\morewritessetup}
 %   Set whatever keys the user passes to \cs{morewritessetup}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \morewritessetup #1
   { \keys_set:nn { @@ } {#1} }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Variants}
+%
+% \begin{macro}[aux]{\prop_gpop:NVNT}
+%   We need this function later.
+%    \begin{macrocode}
+\cs_generate_variant:Nn \prop_gpop:NnNT { NV }
 %    \end{macrocode}
 % \end{macro}
 %
@@ -491,6 +383,116 @@
   }
 \cs_new_protected_nopar:Npn \@@_equals_file_aux:
   { \primargs_get_file_name:N \group_end: }
+%    \end{macrocode}
+% \end{macro}
+%
+% \subsection{Auxiliary file}
+%
+% \begin{variable}[aux]{\g_@@_tmp_file_tl, \g_@@_tmp_file_bool}
+%   Temporary file used to do the correct expansion for each \tn{write}.
+%   Boolean indicating whether that file has been checked to be empty:
+%   the \pkg{morewrites} package will only use the file if it is indeed
+%   empty, so as to avoid clobbering user data.
+%    \begin{macrocode}
+\tl_new:N \g_@@_tmp_file_tl
+\bool_new:N \g_@@_tmp_file_bool
+%    \end{macrocode}
+% \end{variable}
+%
+% \begin{macro}[added = 2014-07-26]{file}
+%   Sets \cs{g_@@_tmp_file_tl} to the given value (|\c_job_name_tl.mw|
+%   by default), and sets a boolean to indicate that the file has not
+%   been tested for emptyness.
+%    \begin{macrocode}
+\keys_define:nn { @@ }
+  {
+    file .code:n = {
+      \tl_gset:Nn \g_@@_tmp_file_tl {#1}
+      \bool_gset_false:N \g_@@_tmp_file_bool
+    } ,
+    file .initial:n = \c_job_name_tl .mw
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[aux]{\@@_empty_file:}
+%   Empties the file \cs{g_@@_tmp_file_tl} by opening it and closing it
+%   right away.  This ensures that the file used by \pkg{morewrites} is
+%   left empty (and we do this every time the auxiliary file is used,
+%   in case that file is changed by \cs{morewritessetup} mid-document).
+%    \begin{macrocode}
+\cs_new_protected_nopar:Npn \@@_empty_file:
+  {
+    \@@_tex_immediate:w \@@_tex_openout:w
+      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
+    \@@_tex_immediate:w \@@_tex_closeout:w
+      \g_@@_iow
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[aux,TF]{\@@_if_file_trivial:n}
+%   True if the file does not exist, or if it only contains spaces and
+%   tabs (no newline).  Only the TF variant exists.  We set
+%   \cs{@@_tmp:w} to \cs{prg_return_true:} or \cs{prg_return_false:}
+%   within the group and use it after cleaning up.  The first
+%   \texttt{eof} test is \texttt{true} if the file does not exist.
+%   Then we read one line, the second \texttt{eof} test is
+%   \texttt{true} if the file contains a single line (no newline), and
+%   we further test that this line is empty.
+%    \begin{macrocode}
+\prg_new_conditional:Npnn \@@_if_file_trivial:n #1 { TF }
+  {
+    \group_begin:
+      \tex_openin:D \g_@@_ior = #1 \scan_stop:
+      \if_eof:w \g_@@_ior
+        \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
+      \else:
+        \int_set_eq:NN \tex_endlinechar:D \c_minus_one
+        \etex_readline:D \g_@@_ior to \l_@@_internal_tl
+        \if_eof:w \g_@@_ior
+          \tl_if_empty:NTF \l_@@_internal_tl
+            { \cs_gset_eq:NN \@@_tmp:w \prg_return_true: }
+            { \cs_gset_eq:NN \@@_tmp:w \prg_return_false: }
+        \else:
+          \cs_gset_eq:NN \@@_tmp:w \prg_return_false:
+        \fi:
+      \fi:
+      \tex_closein:D \g_@@_ior
+    \group_end:
+    \@@_tmp:w
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[aux]{\@@_chk_file:}
+%   Check that the file \cs{g_@@_tmp_file_tl} does not exist or is blank.
+%   If not, try the file name obtained by adding |.mw|.
+%   This avoids clobbering files that the user would not want to lose.
+%    \begin{macrocode}
+\cs_new_protected_nopar:Npn \@@_chk_file:
+  {
+    \@@_if_file_trivial:nTF { \g_@@_tmp_file_tl }
+      { \bool_gset_true:N \g_@@_tmp_file_bool }
+      {
+        \msg_error:nnxx { @@ } { file-exists }
+          { \g_@@_tmp_file_tl }
+          { \g_@@_tmp_file_tl .mw }
+        \tl_gput_right:Nn \g_@@_tmp_file_tl { .mw }
+        \@@_chk_file:
+      }
+  }
+\msg_new:nnnn { @@ } { file-exists }
+  { File~'#1'~exists,~using~'#2'~instead. }
+  {
+    The~morewrites~package~needs~an~auxiliary~file.~
+    The~file~'#1'~exists~and~it~seems~that~it~was~not~created~by~
+    the~morewrites~package.~Please~get~rid~of~that~file,~or~
+    provide~an~alternate~file~name~by~adding\\
+    \iow_char:N\\morewritessetup~{~file~=~some-file-name~}\\
+    to~your~source~file.~
+    In~the~meantime,~the~file~'#2'~will~be~used.
+  }
 %    \end{macrocode}
 % \end{macro}
 %
