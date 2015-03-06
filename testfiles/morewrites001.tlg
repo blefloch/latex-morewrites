@@ -25,14 +25,8 @@ TEST 1: Immediate writing
 This is written to the file `tmp.tmp'.
 Trying out \noexpand ...
 )
-(tmp.tmp
-This is written to the file `tmp.tmp'.
-Trying out \noexpand ...
-)
-(tmp.tmp
-This is written to the file `tmp.tmp'.
-Trying out \noexpand ...
-)
+(tmp.tmp)
+(tmp.tmp)
 (tmp.tmp
 File tmp.tmp again.
 )

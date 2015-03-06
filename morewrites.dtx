@@ -632,6 +632,7 @@
 %
 %   We then put the stream and its associated file name in the property
 %   list, and empty/create the corresponding token list.
+%   Finally, empty the target file as \TeX{}'s \tn{openout} would do.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_openout_now_aux:n #1
   {
@@ -639,6 +640,7 @@
     \prop_gput:NVn \g_@@_iow_prop \g_@@_stream_int {#1}
     \tl_gclear_new:c
       { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
+    \@@_empty_file:n {#1}
   }
 %    \end{macrocode}
 % \end{macro}
