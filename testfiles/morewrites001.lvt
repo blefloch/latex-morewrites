@@ -13,7 +13,7 @@
     \newwrite \testwrite
     \immediate \openout \testwrite = tm\string p.tmp\space
     \immediate \write \testwrite {\noexpand \TYPE {This is written
-        to the file `tmp.tmp'.}}
+        to the file ^^J^^J `tmp.tmp'.}}
     \immediate \write \testwrite {\noexpand \TYPE {Trying out
         \noexpand \noexpand \noexpand \noexpand ...}}
     \immediate \closeout \testwrite

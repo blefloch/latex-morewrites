@@ -22,7 +22,7 @@ TEST 1: Immediate writing
 ============================================================
 \testwrite=\write5
 (tmp.tmp
-This is written to the file `tmp.tmp'.
+This is written to the file \par `tmp.tmp'.
 Trying out \noexpand ...
 )
 (tmp.tmp)
