@@ -1,0 +1,36 @@
+%
+% Copyright (C) 2015 `morewrites' maintainer
+%
+
+\input regression-test
+\RequirePackage{morewrites}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\OMIT
+\shipout\vbox{}
+\newwrite \testwrite
+\TIMO
+
+\TEST {Change temporary file}
+  {
+    \immediate \openout \testwrite = empty.tmp\relax
+    \immediate \closeout \testwrite
+    \morewritessetup { file = empty.tmp }
+    \immediate \openout \testwrite = tmp.tmp\relax
+    \immediate \write \testwrite
+      {\noexpand \TYPE {This is in `tmp.tmp'}}
+    \morewritessetup { file = inexistent.tmp }
+    \immediate \write \testwrite
+      {\noexpand \TYPE {Some more in `tmp.tmp'}}
+    \immediate \closeout \testwrite
+    \input tmp.tmp\relax
+    \morewritessetup { file = tmp.tmp }
+    \message { No error yet! }
+    \shipout\vbox{\write-1{\noexpand \TYPE {Log}}}
+    \input tmp.tmp\relax
+    \input tmp.tmp.mw\relax
+  }
+
+\END

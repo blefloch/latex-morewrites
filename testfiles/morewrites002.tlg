@@ -1,0 +1,51 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+%% \CharacterTable
+%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
+%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
+%%   Digits        \0\1\2\3\4\5\6\7\8\9
+%%   Exclamation   \!     Double quote  \"     Hash (number) \#
+%%   Dollar        \$     Percent       \%     Ampersand     \&
+%%   Acute accent  \'     Left paren    \(     Right paren   \)
+%%   Asterisk      \*     Plus          \+     Comma         \,
+%%   Minus         \-     Point         \.     Solidus       \/
+%%   Colon         \:     Semicolon     \;     Less than     \<
+%%   Equals        \=     Greater than  \>     Question mark \?
+%%   Commercial at \@     Left bracket  \[     Backslash     \\
+%%   Right bracket \]     Circumflex    \^     Underscore    \_
+%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
+%%   Right brace   \}     Tilde         \~}
+%%
+Author: Bruno Le Floch
+============================================================
+TEST 1: Change temporary file
+============================================================
+(tmp.tmp
+This is in `tmp.tmp'
+Some more in `tmp.tmp'
+)  No error yet! 
+!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+!
+! __morewrites error: "file-exists"
+! 
+! File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
+! 
+! See the __morewrites documentation for further information.
+! 
+! For immediate help type H <return>.
+!...............................................  
+l.34   }
+|'''''''''''''''''''''''''''''''''''''''''''''''
+| The morewrites package needs an auxiliary file. The file 'tmp.tmp' exists
+| and it seems that it was not created by the morewrites package. Please get
+| rid of that file, or provide an alternate file name by adding
+| \morewritessetup { file = some-file-name }
+| to your source file. In the meantime, the file 'tmp.tmp.mw' will be used.
+|...............................................
+[1] (tmp.tmp.mw)
+\TYPE {Log}
+(tmp.tmp
+This is in `tmp.tmp'
+Some more in `tmp.tmp'
+) (tmp.tmp.mw)
+============================================================
