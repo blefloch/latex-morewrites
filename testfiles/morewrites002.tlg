@@ -26,21 +26,23 @@ Some more in `tmp.tmp'
 )  No error yet! 
 !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 !
-! __morewrites error: "file-exists"
+! morewrites error: "file-exists"
 ! 
 ! File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
 ! 
-! See the __morewrites documentation for further information.
+! See the morewrites documentation for further information.
 ! 
 ! For immediate help type H <return>.
 !...............................................  
 l.34   }
 |'''''''''''''''''''''''''''''''''''''''''''''''
-| The morewrites package needs an auxiliary file. The file 'tmp.tmp' exists
-| and it seems that it was not created by the morewrites package. Please get
-| rid of that file, or provide an alternate file name by adding
-| \morewritessetup { file = some-file-name }
-| to your source file. In the meantime, the file 'tmp.tmp.mw' will be used.
+| The file `tmp.tmp' exists and was not created by this version of the
+| `morewrites' package. Please move or delete that file, or provide another
+| file name by adding
+| 
+|     \morewritessetup { file = other-name }
+| 
+| to your source file. In the meantime, the file `tmp.tmp.mw' will be used.
 |...............................................
 [1] (tmp.tmp.mw)
 \TYPE {Log}
