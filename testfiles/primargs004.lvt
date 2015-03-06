@@ -11,10 +11,11 @@
 \ExplSyntaxOn
 
 \OMIT
+\cs_generate_variant:Nn \tl_if_eq:nnF { o }
 \cs_new:Npn \test:nw #1#2 \scan_stop:
   {
     \TYPE { \exp_not:n { | #1 | #2 | } }
-    \TYPE { \exp_args:NNf \use:nn \cs_meaning:N { \tl_head:n {#1} } \c_empty_tl }
+    \tl_if_eq:onF { \tl_to_str:n {#1} } {#1} { \ERROR }
   }
 \group_begin:
   \char_set_lccode:nn { `\  } { `\* }
