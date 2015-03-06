@@ -166,7 +166,7 @@
 %   \meta{function} with this \meta{file name} as a braced argument.
 %   The code is currently not aware of the special role of the quote
 %   (|"|) character used to escape spaces in file names, nor of braced
-%   file names allowed by \LuaTeX{}.
+%   file names allowed by some \LuaTeX{} primitives.
 % \end{function}
 %
 % \subsection{Internal functions and comments}
@@ -642,6 +642,9 @@
 %   ending with a non-expandable character or control sequence.  After
 %   space removal, \cs{g_primargs_token} contains the next token, so no
 %   need for \cs{primargs_read_token:N}.
+%   When \TeX{} reads a file name, the \tn{input} primitive is
+%   temporarily not expandable, so we turn it into \tn{relax},
+%   unless \tn{globaldefs} was set to a positive number!
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_get_file_name:N #1
   {
@@ -649,7 +652,29 @@
       \@@_safe:
       \tex_aftergroup:D #1
       \tl_gclear:N \g_@@_file_name_tl
+      \if_int_compare:w \tex_globaldefs:D = \c_zero
+        \@@_disable_input:
+      \fi:
       \primargs_remove_optional_spaces:N \@@_get_file_name_test:
+  }
+%    \end{macrocode}
+% \end{macro}
+%
+% \begin{macro}[aux]{\@@_disable_input:}
+%   Make \tn{input} non-expandable (within a group) by setting it to
+%   \tn{relax}.  We want to find every copy of the primitive \tn{input},
+%   but this is impossible within \TeX{}, so we dispatch depending on
+%   the format.  In \LaTeXe{}, \tn{@@input} exists and \tn{input} is
+%   not the primitive, so we only redefine \tn{@@input}.  In other
+%   supported formats, \tn{@@input} does not exist, and \tn{input} is
+%   the primitive.  In all cases, \cs{tex_input:D} is the primitive too.
+%    \begin{macrocode}
+\cs_new_protected_nopar:Npx \@@_disable_input:
+  {
+    \cs_if_exist:cTF { @ @input }
+      { \cs_set_eq:NN \exp_not:c { @ @ input } \scan_stop: }
+      { \cs_set_eq:NN \exp_not:N \input \scan_stop: }
+    \cs_set_eq:NN \exp_not:N \tex_input:D \scan_stop:
   }
 %    \end{macrocode}
 % \end{macro}
