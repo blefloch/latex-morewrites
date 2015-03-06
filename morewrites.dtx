@@ -419,14 +419,14 @@
 % \end{macro}
 %
 % \begin{macro}[aux,TF]{\@@_if_file_trivial:n}
-%   True if the file does not exist, or if it only contains spaces and
-%   tabs (no newline).  Only the TF variant exists.  We set
+%   True if the file does not exist, or if it is empty.
+%   Only the TF variant is defined.  We set
 %   \cs{@@_tmp:w} to \cs{prg_return_true:} or \cs{prg_return_false:}
 %   within the group and use it after cleaning up.  The first
 %   \texttt{eof} test is \texttt{true} if the file does not exist.
 %   Then we read one line, the second \texttt{eof} test is
-%   \texttt{true} if the file contains a single line (no newline), and
-%   we further test that this line is empty.
+%   \texttt{true} if the file was empty (it is \texttt{false} if
+%   the file contained anything, even a single space).
 %    \begin{macrocode}
 \prg_new_conditional:Npnn \@@_if_file_trivial:n #1 { TF }
   {
@@ -438,9 +438,7 @@
         \int_set_eq:NN \tex_endlinechar:D \c_minus_one
         \etex_readline:D \g_@@_ior to \l_@@_internal_tl
         \if_eof:w \g_@@_ior
-          \tl_if_empty:NTF \l_@@_internal_tl
-            { \cs_gset_eq:NN \@@_tmp:w \prg_return_true: }
-            { \cs_gset_eq:NN \@@_tmp:w \prg_return_false: }
+          \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
         \else:
           \cs_gset_eq:NN \@@_tmp:w \prg_return_false:
         \fi:
