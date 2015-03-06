@@ -363,7 +363,7 @@
 % \begin{variable}[aux]{\l_@@_internal_tl}
 %   Temporary token list, used for scratch purposes.
 %    \begin{macrocode}
-\tl_new:N  \l_@@_internal_tl
+\tl_new:N \l_@@_internal_tl
 %    \end{macrocode}
 % \end{variable}
 %
@@ -925,14 +925,15 @@
       \tl_map_inline:nn { `(0123456789) }
         { \char_set_catcode_other:n {`##1} }
       \etex_everyeof:D { `() \exp_not:N }
-      \tl_gset:Nx \g_@@_internal_tl
+      \tl_set:Nx \l_@@_internal_tl
         {
           \exp_after:wN \@@_after_shipout_loop:ww
           \tex_input:D \g_@@_tmp_file_tl \c_space_tl
         }
       \@@_empty_file:
+      \exp_args:NNo
     \group_end:
-    \tl_map_inline:Nn \g_@@_internal_tl
+    \tl_map_inline:nn { \l_@@_internal_tl }
       { \tl_use:c { c_@@_later_ ##1 _tl } }
   }
 \cs_new:Npn \@@_after_shipout_loop:ww #1 `( #2 )
