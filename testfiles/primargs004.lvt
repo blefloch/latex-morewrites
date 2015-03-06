@@ -25,7 +25,7 @@
 
 \TEST { Get~file~name }
   {
-    \primargs_get_file_name:N \test:nw \tl_to_str:n { abc ~ def } \scan_stop:
+    \primargs_get_file_name:N \test:nw \tl_to_str:n { "abc ~ def" ~ ghi } \scan_stop:
     \primargs_get_file_name:N \test:nw abc \c_test_space_tl def \scan_stop:
     \primargs_get_file_name:N \test:nw \undefined \scan_stop:
     { \primargs_get_file_name:N \test:nw === } { # $ & ^ ... \scan_stop: }
