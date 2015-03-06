@@ -110,13 +110,8 @@
 %
 % \section{Known deficiencies and open questions}
 %
-% Some distributions of \TeX{} allow a quoted syntax for file names with
-% spaces. I haven't yet coded that. A temporary fix is to avoid file
-% names with spaces.  The package may not work with \LuaTeX{} when file
-% names are given within braces.
-%
-% The current code trims spaces at the end of every line that is written
-% to a file.  This might be fixable with enough work.
+% See the bug tracker \url{github.com/blefloch/latex-morewrites/issues/}
+% for a list of issues with \pkg{morewrites}.
 %
 % The package code is not very legible, and definitely uses too many
 % |:D| control sequences, whose name means \enquote{do not use}.  I do
@@ -127,11 +122,10 @@
 %   example of how to code with \pkg{expl3}; go and see Joseph Wright's
 %   \pkg{siunitx} instead.}
 %
-% Things that I need to do.
+% Things that need thought.
 % \begin{itemize}
 % \item Redefine the \LaTeX3 functions to use \pkg{morewrites} too?
 % \item Should \tn{newwrite} be protected?
-% \item Empty the target file on \tn{openout}, not on \tn{closeout}.
 % \end{itemize}
 %
 % \end{documentation}
