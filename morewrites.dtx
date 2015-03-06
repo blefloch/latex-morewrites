@@ -233,14 +233,65 @@
 %   assignment of the form \tn{toks}|0=|\meta{general text}.
 % \end{itemize}
 %
-% \subsection{Variants}
+% \subsection{Variants and helpers}
 %
-% \begin{macro}[aux]{\prop_gpop:NVNT}
+% \begin{macro}[aux]{\prop_gpop:NVNT, \tl_gput_right:Nv}
 %   We need this function later.
 %    \begin{macrocode}
 \cs_generate_variant:Nn \prop_gpop:NnNT { NV }
+\cs_generate_variant:Nn \tl_gput_right:Nn { Nv }
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{variable}[aux]{\l_@@_collect_next_int}
+% \begin{macro}[aux]
+%   {\@@_collect:x, \@@_collect_aux:Nn, \@@_collect_gput_right:N}
+%   When encountering very large \tn{write} statements we may need to
+%   collect many lines.  This can easily become an $O(n^2)$ task, and
+%   here we make sure that it remains around $O(n\log n)$.  The
+%   constant, unfortunately, is not small.
+%    \begin{macrocode}
+\int_new:N \l_@@_collect_next_int
+\cs_new_protected:Npn \@@_collect:x #1
+  {
+    \tl_set:Nx \l_@@_internal_tl {#1}
+    \@@_collect_aux:cf { l_@@_0_tl } { 1 }
+  }
+\cs_new_protected:Npn \@@_collect_aux:Nn #1#2
+  {
+    \int_compare:nNnT {#2} > \l_@@_collect_next_int
+      {
+        \tl_clear_new:N #1
+        \int_set:Nn \l_@@_collect_next_int {#2}
+      }
+    \tl_if_empty:NTF #1
+      { \tl_set_eq:NN #1 \l_@@_internal_tl }
+      {
+        \tl_put_left:No \l_@@_internal_tl {#1}
+        \tl_clear:N #1
+        \@@_collect_aux:cf { l_@@_#2_tl }
+          { \int_eval:n { #2 + 1 } }
+      }
+  }
+\cs_generate_variant:Nn \@@_collect_aux:Nn { cf }
+\cs_new_protected:Npn \@@_collect_gput_right:N #1
+  {
+    \int_compare:nNnF \l_@@_collect_next_int = 0
+      {
+        \int_decr:N \l_@@_collect_next_int
+        \tl_gput_right:Nv #1
+          {
+            l_@@_
+            \int_use:N \l_@@_collect_next_int
+            _tl
+          }
+        \@@_collect_gput_right:N #1
+      }
+  }
+\cs_generate_variant:Nn \@@_collect_gput_right:N { c }
+%    \end{macrocode}
+% \end{macro}
+% \end{variable}
 %
 % \subsection{Renaming primitives (again)}
 %
@@ -720,6 +771,8 @@
       \tex_openin:D \g_@@_ior = \g_@@_tmp_file_tl \scan_stop:
       \@@_write_now_loop:
       \tex_closein:D \g_@@_ior
+      \@@_collect_gput_right:c
+        { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
     \group_end:
     \@@_empty_file:n { \g_@@_tmp_file_tl }
   }
@@ -728,8 +781,7 @@
     \etex_readline:D \g_@@_ior to \l_@@_internal_tl
     \ior_if_eof:NF \g_@@_ior
       {
-        \tl_gput_right:cx
-          { g_@@_iow_ \int_use:N \g_@@_stream_int _tl }
+        \@@_collect:x
           {
             \@@_tex_immediate:w \@@_tex_write:w
               \g_@@_iow { \l_@@_internal_tl }

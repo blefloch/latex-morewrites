@@ -1,0 +1,34 @@
+%
+% Copyright (C) 2015 `morewrites' maintainer
+%
+
+\input regression-test
+\RequirePackage{morewrites}
+
+\START
+\AUTHOR{Bruno Le Floch}
+\ExplSyntaxOn
+
+\OMIT
+\shipout\vbox{}
+\newwrite \testwrite
+\ior_new:N \l_test_ior
+\TIMO
+
+\TEST {Very~large~write~operation}
+  {
+    \immediate \openout \testwrite = tmp.tmp\relax
+    \immediate \write \testwrite
+      {
+        \prg_replicate:nn { 2000 } { foo \iow_newline: }
+      }
+    \immediate \closeout \testwrite
+    \int_zero:N \l_tmpa_int
+    \ior_open:Nn \l_test_ior { tmp.tmp }
+    \ior_map_inline:Nn \l_test_ior
+      { \int_incr:N \l_tmpa_int }
+    \ior_close:N \l_test_ior
+    \TYPE { \int_use:N \l_tmpa_int }
+  }
+
+\END
