@@ -396,16 +396,16 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_empty_file:}
+% \begin{macro}[aux]{\@@_empty_file:n}
 %   Empties the file \cs{g_@@_tmp_file_tl} by opening it and closing it
 %   right away.  This ensures that the file used by \pkg{morewrites} is
 %   left empty (and we do this every time the auxiliary file is used,
 %   in case that file is changed by \cs{morewritessetup} mid-document).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_empty_file:
+\cs_new_protected:Npn \@@_empty_file:n #1
   {
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow \g_@@_tmp_file_tl \scan_stop:
+      \g_@@_iow #1 \scan_stop:
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
   }
@@ -719,7 +719,7 @@
       \@@_write_now_loop:
       \tex_closein:D \g_@@_ior
     \group_end:
-    \@@_empty_file:
+    \@@_empty_file:n { \g_@@_tmp_file_tl }
   }
 \cs_new_protected_nopar:Npn \@@_write_now_loop:
   {
@@ -909,7 +909,7 @@
           \exp_after:wN \@@_after_shipout_loop:ww
           \tex_input:D \g_@@_tmp_file_tl \c_space_tl
         }
-      \@@_empty_file:
+      \@@_empty_file:n { \g_@@_tmp_file_tl }
       \exp_args:NNo
     \group_end:
     \tl_map_inline:nn { \l_@@_internal_tl }
