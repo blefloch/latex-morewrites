@@ -12,7 +12,7 @@
 
 \OMIT
 \cs_generate_variant:Nn \tl_if_eq:nnF { o , f }
-\cs_new:Npn \test:nw #1#2 \scan_stop:
+\cs_new:Npn \test:nw #1#2 \l_tmpa_int
   {
     \TYPE { \exp_not:n { | #1 | #2 | } }
     \tl_if_eq:onF { \tl_to_str:n {#1} } {#1} { \ERROR }
@@ -25,14 +25,14 @@
 
 \TEST { Get~file~name }
   {
-    \primargs_get_file_name:N \test:nw \tl_to_str:n { "abc ~ def" ~ ghi } \scan_stop:
-    \primargs_get_file_name:N \test:nw abc \c_test_space_tl def \scan_stop:
-    \primargs_get_file_name:N \test:nw \undefined \scan_stop:
-    { \primargs_get_file_name:N \test:nw === } { # $ & ^ ... \scan_stop: }
+    \primargs_get_file_name:N \test:nw \tl_to_str:n { "abc ~ def" ~ ghi } \l_tmpa_int
+    \primargs_get_file_name:N \test:nw abc \c_test_space_tl def \l_tmpa_int
+    \primargs_get_file_name:N \test:nw \undefined \scan_stop: \l_tmpa_int
+    { \primargs_get_file_name:N \test:nw === } { # $ & ^ ... \l_tmpa_int }
   }
 
 \OMIT
-\cs_new:Npn \test:nwn #1#2 \scan_stop: #3
+\cs_new:Npn \test:nwn #1#2 \l_tmpa_int #3
   {
     \TYPE { \exp_not:n { | #1 | } }
     \tl_if_eq:onF { \tl_to_str:n {#1} } {#1} { \ERROR }
@@ -42,11 +42,11 @@
 
 \TEST { Get~file~name~input }
   {
-    \primargs_get_file_name:N \test:nwn abc \input tmp.tmp \scan_stop:
+    \primargs_get_file_name:N \test:nwn abc \input tmp.tmp \l_tmpa_int
       { \input tmp.tmp }
-    \primargs_get_file_name:N \test:nwn abc \use:c { @@input } tmp.tmp \scan_stop:
+    \primargs_get_file_name:N \test:nwn abc \use:c { @@input } tmp.tmp \l_tmpa_int
       { \exp_not:c { @@input } tmp.tmp }
-    \primargs_get_file_name:N \test:nwn abc \tex_input:D tmp.tmp \scan_stop:
+    \primargs_get_file_name:N \test:nwn abc \tex_input:D tmp.tmp \l_tmpa_int
       { \exp_not:N \tex_input:D tmp.tmp }
   }
 
