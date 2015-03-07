@@ -20,7 +20,7 @@ Author: Bruno Le Floch
 ============================================================
 TEST 1: Get file name
 ============================================================
-|"abc|def" ghi|
+|"abc def"|ghi|
 |abc*def||
 ! Undefined control sequence.
 <recently read> \undefined 

@@ -164,9 +164,23 @@
 %   \end{syntax}
 %   Reads a \meta{file name} following the \meta{function} and calls the
 %   \meta{function} with this \meta{file name} as a braced argument.
-%   The code is currently not aware of the special role of the quote
-%   (|"|) character used to escape spaces in file names, nor of braced
-%   file names allowed by some \LuaTeX{} primitives.
+%   The code is currently not aware of braced file names allowed by some
+%   primitives in \LuaTeX{}.
+%   \begin{texnote}
+%     A file name is obtained by discarding \meta{optional spaces} (or
+%     a \meta{filler} for \LuaTeX{}), then repeatedly doing the
+%     following.  Fully expand what follows in the input stream.  If
+%     the next token is an explicit or implicit character token
+%     (regardless of its category code) then add that character to the
+%     file name and remove it from the input stream, and go back to
+%     expanding tokens, except in one case: if the character code
+%     is~$32$ (space) and the number of quote characters (code~$34$)
+%     already in the file name is even, then the space is removed from
+%     the input stream, not included in the file name, and parsing
+%     ends.  Finally, if the next token is a non-expandable command
+%     (be it a control sequence or an active character) then the file
+%     name ends and the command is left in the input stream.
+%   \end{texnote}
 % \end{function}
 %
 % \subsection{Internal functions and comments}
@@ -185,8 +199,9 @@
 %   cause trouble with others.
 % \end{function}
 %
-% Setting the \tn{globaldefs} parameter to a non-zero value may make
-% some parts of this package crash.
+% Despite large efforts expended to make this package robust against
+% changes to the \tn{globaldefs} parameter, setting it to a non-zero
+% value may make some parts of this package crash.
 %
 % Tokens inserted using \tn{afterassignment} may be lost when using this
 % package, since it uses \tn{afterassignment} internally.
@@ -197,9 +212,9 @@
 %   \tn{noexpand}.
 % \item Test all functions within alignments and understand their
 %   interaction with the master counter.
-% \item Implement |"| for quoting file names.
 % \item Provide two functions for file names, to allow for the braced
-%   syntax of some primitives in \LuaTeX{}.
+%   syntax of some primitives in \LuaTeX{} (\tn{openin} and \tn{input}
+%   accept braced arguments, while \tn{openout} does not?).
 % \item Correct the parsing of \meta{mudimen}.
 % \item Perhaps parse \meta{muglue} and \meta{glue} by hand to avoid bad
 %   interactions with \tn{globaldefs}.  Otherwise put up a warning about
@@ -645,10 +660,12 @@
 %
 % \subsection{Get file name}
 %
-% \begin{variable}[int]{\g_@@_file_name_tl}
+% \begin{variable}[int]{\g_@@_file_name_tl, \g_@@_file_name_quotes_int}
 %   Token list used to build a file name, one character at a time.
+%   Integer counting quotes in the file name.
 %    \begin{macrocode}
 \tl_new:N \g_@@_file_name_tl
+\int_new:N \g_@@_file_name_quotes_int
 %    \end{macrocode}
 % \end{variable}
 %
@@ -656,7 +673,8 @@
 %   Empty the file name (globally), and build it one character at a time.
 %   The \meta{function} is added at the end of a group, started here.
 %   As described in the \TeX{}book, a \meta{file name} should start with
-%   \meta{optional spaces}, which we remove, then character tokens,
+%   \meta{optional spaces} (\LuaTeX{} changes that to \meta{filler}),
+%   which we remove, then character tokens,
 %   ending with a non-expandable character or control sequence.  After
 %   space removal, \cs{g_primargs_token} contains the next token, so no
 %   need for \cs{primargs_read_token:N}.
@@ -673,15 +691,19 @@
                      \@@_read_x_token_file:N
       \tex_aftergroup:D #1
       \tl_gclear:N \g_@@_file_name_tl
-      \primargs_remove_optional_spaces:N \@@_get_file_name_test:
+      \int_gzero:N \g_@@_file_name_quotes_int
+      \luatex_if_engine:TF
+        { \primargs_remove_filler:N }
+        { \primargs_remove_optional_spaces:N }
+            \@@_get_file_name_test:
   }
 %    \end{macrocode}
 % \end{macro}
 %
 % \begin{macro}[aux]{\@@_get_file_name_test:}
 %   The token read is in \cs{g_primargs_token}, and is non-expandable.
-%   If it is a control sequence, end the \meta{file name}.  If it is a
-%   space, the the \meta{file name} ends after its removal.  Otherwise,
+%   If it is a control sequence, end the \meta{file name}.  Spaces are
+%   special (quotes too, but that is treated elsewhere).  Otherwise,
 %   we extract the character from the \tn{meaning} of the \meta{token},
 %   which we remove anyways: in that case, we'll recurse.
 %    \begin{macrocode}
@@ -691,7 +713,7 @@
       { \@@_get_file_name_end: }
       {
         \token_if_eq_charcode:NNTF \c_space_token \g_primargs_token
-          { \primargs_remove_token:N \@@_get_file_name_end: }
+          { \primargs_remove_token:N \@@_get_file_name_space: }
           { \primargs_remove_token:N \@@_get_file_name_char: }
       }
   }
@@ -713,9 +735,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[aux]{\@@_get_file_name_space:}
+%   We have already removed the space from the input stream.  If
+%   there is an odd number of quotes so far, add a space to the
+%   file name and continue.  Otherwise the file name ends.
+%    \begin{macrocode}
+\cs_new_protected_nopar:Npn \@@_get_file_name_space:
+  {
+    \int_if_odd:nTF { \g_@@_file_name_quotes_int }
+      {
+        \tl_gput_right:Nn \g_@@_file_name_tl { ~ }
+        \primargs_read_x_token:N \@@_get_file_name_test:
+      }
+      { \@@_get_file_name_end: }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \begin{macro}[aux]{\@@_get_file_name_char:}
 % \begin{macro}[aux, EXP]
 %   {\@@_get_file_name_char_ii:w, \@@_get_file_name_char_iii:w}
+%   Check for a quote, which increments \cs{g_@@_file_name_quotes_int}.
 %   With an explicit character, applying \tn{string} would give the
 %   character code.  Here, implicit characters have to be converted too,
 %   so we must work with the \tn{meaning}, which is two or three words
@@ -728,6 +768,8 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_get_file_name_char:
   {
+    \token_if_eq_charcode:NNT " \g_primargs_token
+      { \int_gincr:N \g_@@_file_name_quotes_int }
     \tl_gput_right:Nx \g_@@_file_name_tl
       {
         \exp_after:wN \@@_get_file_name_char_ii:w
