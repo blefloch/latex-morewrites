@@ -1,0 +1,93 @@
+%
+% Copyright (C) 2015 `primargs' maintainer
+%
+
+\input regression-test
+\RequirePackage{primargs}
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\ExplSyntaxOn
+
+\OMIT
+\cs_new:Npn \test:w #1 \scan_stop:
+  { \TYPE { \exp_not:n { | #1 | } } }
+\tl_const:Nn \c_outer_tl { \c_outer_token }
+\cs_new_eq:NN \c_outer_token ?
+\tex_outer:D \tex_gdef:D \c_outer_token { }
+\group_begin:
+  \char_set_lccode:nn { `* } { `~ }
+  \char_set_lccode:nn { `~ } { `* }
+  \tex_lowercase:D
+    {
+      \tl_const:Nn \c_other_space_tl { * }
+      \tl_const:Nn \c_space_star_tl { ~ }
+    }
+\group_end:
+\cs_new_eq:NN \c_equals_token =
+\TIMO
+
+\TEST { Remove~token }
+  {
+    \primargs_remove_token:N \test:w ? . \scan_stop:
+    \primargs_remove_token:N \test:w { . \scan_stop: \if_false: } \fi:
+    \if_false: { \fi: \primargs_remove_token:N \test:w } . \scan_stop:
+    \use:nn { \primargs_remove_token:N \test:w } { ~ } . \scan_stop:
+    \use:nnn { \primargs_remove_token:N \test:w } { ~ } { ~ } . \scan_stop:
+    \exp_after:wN \primargs_remove_token:N \exp_after:wN \test:w \c_outer_tl . \scan_stop:
+    \exp_after:wN \primargs_remove_token:N \exp_after:wN \test:w \exp_not:N \c_space_tl . \scan_stop:
+  }
+
+\TEST { Remove~one~optional~space }
+  {
+    \primargs_remove_one_optional_space:N \test:w ? \scan_stop:
+    \primargs_remove_one_optional_space:N \test:w { ~ } . \scan_stop:
+    \primargs_remove_one_optional_space:N \test:w \c_space_token \scan_stop:
+    \exp_after:wN \primargs_remove_one_optional_space:N \exp_after:wN \test:w \c_other_space_tl \scan_stop:
+    \exp_after:wN \primargs_remove_one_optional_space:N \exp_after:wN \test:w \c_space_star_tl \scan_stop:
+    \primargs_remove_one_optional_space:N \test:w \prg_replicate:nn { 3 } { \use:n { \c_space_token } } \scan_stop:
+    \exp_after:wN \primargs_remove_one_optional_space:N \exp_after:wN \test:w \exp_not:N \c_space_tl ? \scan_stop:
+  }
+
+\TEST { Remove~optional~spaces }
+  {
+    \primargs_remove_optional_spaces:N \test:w ? \scan_stop:
+    \primargs_remove_optional_spaces:N \test:w { ~ } . \scan_stop:
+    \primargs_remove_optional_spaces:N \test:w \c_space_token \scan_stop:
+    \exp_after:wN \primargs_remove_optional_spaces:N \exp_after:wN \test:w \c_other_space_tl \scan_stop:
+    \exp_after:wN \primargs_remove_optional_spaces:N \exp_after:wN \test:w \c_space_star_tl \scan_stop:
+    \primargs_remove_optional_spaces:N \test:w \prg_replicate:nn { 3 } { \use:n { \c_space_token } } \scan_stop:
+    \exp_after:wN \primargs_remove_optional_spaces:N \exp_after:wN \test:w \exp_not:N \c_space_tl ? \scan_stop:
+  }
+
+\TEST { Remove~equals }
+  {
+    \primargs_remove_equals:N \test:w ? = \scan_stop:
+    \primargs_remove_equals:N \test:w \c_space_token ? = \scan_stop:
+    \primargs_remove_equals:N \test:w \c_equals_token \scan_stop:
+    \primargs_remove_equals:N \test:w { = } = \scan_stop:
+    \primargs_remove_equals:N \test:w { ~ } = \scan_stop:
+    \primargs_remove_equals:N \test:w = = \scan_stop:
+    \use:nnn \primargs_remove_equals:N \test:w { ~ } = \scan_stop:
+    \primargs_remove_equals:N \test:w \use:nn { \c_space_token } { ~ } = ~ \use:n { ~ } \scan_stop:
+    \primargs_remove_equals:N \test:w \prg_replicate:nn { 3 } { ~ } = \prg_replicate:nn { 3 } { \c_space_token } \scan_stop:
+    \exp_after:wN \primargs_remove_equals:N \exp_after:wN \test:w \c_other_space_tl \scan_stop:
+    \exp_after:wN \primargs_remove_equals:N \exp_after:wN \test:w \c_space_star_tl \scan_stop:
+    \exp_after:wN \primargs_remove_equals:N \exp_after:wN \test:w \exp_not:N \c_space_tl ? \scan_stop:
+  }
+
+\TEST { Remove~filler }
+  {
+    \primargs_remove_filler:N \test:w ? . \scan_stop:
+    \primargs_remove_filler:N \test:w \c_space_token ? . \scan_stop:
+    \primargs_remove_filler:N \test:w { \scan_stop: } . \scan_stop:
+    \primargs_remove_filler:N \test:w { ~ } . \scan_stop:
+    \primargs_remove_filler:N \test:w \exp_not:N \tl_clear:N \tex_relax:D \scan_stop: . \scan_stop:
+    \use:nnn \primargs_remove_filler:N \test:w { ~ } \scan_stop: . \scan_stop:
+    \primargs_remove_filler:N \test:w \prg_replicate:nn { 3 } { ~ } \prg_replicate:nn { 3 } { \c_space_token \scan_stop: } . \scan_stop:
+    \exp_after:wN \primargs_remove_filler:N \exp_after:wN \test:w \c_other_space_tl . \scan_stop:
+    \exp_after:wN \primargs_remove_filler:N \exp_after:wN \test:w \c_space_star_tl . \scan_stop:
+  }
+
+\END

@@ -71,7 +71,7 @@
 %
 % \subsection{Removing tokens}
 %
-% \begin{function}{\primargs_remove_token:N}
+% \begin{function}[tested = primargs005]{\primargs_remove_token:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_token:N} \meta{function}
 %   \end{syntax}
@@ -80,7 +80,7 @@
 %   equal to the removed token.
 % \end{function}
 %
-% \begin{function}{\primargs_remove_one_optional_space:N}
+% \begin{function}[tested = primargs005]{\primargs_remove_one_optional_space:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_one_optional_space:N} \meta{function}
 %   \end{syntax}
@@ -90,7 +90,7 @@
 %   call the \meta{function}.
 % \end{function}
 %
-% \begin{function}{\primargs_remove_optional_spaces:N}
+% \begin{function}[tested = primargs005]{\primargs_remove_optional_spaces:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_optional_spaces:N} \meta{function}
 %   \end{syntax}
@@ -99,7 +99,7 @@
 %   the first non-space token and calls the \meta{function}.
 % \end{function}
 %
-% \begin{function}{\primargs_remove_equals:N}
+% \begin{function}[tested = primargs005]{\primargs_remove_equals:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_equals:N} \meta{function}
 %   \end{syntax}
@@ -110,7 +110,7 @@
 %   well.  Finally, calls the \meta{function}.
 % \end{function}
 %
-% \begin{function}[added = 2014-08-06]{\primargs_remove_filler:N}
+% \begin{function}[added = 2014-08-06, tested = primargs005]{\primargs_remove_filler:N}
 %   \begin{syntax}
 %     \cs{primargs_remove_filler:N} \meta{function}
 %   \end{syntax}
@@ -159,7 +159,7 @@
 %   argument.
 % \end{function}
 %
-% \begin{function}[updated = 2015-03-07]{\primargs_get_file_name:N}
+% \begin{function}[updated = 2015-03-07, tested = primargs004]{\primargs_get_file_name:N}
 %   \begin{syntax}
 %     \cs{primargs_get_file_name:N} \meta{function}
 %   \end{syntax}
@@ -209,8 +209,6 @@
 %
 % The following needs to be done.
 % \begin{itemize}
-% \item Test all functions, in particular their interaction with
-%   \tn{noexpand}.
 % \item Test all functions within alignments and understand their
 %   interaction with the master counter.
 % \item Provide two functions for file names, to allow for the braced
