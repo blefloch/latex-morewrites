@@ -40,7 +40,7 @@
 %
 % \subsection{Reading one token without removing it}
 %
-% \begin{variable}{\g_primargs_token}
+% \begin{variable}[tested = primargs001]{\g_primargs_token}
 %   The token read by \cs{primargs_read_token:N} or
 %   \cs{primargs_read_x_token:N}.  Its value is always set globally.
 % \end{variable}
@@ -54,7 +54,8 @@
 %   following the \meta{function} is not removed.
 %   \begin{texnote}
 %     This is essentially \tn{global} \tn{futurelet}
-%     \cs{g_primargs_token} \meta{function}.
+%     \cs{g_primargs_token} \meta{function}, with the added guarantee
+%     that the assignment is global even when $\tn{globaldefs}<0$.
 %   \end{texnote}
 % \end{function}
 %

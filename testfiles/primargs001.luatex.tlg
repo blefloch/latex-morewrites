@@ -109,3 +109,34 @@ l.47   }
 <recently read> \c_empty_tl 
 l.47   }
 ============================================================
+============================================================
+TEST 3: The assignment is global
+============================================================
+blank space  
+> blank space  .
+<recently read>  
+l.64   }
+\noexpand
+> \exp_not:N=\noexpand.
+<recently read> \exp_not:N 
+l.64   }
+[unknown command code! (0, 1)]
+> \c_empty_tl=macro:
+->.
+<recently read> \c_empty_tl 
+l.64   }
+blank space  
+> blank space  .
+<recently read>  
+l.64   }
+[unknown command code! (0, 1)]
+> \c_empty_tl=macro:
+->.
+<recently read> \c_empty_tl 
+l.64   }
+[unknown command code! (0, 1)]
+> \c_empty_tl=macro:
+->.
+<recently read> \c_empty_tl 
+l.64   }
+============================================================

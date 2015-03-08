@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2014 `primargs' maintainer
+% Copyright (C) 2014-2015 `primargs' maintainer
 %
 
 \input regression-test
@@ -44,6 +44,23 @@
     \primargs_read_x_token:N \test:w \exp_not:N \c_empty_tl
     \exp_after:wN \primargs_read_x_token:N
       \exp_after:wN \test:w \exp_not:N \c_empty_tl \scan_stop:
+  }
+
+\OMIT
+\cs_new:Npn \test_pre:
+  { \group_begin: \int_set:Nn \tex_globaldefs:D { -1 } }
+\cs_gset:Npn \test:w
+  { \group_end: \TYPE { \cs_meaning:N \g_primargs_token } \show }
+\TIMO
+
+\TEST { The~assignment~is~global }
+  {
+    \test_pre: \exp_after:wN \primargs_read_token:N \exp_after:wN \test:w \c_space_tl
+    \test_pre: \primargs_read_token:N \test:w \exp_not:N \c_empty_tl
+    \test_pre: \exp_after:wN \primargs_read_token:N \exp_after:wN \test:w \exp_not:N \c_empty_tl \scan_stop:
+    \test_pre: \exp_after:wN \primargs_read_x_token:N \exp_after:wN \test:w \c_space_tl
+    \test_pre: \primargs_read_x_token:N \test:w \exp_not:N \c_empty_tl
+    \test_pre: \exp_after:wN \primargs_read_x_token:N \exp_after:wN \test:w \exp_not:N \c_empty_tl \scan_stop:
   }
 
 \END
