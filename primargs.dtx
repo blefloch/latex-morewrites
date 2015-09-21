@@ -691,7 +691,7 @@
       \tex_aftergroup:D #1
       \tl_gclear:N \g_@@_file_name_tl
       \int_gzero:N \g_@@_file_name_quotes_int
-      \luatex_if_engine:TF
+      \sys_if_engine_luatex:TF
         { \primargs_remove_filler:N }
         { \primargs_remove_optional_spaces:N }
             \@@_get_file_name_test:
