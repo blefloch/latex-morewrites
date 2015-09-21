@@ -10,7 +10,7 @@ few TeX primitives related to output.
 
 This package uses the `l3kernel` bundle.
 
-This is work in progress, all suggestions/comments/bug reports are
-welcome!
+This is work in progress, all suggestions/comments/bug reports
+are welcome!  See https://github.com/blefloch/latex-morewrites
 
 
