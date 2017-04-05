@@ -13,38 +13,38 @@ TEST 2: Get general text errors
 ============================================================
 ! Missing { inserted.
 <to be read again> 
-                   }
+}
 l. ...  }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
-(If you're confused by all this, try typing `I}' now.)
+If you're confused by all this, try typing `I}' now.
 |||
 ! Missing { inserted.
 <to be read again> 
-                   }
+}
 l. ...  }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
-(If you're confused by all this, try typing `I}' now.)
+If you're confused by all this, try typing `I}' now.
 |\c_group_end_token ||
 ! Missing { inserted.
 <to be read again> 
-                   1
+1
 l. ...  }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
-(If you're confused by all this, try typing `I}' now.)
+If you're confused by all this, try typing `I}' now.
 |123||
 ! Missing { inserted.
 <to be read again> 
-                   \tex_toks:D 
+\tex_toks:D 
 l. ...  }
 A left brace was mandatory here, so I've put one in.
 You might want to delete and/or insert some corrections
 so that I will find a matching right brace soon.
-(If you're confused by all this, try typing `I}' now.)
+If you're confused by all this, try typing `I}' now.
 |\tex_toks:D 123||
 ============================================================

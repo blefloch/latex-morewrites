@@ -1,21 +1,5 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
-%%
 Author: Bruno Le Floch
 ============================================================
 TEST 1: Read token
@@ -23,48 +7,48 @@ TEST 1: Read token
 undefined
 > \undefined=undefined.
 <recently read> \undefined 
-l.32   }
+l. ...  }
 \par
 > \par=\par.
 <recently read> \par 
-l.32   }
+l. ...  }
 macro parameter character #
 > macro parameter character #.
 <recently read> ##
-l.32   }
+l. ...  }
 begin-group character {
 > begin-group character {.
 <recently read> {
-l.32   }
+l. ...  }
 end-group character }
 > end-group character }.
 <recently read> }
-l.32   }
+l. ...  }
 macro:-> 
 > \c_space_tl=macro:
 -> .
 <recently read> \c_space_tl 
-l.32   }
+l. ...  }
 blank space  
 > blank space  .
 <recently read>  
-l.32   }
+l. ...  }
 \noexpand
 > \exp_not:N=\noexpand.
 <recently read> \exp_not:N 
-l.32   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.32   }
+l. ...  }
 ============================================================
 ============================================================
 TEST 2: Read expanded token
 ============================================================
 ! Undefined control sequence.
 <recently read> \undefined 
-l.47   }
+l. ...  }
 The control sequence at the end of the top line
 of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
@@ -73,41 +57,41 @@ and I'll forget about whatever was undefined.
 \relax
 > \scan_stop:=\relax.
 <recently read> \scan_stop: 
-l.47   }
+l. ...  }
 \par
 > \par=\par.
 <recently read> \par 
-l.47   }
+l. ...  }
 macro parameter character #
 > macro parameter character #.
 <recently read> ##
-l.47   }
+l. ...  }
 begin-group character {
 > begin-group character {.
 <recently read> {
-l.47   }
+l. ...  }
 end-group character }
 > end-group character }.
 <recently read> }
-l.47   }
+l. ...  }
 blank space  
 > blank space  .
 <recently read>  
-l.47   }
+l. ...  }
 blank space  
 > blank space  .
 <recently read>  
-l.47   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.47   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.47   }
+l. ...  }
 ============================================================
 ============================================================
 TEST 3: The assignment is global
@@ -115,28 +99,28 @@ TEST 3: The assignment is global
 blank space  
 > blank space  .
 <recently read>  
-l.64   }
+l. ...  }
 \noexpand
 > \exp_not:N=\noexpand.
 <recently read> \exp_not:N 
-l.64   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.64   }
+l. ...  }
 blank space  
 > blank space  .
 <recently read>  
-l.64   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.64   }
+l. ...  }
 \relax
 > \c_empty_tl=macro:
 ->.
 <recently read> \c_empty_tl 
-l.64   }
+l. ...  }
 ============================================================

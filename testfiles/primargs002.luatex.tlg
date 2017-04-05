@@ -1,21 +1,5 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-%% \CharacterTable
-%%  {Upper-case    \A\B\C\D\E\F\G\H\I\J\K\L\M\N\O\P\Q\R\S\T\U\V\W\X\Y\Z
-%%   Lower-case    \a\b\c\d\e\f\g\h\i\j\k\l\m\n\o\p\q\r\s\t\u\v\w\x\y\z
-%%   Digits        \0\1\2\3\4\5\6\7\8\9
-%%   Exclamation   \!     Double quote  \"     Hash (number) \#
-%%   Dollar        \$     Percent       \%     Ampersand     \&
-%%   Acute accent  \'     Left paren    \(     Right paren   \)
-%%   Asterisk      \*     Plus          \+     Comma         \,
-%%   Minus         \-     Point         \.     Solidus       \/
-%%   Colon         \:     Semicolon     \;     Less than     \<
-%%   Equals        \=     Greater than  \>     Question mark \?
-%%   Commercial at \@     Left bracket  \[     Backslash     \\
-%%   Right bracket \]     Circumflex    \^     Underscore    \_
-%%   Grave accent  \`     Left brace    \{     Vertical bar  \|
-%%   Right brace   \}     Tilde         \~}
-%%
 Author: Bruno Le Floch
 ============================================================
 TEST 1: Get number
@@ -23,7 +7,7 @@ TEST 1: Get number
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.32   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
@@ -31,7 +15,7 @@ look up `weird error' in the index to The TeXbook.)
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.32   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
@@ -49,14 +33,14 @@ TEST 2: Get dimen
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.45   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 \scan_stop: 
-l.45   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -67,14 +51,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.45   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 \scan_stop: 
-l.45   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -86,7 +70,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 9
-l.45   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -98,7 +82,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 9
-l.45   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -115,14 +99,14 @@ TEST 3: Get glue
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.58   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 \scan_stop: 
-l.58   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -133,14 +117,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.58   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 \scan_stop: 
-l.58   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -152,7 +136,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 9
-l.58   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -164,7 +148,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (pt inserted).
 <to be read again> 
 9
-l.58   }
+l. ...  }
 Dimensions can be in units of em, ex, in, pt, pc,
 cm, mm, dd, cc, nd, nc, bp, or sp; but yours is a new one!
 I'll assume that you meant to say pt, for printer's points.
@@ -186,14 +170,14 @@ TEST 4: Get mu dimen
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.71   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 \scan_stop: 
-l.71   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -207,14 +191,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.71   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 \scan_stop: 
-l.71   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -234,7 +218,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
-l.71   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -247,7 +231,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 *************************************************
 ! Incompatible glue units.
 <recently read> \scan_stop: 
-l.71   }
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |10.0mu minus 1.0fil||
 *************************************************
@@ -258,7 +242,7 @@ I'm going to assume that 1mu=1pt when they're mixed.
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
-l.71   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -271,8 +255,8 @@ two letters. (See Chapter 27 of The TeXbook.)
 *************************************************
 ! Incompatible glue units.
 <argument> ...: \primargs_get_mudimen:N \test:nw \l_tmpa_dim 
-minus1fil\scan_stop: \prim...
-l.71   }
+                                                  minus1fil\scan_stop: \prim...
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |100.0mu minus 1.0fil||
 *************************************************
@@ -282,8 +266,8 @@ I'm going to assume that 1mu=1pt when they're mixed.
 *************************************************
 ! Incompatible glue units.
 <argument> ... \primargs_get_mudimen:N \test:nw \l_tmpa_skip 
-minus1fil\scan_stop: 
-l.71   }
+                                                  minus1fil\scan_stop: 
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |100.0mu plus 10.0mu|minus1fil|
 ============================================================
@@ -293,14 +277,14 @@ TEST 5: Get mu glue
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.84   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 \scan_stop: 
-l.84   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -309,14 +293,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
-l.84   }
+l. ...  }
 A number should have been here; I inserted `0'.
 (If you can't figure out why I needed to see a number,
 look up `weird error' in the index to The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 \scan_stop: 
-l.84   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -326,7 +310,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
-l.84   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -334,13 +318,13 @@ two letters. (See Chapter 27 of The TeXbook.)
 |0.0mu|9|
 ! Incompatible glue units.
 <recently read> \scan_stop: 
-l.84   }
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |10.0mu minus 1.0fil||
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
-l.84   }
+l. ...  }
 The unit of measurement in math glue must be mu.
 To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
@@ -348,14 +332,14 @@ two letters. (See Chapter 27 of The TeXbook.)
 |122.0mu|9|
 ! Incompatible glue units.
 <argument> ...p: \primargs_get_muglue:N \test:nw \l_tmpa_dim 
-minus1fil\scan_stop: \prim...
-l.84   }
+                                                  minus1fil\scan_stop: \prim...
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |100.0mu minus 1.0fil||
 ! Incompatible glue units.
 <argument> ...: \primargs_get_muglue:N \test:nw \l_tmpa_skip 
-minus1fil\scan_stop: 
-l.84   }
+                                                  minus1fil\scan_stop: 
+l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |100.0mu plus 10.0mu|minus1fil|
 ============================================================
