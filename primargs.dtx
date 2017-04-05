@@ -297,7 +297,7 @@
 %   every assignment is global, and it is not possible to safely
 %   (locally) set it to zero.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_safe:
+\cs_new_protected:Npn \@@_safe:
   {
     \tex_afterassignment:D \tex_relax:D
     \if_int_compare:w 0 > \tex_globaldefs:D
@@ -361,18 +361,18 @@
 %   version there is an extra test for \cs{tex_input:D}.  By default
 %   use the standard version.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_read_x_token:N
+\cs_new_protected:Npn \primargs_read_x_token:N
   {
     \group_begin:
       \@@_safe:
       \@@_read_x_token:N
   }
-\cs_new_protected_nopar:Npn \@@_read_x_token:N
+\cs_new_protected:Npn \@@_read_x_token:N
   {
     \tex_afterassignment:D \@@_read_x_token_aux:N
     \tex_global:D \tex_futurelet:D \g_primargs_token
   }
-\cs_new_protected_nopar:Npn \@@_read_x_token_std:N
+\cs_new_protected:Npn \@@_read_x_token_std:N
   {
     \exp_after:wN
     \if_meaning:w \exp_not:N \g_primargs_token \g_primargs_token
@@ -382,7 +382,7 @@
   }
 \cs_new_eq:NN \@@_read_x_token_aux:N
               \@@_read_x_token_std:N
-\cs_new_protected_nopar:Npn \@@_read_x_token_file:N
+\cs_new_protected:Npn \@@_read_x_token_file:N
   {
     \if_meaning:w \tex_input:D \g_primargs_token
       \use_i_ii:nnn \group_end:
@@ -398,7 +398,7 @@
 %   that what follows is expanded.  Interestingly, we don't ever need to
 %   take the user's function as an argument.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_read_token:N
+\cs_new_protected:Npn \primargs_read_token:N
   {
     \group_begin:
       \@@_safe:
@@ -437,7 +437,7 @@
       \tex_aftergroup:D #1
       \primargs_read_x_token:N \@@_remove_one_optional_space:
   }
-\cs_new_protected_nopar:Npn \@@_remove_one_optional_space:
+\cs_new_protected:Npn \@@_remove_one_optional_space:
   {
     \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
@@ -462,9 +462,9 @@
       \tex_aftergroup:D #1
       \@@_remove_optional_spaces:
   }
-\cs_new_protected_nopar:Npn \@@_remove_optional_spaces:
+\cs_new_protected:Npn \@@_remove_optional_spaces:
   { \primargs_read_x_token:N \@@_remove_optional_spaces_aux: }
-\cs_new_protected_nopar:Npn \@@_remove_optional_spaces_aux:
+\cs_new_protected:Npn \@@_remove_optional_spaces_aux:
   {
     \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
@@ -489,7 +489,7 @@
       \tex_aftergroup:D #1
       \primargs_remove_optional_spaces:N \@@_remove_equals:
   }
-\cs_new_protected_nopar:Npn \@@_remove_equals:
+\cs_new_protected:Npn \@@_remove_equals:
   {
       \if_meaning:w = \g_primargs_token
         \exp_after:wN \@@_remove_equals_aux:NN
@@ -521,9 +521,9 @@
       \tex_aftergroup:D #1
       \@@_remove_filler:
   }
-\cs_new_protected_nopar:Npn \@@_remove_filler:
+\cs_new_protected:Npn \@@_remove_filler:
   { \primargs_read_x_token:N \@@_remove_filler_aux: }
-\cs_new_protected_nopar:Npn \@@_remove_filler_aux:
+\cs_new_protected:Npn \@@_remove_filler_aux:
   {
     \if_catcode:w \c_space_token \exp_not:N \g_primargs_token
     \else:
@@ -599,7 +599,7 @@
 %   \tn{deadcycles}, for which all assignments are global: thus,
 %   restoring its value will not interact badly with groups.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_number:N
+\cs_new_protected:Npn \primargs_get_number:N
   {
     \@@_get_rhs:NoN \tex_deadcycles:D
       { \tex_the:D \tex_deadcycles:D }
@@ -613,7 +613,7 @@
 %   important since normally, \tn{globaldefs} is zero, and everything is
 %   done within a group).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_dimen:N
+\cs_new_protected:Npn \primargs_get_dimen:N
   {
     \@@_get_rhs:NoN \tex_hoffset:D
       { \tex_the:D \tex_hoffset:D }
@@ -624,7 +624,7 @@
 % \begin{macro}{\primargs_get_glue:N}
 %   Use \tn{topskip}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_glue:N
+\cs_new_protected:Npn \primargs_get_glue:N
   {
     \@@_get_rhs:NoN \tex_topskip:D
       { \tex_the:D \tex_topskip:D }
@@ -637,7 +637,7 @@
 %   own to parse a \meta{mudimen}.  Warn about that problem, and parse a
 %   \meta{muglue} instead.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_mudimen:N
+\cs_new_protected:Npn \primargs_get_mudimen:N
   {
     \msg_warning:nn { primargs } { get-mudimen }
     \primargs_get_muglue:N
@@ -650,7 +650,7 @@
 % \begin{macro}{\primargs_get_muglue:N}
 %   Use \tn{thinmuskip}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \primargs_get_muglue:N
+\cs_new_protected:Npn \primargs_get_muglue:N
   {
     \@@_get_rhs:NoN \tex_thinmuskip:D
       { \tex_the:D \tex_thinmuskip:D }
@@ -677,7 +677,7 @@
       \tex_aftergroup:D { \if_false: } \fi:
       \primargs_remove_filler:N \@@_get_general_text:
   }
-\cs_new_protected_nopar:Npn \@@_get_general_text:
+\cs_new_protected:Npn \@@_get_general_text:
   {
     \if_catcode:w \c_group_begin_token \g_primargs_token
       \exp_after:wN \primargs_remove_token:N
@@ -737,7 +737,7 @@
 %   we extract the character from the \tn{meaning} of the \meta{token},
 %   which we remove anyways: in that case, we'll recurse.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_get_file_name_test:
+\cs_new_protected:Npn \@@_get_file_name_test:
   {
     \token_if_cs:NTF \g_primargs_token
       { \@@_get_file_name_end: }
@@ -756,7 +756,7 @@
 %   again, then end the group, after
 %   expanding the contents of \cs{g_@@_file_name_tl}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_get_file_name_end:
+\cs_new_protected:Npn \@@_get_file_name_end:
   {
     \cs_gset_eq:NN \@@_read_x_token_aux:N
                    \@@_read_x_token_std:N
@@ -770,7 +770,7 @@
 %   there is an odd number of quotes so far, add a space to the
 %   file name and continue.  Otherwise the file name ends.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_get_file_name_space:
+\cs_new_protected:Npn \@@_get_file_name_space:
   {
     \int_if_odd:nTF { \g_@@_file_name_level_tl }
       {
@@ -797,7 +797,7 @@
 %   character).  Then loop with expansion.  This technique would fail if
 %   the character could be a space (character code~$32$).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_get_file_name_char:
+\cs_new_protected:Npn \@@_get_file_name_char:
   {
     \token_if_eq_charcode:NNT " \g_primargs_token
       {
@@ -846,7 +846,7 @@
           \tl_gset:Nn \g_@@_file_name_level_tl { 1 }
           \primargs_remove_filler:N \@@_get_input_file_name_first:
       }
-    \cs_new_protected_nopar:Npn \@@_get_input_file_name_first:
+    \cs_new_protected:Npn \@@_get_input_file_name_first:
       {
         \token_if_eq_catcode:NNTF \g_primargs_token \c_group_begin_token
           { \primargs_remove_token:N \@@_get_input_file_name_loop: }
