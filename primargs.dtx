@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: primargs.dtx Copyright (C) 2012-2015 Bruno Le Floch
+%% File: primargs.dtx Copyright (C) 2012-2017 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -21,10 +21,9 @@
 % \fi
 %
 % \title{The \textsf{primargs} package: \\
-%   Parsing arguments of primitives\thanks{This
-%     file has version number v0.4, last revised 2015/03/07.}}
+%   Parsing arguments of primitives}
 % \author{Bruno Le Floch}
-% \date{2015/03/07}
+% \date{2017/04/05}
 %
 % \maketitle
 % \tableofcontents
@@ -38,11 +37,17 @@
 % in place of \TeX{}, which is useful to add hooks to primitives.  Of
 % course, this is much slower than letting \TeX{} do things directly.
 %
+% All assignments done by this package are global.  While a negative
+% value of the \tn{globaldefs} (primitive) parameter normally makes all
+% assignments local, this package makes sure \tn{globaldefs} is
+% non-negative before assignments.
+%
 % \subsection{Reading one token without removing it}
 %
 % \begin{variable}[tested = primargs001]{\g_primargs_token}
 %   The token read by \cs{primargs_read_token:N} or
 %   \cs{primargs_read_x_token:N}.  Its value is always set globally.
+%   It can be an \tn{outer} macro.
 % \end{variable}
 %
 % \begin{function}[tested = primargs001]{\primargs_read_token:N}
@@ -63,10 +68,11 @@
 %   \begin{syntax}
 %     \cs{primargs_read_x_token:N} \meta{function}
 %   \end{syntax}
-%   Expands tokens recursively with \cs{exp_after:wN}, until
-%   encountering a non-expandable token, and calls the \meta{function}
-%   afterwards.  The non-expandable token follows the \meta{function},
-%   and \cs{g_primargs_token} is also set equal to that token.
+%   Expands tokens recursively with \cs{exp_after:wN} until encountering
+%   a non-expandable token and afterwards calls the \meta{function}.
+%   The non-expandable token following the \meta{function} is not
+%   removed and \cs{g_primargs_token} is also set (globally) equal to
+%   that token.
 % \end{function}
 %
 % \subsection{Removing tokens}
@@ -77,7 +83,7 @@
 %   \end{syntax}
 %   Removes the \meta{token} which follows the \meta{function}, then
 %   calls the \meta{function}.  This also sets \cs{g_primargs_token}
-%   equal to the removed token.
+%   (globally) equal to the removed token.
 % \end{function}
 %
 % \begin{function}[tested = primargs005]{\primargs_remove_one_optional_space:N}
@@ -85,7 +91,7 @@
 %     \cs{primargs_remove_one_optional_space:N} \meta{function}
 %   \end{syntax}
 %   Expands tokens following the \meta{function} until a non-expandable
-%   token is found, and sets \cs{g_primargs_token} equal to this token,
+%   token is found, and sets \cs{g_primargs_token} (globally) equal to this token,
 %   then removes the token if it has catcode~$10$ (space).  Finally,
 %   call the \meta{function}.
 % \end{function}
@@ -95,7 +101,7 @@
 %     \cs{primargs_remove_optional_spaces:N} \meta{function}
 %   \end{syntax}
 %   Expands tokens following the \meta{function}, removing any token
-%   with catcode~$10$ (space), then sets \cs{g_primargs_token} equal to
+%   with catcode~$10$ (space), then sets \cs{g_primargs_token} (globally) equal to
 %   the first non-space token and calls the \meta{function}.
 % \end{function}
 %
@@ -104,7 +110,7 @@
 %     \cs{primargs_remove_equals:N} \meta{function}
 %   \end{syntax}
 %   Expands tokens following the \meta{function}, removing any token
-%   with catcode~$10$ (space), then sets \cs{g_primargs_token} equal to
+%   with catcode~$10$ (space), then sets \cs{g_primargs_token} (globally) equal to
 %   the first non-space token.  If this token is an explicit~|=|
 %   character token with catcode~$12$ (other), then it is removed as
 %   well.  Finally, calls the \meta{function}.
@@ -116,7 +122,7 @@
 %   \end{syntax}
 %   Expands tokens following the \meta{function}, removing any token
 %   with catcode~$10$ (space) or equal to \tn{relax}, then sets
-%   \cs{g_primargs_token} equal to the first non-space non-\tn{relax}
+%   \cs{g_primargs_token} (globally) equal to the next
 %   token.  Finally, calls the \meta{function}.
 % \end{function}
 %
@@ -159,20 +165,23 @@
 %   argument.
 % \end{function}
 %
-% \begin{function}[updated = 2015-03-07, tested = primargs004]{\primargs_get_file_name:N}
+% \begin{function}[updated = 2017-04-05, tested = primargs004]{\primargs_get_file_name:N, \primargs_get_input_file_name:N}
 %   \begin{syntax}
 %     \cs{primargs_get_file_name:N} \meta{function}
+%     \cs{primargs_get_input_file_name:N} \meta{function}
 %   \end{syntax}
 %   Reads a \meta{file name} following the \meta{function} and calls the
 %   \meta{function} with this \meta{file name} as a braced argument.
-%   The code is currently not aware of braced file names allowed by some
-%   primitives in \LuaTeX{}.
+%   The two functions are identical except in the \LuaTeX{} engine where
+%   \cs{primargs_get_input_file_name:N} allows braced file names:
+%   \LuaTeX{} allows such braced file names for some primitives (\tn{input}
+%   and \tn{openin}) but not others (\tn{openout}).
 %   \begin{texnote}
-%     A file name is obtained by discarding \meta{optional spaces} (or
-%     a \meta{filler} for \LuaTeX{}), then repeatedly doing the
+%     When braced file names are disallowed, the file name is obtained
+%     by discarding \meta{optional spaces} then repeatedly doing the
 %     following.  Fully expand what follows in the input stream.  If
 %     the next token is an explicit or implicit character token
-%     (regardless of its category code) then add that character to the
+%     (regardless of its catcode) then add that character to the
 %     file name and remove it from the input stream, and go back to
 %     expanding tokens, except in one case: if the character code
 %     is~$32$ (space) and the number of quote characters (code~$34$)
@@ -181,10 +190,33 @@
 %     ends.  Finally, if the next token is a non-expandable command
 %     (be it a control sequence or an active character) then the file
 %     name ends and the command is left in the input stream.
+%
+%     When braced file names are allowed, the following steps are added
+%     prior to the procedure above.  First remove a \meta{filler}.  If
+%     the next token is of catcode~$1$ then fully expand tokens one by
+%     one and add their string representation (with \cs{tl_to_str:n},
+%     not \cs{token_to_str:N}) to the file name.
 %   \end{texnote}
 % \end{function}
 %
-% \subsection{Internal functions and comments}
+% \subsection{Comments and internal functions}
+%
+% This package is not idiomatic \pkg{expl3} and should not be used as an
+% example of good coding practices.  It uses \cs[no-index]{\ldots{}:D}
+% primitives directly:
+% \begin{itemize}
+% \item to cope with \tn{outer} tokens, since this package is meant to
+%   be used quite broadly;
+% \item for primitives with (rightfully) no \pkg{expl3} interface (or a
+%   slightly incomplete interface), namely \tn{afterassignment},
+%   \tn{globaldefs}, \tn{aftergroup}, \tn{the}, \tn{deadcycles},
+%   \tn{hoffset}, \tn{topskip}, \tn{thinmuskip}, \tn{unexpanded};
+% \item to test that a token's meaning is a given primitive when the
+%   \pkg{expl3} interface is not (or not obviously) a copy of the primitive.
+% \end{itemize}
+% As a result, \emph{do not take this package as an example of how to
+% code with \pkg{expl3}; go and see Joseph Wright's \pkg{siunitx} for
+% instance.}
 %
 % \begin{function}{\__primargs_get_rhs:NnN, \__primargs_get_rhs:NoN}
 %   \begin{syntax}
@@ -207,17 +239,19 @@
 % Tokens inserted using \tn{afterassignment} may be lost when using this
 % package, since it uses \tn{afterassignment} internally.
 %
-% The following needs to be done.
+% Todo list.
 % \begin{itemize}
 % \item Test all functions within alignments and understand their
 %   interaction with the master counter.
-% \item Provide two functions for file names, to allow for the braced
-%   syntax of some primitives in \LuaTeX{} (\tn{openin} and \tn{input}
-%   accept braced arguments, while \tn{openout} does not?).
 % \item Correct the parsing of \meta{mudimen}.
 % \item Perhaps parse \meta{muglue} and \meta{glue} by hand to avoid bad
 %   interactions with \tn{globaldefs}.  Otherwise put up a warning about
-%   \tn{globaldefs} when relevant.
+%   \tn{globaldefs} when relevant.  Better partial fix: declare a skip and a muskip.
+% \item Write tests of engine behaviour, especially \LuaTeX{}'s \tn{input},
+%   \tn{openin}, \tn{openout} including behaviour of |#| and spaces and
+%   character-code-zero, to detect unexpected changes.  In
+%   \tn{input}|{|\ldots{}\tn{input}\ldots{}|}|, \LuaTeX{} expands the
+%   inner \tn{input} but uses the inner file name as the outer file name.
 % \end{itemize}
 %
 % \end{documentation}
@@ -228,16 +262,16 @@
 %
 %<*package>
 %    \begin{macrocode}
-\RequirePackage {expl3} [2012/08/14]
+\RequirePackage {expl3} [2017/03/18]
 \ProvidesExplPackage
-  {primargs} {2015/03/07} {0.4} {Parsing arguments of primitives}
+  {primargs} {2017/04/05} {} {Parsing arguments of primitives}
 %    \end{macrocode}
 %
 %    \begin{macrocode}
 %<@@=primargs>
 %    \end{macrocode}
 %
-% \subsection{Helpers}
+% \subsection{Variables and helpers}
 %
 % \begin{macro}[aux]{\g_@@_code_tl}
 %   Used to contain temporary code.
@@ -245,6 +279,15 @@
 \tl_new:N \g_@@_code_tl
 %    \end{macrocode}
 % \end{macro}
+%
+% \begin{variable}[int]{\g_@@_file_name_tl, \g_@@_file_name_level_tl}
+%   Token list used to build a file name, one character at a time.
+%   Token list holding the level of nesting in quotes or braces.
+%    \begin{macrocode}
+\tl_new:N \g_@@_file_name_tl
+\tl_new:N \g_@@_file_name_level_tl
+%    \end{macrocode}
+% \end{variable}
 %
 % \begin{macro}[aux]{\@@_safe:}
 %   This function, which must be called in a group, cancels any
@@ -257,8 +300,8 @@
 \cs_new_protected_nopar:Npn \@@_safe:
   {
     \tex_afterassignment:D \tex_relax:D
-    \if_int_compare:w \tex_globaldefs:D < \c_zero
-      \tex_globaldefs:D = \c_zero
+    \if_int_compare:w 0 > \tex_globaldefs:D
+      \int_zero:N \tex_globaldefs:D
     \fi:
   }
 %    \end{macrocode}
@@ -659,15 +702,6 @@
 %
 % \subsection{Get file name}
 %
-% \begin{variable}[int]{\g_@@_file_name_tl, \g_@@_file_name_quotes_int}
-%   Token list used to build a file name, one character at a time.
-%   Integer counting quotes in the file name.
-%    \begin{macrocode}
-\tl_new:N \g_@@_file_name_tl
-\int_new:N \g_@@_file_name_quotes_int
-%    \end{macrocode}
-% \end{variable}
-%
 % \begin{macro}{\primargs_get_file_name:N}
 %   Empty the file name (globally), and build it one character at a time.
 %   The \meta{function} is added at the end of a group, started here.
@@ -690,11 +724,8 @@
                      \@@_read_x_token_file:N
       \tex_aftergroup:D #1
       \tl_gclear:N \g_@@_file_name_tl
-      \int_gzero:N \g_@@_file_name_quotes_int
-      \sys_if_engine_luatex:TF
-        { \primargs_remove_filler:N }
-        { \primargs_remove_optional_spaces:N }
-            \@@_get_file_name_test:
+      \tl_gset:Nn \g_@@_file_name_level_tl { 0 }
+      \primargs_remove_optional_spaces:N \@@_get_file_name_test:
   }
 %    \end{macrocode}
 % \end{macro}
@@ -741,7 +772,7 @@
 %    \begin{macrocode}
 \cs_new_protected_nopar:Npn \@@_get_file_name_space:
   {
-    \int_if_odd:nTF { \g_@@_file_name_quotes_int }
+    \int_if_odd:nTF { \g_@@_file_name_level_tl }
       {
         \tl_gput_right:Nn \g_@@_file_name_tl { ~ }
         \primargs_read_x_token:N \@@_get_file_name_test:
@@ -754,7 +785,8 @@
 % \begin{macro}[aux]{\@@_get_file_name_char:}
 % \begin{macro}[aux, EXP]
 %   {\@@_get_file_name_char_ii:w, \@@_get_file_name_char_iii:w}
-%   Check for a quote, which increments \cs{g_@@_file_name_quotes_int}.
+%   Check for a quote, which switches \cs{g_@@_file_name_level_tl}
+%   from $0$ to $1$ or back.
 %   With an explicit character, applying \tn{string} would give the
 %   character code.  Here, implicit characters have to be converted too,
 %   so we must work with the \tn{meaning}, which is two or three words
@@ -768,7 +800,10 @@
 \cs_new_protected_nopar:Npn \@@_get_file_name_char:
   {
     \token_if_eq_charcode:NNT " \g_primargs_token
-      { \int_gincr:N \g_@@_file_name_quotes_int }
+      {
+        \tl_set:Nx \g_@@_file_name_level_tl
+          { \int_eval:n { 1 - \g_@@_file_name_level_tl } }
+      }
     \tl_gput_right:Nx \g_@@_file_name_tl
       {
         \exp_after:wN \@@_get_file_name_char_ii:w
@@ -784,6 +819,94 @@
 % \end{macro}
 % \end{macro}
 %
+% \begin{macro}{\primargs_get_input_file_name:N}
+% \begin{macro}[aux]
+%   {
+%     \@@_get_input_file_name_first:,
+%     \@@_get_input_file_name_loop:, \@@_get_input_file_name_test:,
+%     \@@_get_input_file_name_brace:, \@@_get_input_file_name_aux:N
+%   }
+%   For most engines this is an alias of \cs{primargs_get_file_name:N}.
+%   In \LuaTeX{} we test for a catcode $1$ token (after a filler) then
+%   expand and collect tokens (turned to strings) one by one, counting
+%   begin-group and end-group tokens in \cs{g_@@_file_name_level_tl}.
+%   The control sequence \tn{par} is ignored.  After removing a filler
+%   or after expansion, \cs{g_primargs_token} cannot be \tn{outer} hence
+%   the tests are safe.  We use primitives to cope with outer macro
+%   hidden by \tn{noexpand} upon first expansion.
+%    \begin{macrocode}
+\sys_if_engine_luatex:TF
+  {
+    \cs_new_protected:Npn \primargs_get_input_file_name:N #1
+      {
+        \group_begin:
+          \@@_safe:
+          \tex_aftergroup:D #1
+          \tl_gclear:N \g_@@_file_name_tl
+          \tl_gset:Nn \g_@@_file_name_level_tl { 1 }
+          \primargs_remove_filler:N \@@_get_input_file_name_first:
+      }
+    \cs_new_protected_nopar:Npn \@@_get_input_file_name_first:
+      {
+        \token_if_eq_catcode:NNTF \g_primargs_token \c_group_begin_token
+          { \primargs_remove_token:N \@@_get_input_file_name_loop: }
+          { \primargs_get_file_name:N \group_end: }
+      }
+    \cs_new_protected:Npn \@@_get_input_file_name_loop:
+      { \primargs_read_x_token:N \@@_get_input_file_name_test: }
+    \cs_new_protected:Npn \@@_get_input_file_name_test:
+      {
+        \token_if_eq_catcode:NNTF \g_primargs_token \c_group_begin_token
+          {
+            \tl_gset:Nx \g_@@_file_name_level_tl
+              { \int_eval:n { \g_@@_file_name_level_tl + 1 } }
+            \primargs_remove_token:N \@@_get_input_file_name_brace:
+          }
+          {
+            \token_if_eq_catcode:NNTF \g_primargs_token \c_group_end_token
+              {
+                \tl_gset:Nx \g_@@_file_name_level_tl
+                  { \int_eval:n { \g_@@_file_name_level_tl - 1 } }
+                \int_compare:nNnTF { \g_@@_file_name_level_tl } > 0
+                  { \primargs_remove_token:N \@@_get_input_file_name_brace: }
+                  { \primargs_remove_token:N \@@_get_file_name_end: }
+              }
+              {
+                \token_if_eq_meaning:NNTF \g_primargs_token \c_space_token
+                  {
+                    \tl_gput_right:Nn \g_@@_file_name_tl { ~ }
+                    \primargs_remove_token:N \@@_get_input_file_name_loop:
+                  }
+                  { \exp_after:wN \@@_get_input_file_name_aux:N \exp_not:N }
+              }
+          }
+      }
+    \cs_new_protected:Npn \@@_get_input_file_name_brace:
+      {
+        \tl_gput_right:Nx \g_@@_file_name_tl
+          {
+            \exp_after:wN \@@_get_file_name_char_ii:w
+            \token_to_meaning:N \g_primargs_token
+            \q_stop
+          }
+        \@@_get_input_file_name_loop:
+      }
+    \cs_new_protected:Npn \@@_get_input_file_name_aux:N #1
+      {
+        \exp_after:wN \str_if_eq_x:nnT
+        \exp_after:wN { \token_to_str:N #1 } { \token_to_str:N \par }
+          { \use_none:nnn }
+        \tex_xdef:D \g_@@_file_name_tl
+          {
+            \g_@@_file_name_tl
+            \exp_after:wN \tl_to_str:n \exp_after:wN { \exp_not:N #1 }
+          }
+        \@@_get_input_file_name_loop:
+      }
+  }
+  { \cs_new_eq:NN \primargs_get_input_file_name:N \primargs_get_file_name:N }
+%    \end{macrocode}
+% \end{macro}
 %</package>
 %
 % \end{implementation}

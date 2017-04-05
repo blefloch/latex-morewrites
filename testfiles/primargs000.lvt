@@ -5,6 +5,9 @@
 \input regression-test
 
 \RequirePackage[check-declarations,log-functions]{expl3}
+\ExplSyntaxOn
+\deprecation_error:
+\ExplSyntaxOff
 
 \START
 \AUTHOR{Bruno Le Floch}

@@ -12,23 +12,30 @@
 
 \OMIT
 \cs_generate_variant:Nn \tl_if_eq:nnF { o , f }
-\cs_new:Npn \test:nw #1#2 \l_tmpa_int
+\cs_new:Npn \test:nw #1#2 \l_tmpa_int %% best non-expandable delimiter I could think of, other than \scan_stop:
   {
     \TYPE { \exp_not:n { | #1 | #2 | } }
     \tl_if_eq:onF { \tl_to_str:n {#1} } {#1} { \ERROR }
   }
 \group_begin:
   \char_set_lccode:nn { `\  } { `\* }
-  \tl_to_lowercase:n { \tl_const:Nn \c_test_space_tl { * } }
+  \tl_to_lowercase:n { \tl_const:Nn \c_test_space_tl { ~ } }
 \group_end:
 \TIMO
 
 \TEST { Get~file~name }
   {
-    \primargs_get_file_name:N \test:nw \tl_to_str:n { "abc ~ def" ~ ghi } \l_tmpa_int
+    \primargs_get_file_name:N \test:nw \tl_to_str:n { "abc } ~ def" ~ ghi \l_tmpa_int
+    \primargs_get_input_file_name:N \test:nw \tl_to_str:n { "abc } ~ def" ~ ghi \l_tmpa_int
     \primargs_get_file_name:N \test:nw abc \c_test_space_tl def \l_tmpa_int
+    \primargs_get_input_file_name:N \test:nw abc \c_test_space_tl def \l_tmpa_int
     \primargs_get_file_name:N \test:nw \undefined \scan_stop: \l_tmpa_int
-    { \primargs_get_file_name:N \test:nw === } { # $ & ^ ... \l_tmpa_int }
+    \primargs_get_input_file_name:N \test:nw \undefined \scan_stop: \l_tmpa_int
+    { \primargs_get_file_name:N \test:nw === } { # $ & ^ ... \l_tmpa_int } %$
+    { \primargs_get_input_file_name:N \test:nw === } { # $ & ^ ... \l_tmpa_int } %$
+    \primargs_get_file_name:N \test:nw { abc ~ \l_tmpa_int \if_false: } \fi:
+    \primargs_get_input_file_name:N \test:nw \scan_stop: { abc ~ } \l_tmpa_int
+    \primargs_get_input_file_name:N \test:nw { a b { c d } e f { g h } i j } \l_tmpa_int
   }
 
 \OMIT
