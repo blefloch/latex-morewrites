@@ -1,0 +1,12 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Author: Bruno Le Floch
+(morewrites.sty
+Defining \morewritessetup on line ...
+Defining message morewrites/luatex on line ...
+*************************************************
+* morewrites warning: "luatex"
+* 
+* The morewrites package is unnecessary in LuaTeX.
+*************************************************
+)

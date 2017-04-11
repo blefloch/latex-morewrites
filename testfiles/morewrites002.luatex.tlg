@@ -7,16 +7,9 @@ TEST 1: Change temporary file
 (tmp.tmp
 This is in `tmp.tmp'
 Some more in `tmp.tmp'
-)  No error yet! 
-*************************************************
-* morewrites warning: "file-exists"
-* 
-* File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
-*************************************************
-[1
+)  No error yet!  [1
 \TYPE {Log}
-] (tmp.tmp.mw)
- (tmp.tmp
+] (tmp.tmp
 This is in `tmp.tmp'
 Some more in `tmp.tmp'
 ) (tmp.tmp.mw)
@@ -24,7 +17,7 @@ Some more in `tmp.tmp'
 ============================================================
 TEST 2: Change newlinechar
 ============================================================
-\g__file_internal_ior=\read2
+\g__file_internal_ior=\read1
 |Foo|
 |bar*ba
 z|

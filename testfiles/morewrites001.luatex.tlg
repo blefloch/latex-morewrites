@@ -4,7 +4,7 @@ Author: Bruno Le Floch
 ============================================================
 TEST 1: Immediate writing
 ============================================================
-\testwrite=\write19
+\testwrite=\write3
 (tmp.tmp
 This is written to the file \par `tmp.tmp'.
 Trying out \noexpand ...
@@ -18,15 +18,15 @@ File tmp.tmp again.
 ============================================================
 TEST 2: Delayed writing
 ============================================================
-\firstwrite=\write20
-\secondwrite=\write21
-\thirdwrite=\write22
-[1] (.mw)
+\firstwrite=\write4
+\secondwrite=\write5
+\thirdwrite=\write6
+[1
 \TYPE {Third!}
-[1] (.mw)
+] [1
 \TYPE {First again.}
 \TYPE {Second again.}
-(tmp.tmp
+] (tmp.tmp
 First!
 ) (tmp2.tmp
 Second!
@@ -37,22 +37,22 @@ Third again.
 ============================================================
 TEST 3: Many write streams in parallel
 ============================================================
-\Aw=\write23
-\Bw=\write24
-\Cw=\write25
-\Dw=\write26
-\Ew=\write27
-\Fw=\write28
-\Gw=\write29
-\Hw=\write30
-\Iw=\write31
-\Jw=\write32
-\Kw=\write33
-\Lw=\write34
-\Mw=\write35
-\Nw=\write36
-\Ow=\write37
-\Pw=\write38
+\Aw=\write7
+\Bw=\write8
+\Cw=\write9
+\Dw=\write10
+\Ew=\write11
+\Fw=\write12
+\Gw=\write13
+\Hw=\write14
+\Iw=\write15
+\Jw=\write16
+\Kw=\write17
+\Lw=\write19
+\Mw=\write19
+\Nw=\write20
+\Ow=\write21
+\Pw=\write22
 (A.tmp
 A
 ) (B.tmp
@@ -75,9 +75,8 @@ I
 J
 ) (K.tmp
 K
-) (L.tmp
+) (L.tmp) (M.tmp
 L
-) (M.tmp
 M
 ) (N.tmp
 N
