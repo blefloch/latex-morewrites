@@ -31,8 +31,6 @@
 % \maketitle
 % \tableofcontents
 %
-% ^^A todo: copyright years of test files
-%
 % \begin{documentation}
 %
 % \section{\pkg{morewrites} documentation}
@@ -79,6 +77,16 @@
 %     \cs{morewritessetup} \Arg{key--value list}
 %   \end{syntax}
 %   Sets the options described by the \meta{key--value list}.
+% \end{function}
+%
+% \begin{function}[added = 2017-04-10]{allocate}
+%   \begin{syntax}
+%     \cs{morewritessetup} |{| |allocate| |=| \meta{integer} |}|
+%   \end{syntax}
+%   Sets to (at least) \meta{integer} the number of \tn{write} streams
+%   allocated to the inner workings of \pkg{morewrites}.  By default
+%   this is zero but increasing this value may speed up
+%   \pkg{morewrites}.
 % \end{function}
 %
 % \begin{function}[added = 2014-07-26, updated = 2015-08-01]{file}
@@ -316,9 +324,9 @@
 %   not \tn{outer}.  These copies will not be affected by redefinitions
 %   of \tn{newread} and \tn{newwrite} later on.
 %    \begin{macrocode}
-\exp_args:NNf \cs_new_protected_nopar:Npn \@@_tex_newread:N
+\exp_args:NNf \cs_new_protected:Npn \@@_tex_newread:N
   { \exp_args:NNc \exp_after:wN \exp_stop_f: { newread } }
-\exp_args:NNf \cs_new_protected_nopar:Npn \@@_tex_newwrite:N
+\exp_args:NNf \cs_new_protected:Npn \@@_tex_newwrite:N
   { \exp_args:NNc \exp_after:wN \exp_stop_f: { newwrite } }
 %    \end{macrocode}
 % \end{macro}
@@ -335,8 +343,6 @@
 % \end{macro}
 %
 % \subsubsection{Variables}
-%
-% ^^A todo: order alphabetically
 %
 % \begin{variable}{\l_@@_internal_tl}
 %   Used for temporary scratch purposes.
@@ -449,9 +455,9 @@
 %
 % \begin{variable}[aux]{\g_@@_tmp_file_tl, \g_@@_tmp_file_bool}
 %   Temporary file used to do the correct expansion for each \tn{write}.
-%   Boolean indicating whether that file has been used already: after
-%   that it is too late to change the file name.  Before using a file,
-%   the \pkg{morewrites} package now checkes it is empty, so as to avoid
+%   Boolean indicating whether we have already checked that the file can
+%   be used by \pkg{morewrites}: before using a file, the
+%   \pkg{morewrites} package now checks it is empty, so as to avoid
 %   clobbering user data.
 %    \begin{macrocode}
 \tl_new:N \g_@@_tmp_file_tl
@@ -478,9 +484,9 @@
 % \subsubsection{Helpers for auxiliary file}
 %
 % \begin{macro}{\@@_set_file:n}
-%   Sets \cs{g_@@_tmp_file_tl} to the given value
-%   (\cs{c_sys_jobname_str}|.mw| by default).  This is only allowed if
-%   the file has not been used already.
+%   Sets \cs{g_@@_tmp_file_tl} to the given value (initially
+%   \cs{c_sys_jobname_str}|.mw|).  Mark that the file has not been
+%   checked.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_set_file:n #1
   {
@@ -492,9 +498,10 @@
 %
 % \begin{macro}[aux]{\@@_empty_file:n}
 %   Empties the file \cs{g_@@_tmp_file_tl} by opening it and closing it
-%   right away.  This ensures that the file used by \pkg{morewrites} is
-%   left empty.  We do this every time the auxiliary file is used,
-%   in case that run ends with an error mid-document.
+%   right away.  This is used when performing \tn{immediate}
+%   \tn{openout}.  It is also used to ensure the file used by
+%   \pkg{morewrites} is left empty.  We do this every time the auxiliary
+%   file is used, in case that run ends with an error mid-document.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_empty_file:n #1
   {
@@ -508,7 +515,7 @@
 %
 % \begin{macro}[aux,TF]{\@@_if_file_trivial:n}
 %   True if the file does not exist, or if it is empty.
-%   Only the TF variant is defined.  We set
+%   Only the \texttt{TF} variant is defined.  We set
 %   \cs{@@_tmp:w} to \cs{prg_return_true:} or \cs{prg_return_false:}
 %   within the group and use it after cleaning up.  The first
 %   \texttt{eof} test is \texttt{true} if the file does not exist.
@@ -543,7 +550,7 @@
 %   If not, try the file name obtained by adding |.mw|.
 %   This avoids clobbering files that the user would not want to lose.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_chk_file:
+\cs_new_protected:Npn \@@_chk_file:
   {
     \@@_if_file_trivial:nTF { \g_@@_tmp_file_tl }
       { \bool_gset_true:N \g_@@_tmp_file_bool }
@@ -587,12 +594,10 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% ^^A todo: why is that needed/better than \primargs_get_number:N?  Speed?
 % \begin{macro}[aux]{\@@_get_user:n}
-%   A poor man's version of \cs{primargs_get_number:N}.  Finds an
-%   \meta{integer} as accepted by \TeX{} as the right-hand side of an
-%   assignment, then runs |#1|.  The user stream found in this way is
-%   stored in \cs{l_@@_user_int}.
+%   \pkg{primargs} commands only take \texttt{N}-type arguments, but we
+%   often need to find an integer, save it in \cs{l_@@_user_int}, and
+%   run some code |#1|.  This is analogous to \cs{primargs_get_number:N}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_get_user:n #1
   {
@@ -703,7 +708,7 @@
 %   the new mapping from user stream to \TeX{} stream into
 %   \cs{g_@@_read_prop}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_openin:w
+\cs_new_protected:Npn \@@_openin:w
   {
     \@@_get_user:n
       {
@@ -716,7 +721,7 @@
               }
             \prop_gput:NVV \g_@@_read_prop \l_@@_user_int \l_@@_tstr_tl
           }
-        \@@_tex_openin:w \l_@@_tstr_tl
+        \@@_tex_openin:w \l_@@_tstr_tl \exp_stop_f:
       }
   }
 %    \end{macrocode}
@@ -730,20 +735,20 @@
 %   primitive will simply read user input from the terminal as \TeX{}
 %   would do.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_read:w
+\cs_new_protected:Npn \@@_read:w
   {
     \@@_get_user:n
       {
         \@@_user_to_tstr:NTF \g_@@_read_prop { } { }
-        \@@_tex_read:w \l_@@_tstr_tl
+        \@@_tex_read:w \l_@@_tstr_tl \exp_stop_f:
       }
   }
-\cs_new_protected_nopar:Npn \@@_readline:w
+\cs_new_protected:Npn \@@_readline:w
   {
     \@@_get_user:n
       {
         \@@_user_to_tstr:NTF \g_@@_read_prop { } { }
-        \@@_tex_readline:w \l_@@_tstr_tl
+        \@@_tex_readline:w \l_@@_tstr_tl \exp_stop_f:
       }
   }
 %    \end{macrocode}
@@ -756,7 +761,7 @@
 %   streams.  To avoid useless work, only do this if there was indeed a
 %   non-trivial mapping between user and \TeX{} stream.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_closein:w
+\cs_new_protected:Npn \@@_closein:w
   {
     \@@_get_user:n
       {
@@ -766,7 +771,7 @@
             \prop_gremove:NV \g_@@_read_prop \l_@@_user_int
             \seq_gput_left:NV \g_@@_read_seq \l_@@_tstr_tl
           }
-        \@@_tex_closein:w \l_@@_tstr_tl
+        \@@_tex_closein:w \l_@@_tstr_tl \exp_stop_f:
       }
   }
 %    \end{macrocode}
@@ -829,9 +834,9 @@
 %   too much expansion for some nonsensical uses of \tn{noexpand} after
 %   \tn{immediate}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_immediate:w
+\cs_new_protected:Npn \@@_immediate:w
   { \primargs_read_x_token:N \@@_immediate_auxii: }
-\cs_new_protected_nopar:Npn \@@_immediate_auxii:
+\cs_new_protected:Npn \@@_immediate_auxii:
   {
     \token_if_eq_meaning:NNTF \g_primargs_token \s_@@
       { \@@_immediate_auxiii:N }
@@ -863,18 +868,18 @@
 %   because that is the only safe way to obtain new lines.  We do not
 %   remove the stream/file pair from \cs{g_@@_write_file_prop}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_closeout:w
+\cs_new_protected:Npn \@@_closeout:w
   {
     \s_@@
     \use_i:nn
       { \@@_get_user:n { \@@_closeout_later: } }
       { \@@_get_user:n { \@@_closeout_now: } }
   }
-\cs_new_protected_nopar:Npn \@@_closeout_now:
+\cs_new_protected:Npn \@@_closeout_now:
   {
     \@@_user_to_tstr:NTF \g_@@_write_prop
       {
-        \@@_tex_immediate:w \@@_tex_closeout:w \l_@@_tstr_tl
+        \@@_tex_immediate:w \@@_tex_closeout:w \l_@@_tstr_tl \exp_stop_f:
         \int_compare:nNnF { \l_@@_tstr_tl } = { \l_@@_user_int }
           {
             \prop_gremove:NV \g_@@_write_prop \l_@@_user_int
@@ -906,20 +911,20 @@
 %   that \TeX{} would have written, and empty the file by opening and
 %   closing it (actually that's done automatically by the primitive).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_openout:w
+\cs_new_protected:Npn \@@_openout:w
   {
     \s_@@
     \use_i:nn
       { \@@_get_user:n { \@@_openout_later:w } }
       { \@@_get_user:n { \@@_equals_file:N \@@_openout_now:n } }
   }
-\cs_new_protected_nopar:Npn \@@_openout_now:n #1
+\cs_new_protected:Npn \@@_openout_now:n #1
   {
     \@@_closeout_now:
     \seq_pop:NNTF \g_@@_write_seq \l_@@_tstr_tl
       {
         \prop_gput:NVV \g_@@_write_prop \l_@@_user_int \l_@@_tstr_tl
-        \@@_tex_immediate:w \@@_tex_openout:w \l_@@_tstr_tl
+        \@@_tex_immediate:w \@@_tex_openout:w \l_@@_tstr_tl \exp_stop_f:
           = \tl_to_str:n {#1} \scan_stop:
       }
       {
@@ -932,24 +937,23 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% ^^A todo: sprinkle some \exp_stop_f: after \l_@@_tstr_tl
 % \begin{macro}[aux]{\@@_write:w, \@@_write_now:w, \@@_write_now:n}
 %   In the immediate case we use \cs{@@_write_now_open:n} if the stream
 %   points to a token list, and otherwise use the primitive, with the
 %   dummy stream $16$ if closed (the text is then written to the
 %   terminal).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_write:w
+\cs_new_protected:Npn \@@_write:w
   {
     \s_@@
     \use_i:nn
       { \@@_get_user:n { \@@_write_later:w } }
       { \@@_get_user:n { \@@_write_now:w } }
   }
-\cs_new_protected_nopar:Npn \@@_write_now:w
+\cs_new_protected:Npn \@@_write_now:w
   {
     \@@_user_to_tstr:NTF \g_@@_write_prop
-      { \@@_tex_immediate:w \@@_tex_write:w \l_@@_tstr_tl }
+      { \@@_tex_immediate:w \@@_tex_write:w \l_@@_tstr_tl \exp_stop_f: }
       { \primargs_get_general_text:N \@@_write_now:n }
   }
 \cs_new_protected:Npn \@@_write_now:n
@@ -961,8 +965,6 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% ^^A todo: double-check the logic of the temporary file
-% ^^A todo: double-check the temporary file is always emptied, or make it start with a recognizable string
 % \begin{macro}[aux]{\@@_write_now_open:n}
 % \begin{macro}[aux]{\@@_write_now_loop:}
 %   Only \tn{write} itself can emulate how \tn{write} expands tokens,
@@ -997,7 +999,7 @@
     \group_end:
     \@@_empty_file:n { \g_@@_tmp_file_tl }
   }
-\cs_new_protected_nopar:Npn \@@_write_now_loop:
+\cs_new_protected:Npn \@@_write_now_loop:
   {
     \etex_readline:D \g_@@_ior to \l_@@_internal_tl
     \ior_if_eof:NF \g_@@_ior
@@ -1061,7 +1063,7 @@
 %   If the user stream is a \TeX{} stream use the primitive, otherwise
 %   find a file name and call \cs{@@_openout_now:n} later.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_openout_later:w
+\cs_new_protected:Npn \@@_openout_later:w
   {
     \int_compare:nNnTF \l_@@_user_int < { 19 }
       { \@@_tex_openout:w \l_@@_user_int }
@@ -1072,13 +1074,12 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% ^^A todo: remove _nopar everywhere
 % \begin{macro}[aux]{\@@_write_later:w, \@@_write_later:n, \@@_write_later_aux:n}
 %   For \TeX{} streams use the primitive, otherwise find a general text
 %   and save it for later; the auxiliary is very similar to
 %   \cs{@@_write_now:w}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_write_later:w
+\cs_new_protected:Npn \@@_write_later:w
   {
     \int_compare:nNnTF \l_@@_user_int < { 19 }
       { \@@_tex_write:w \l_@@_user_int }
@@ -1089,7 +1090,7 @@
 \cs_new_protected:Npn \@@_write_later_aux:n
   {
     \@@_user_to_tstr:NTF \g_@@_write_prop
-      { \@@_tex_immediate:w \@@_tex_write:w \l_@@_tstr_tl }
+      { \@@_tex_immediate:w \@@_tex_write:w \l_@@_tstr_tl \exp_stop_f: }
       { \@@_write_now:n }
   }
 %    \end{macrocode}
@@ -1116,7 +1117,7 @@
 %   \cs{g_@@_iow} (after making sure we are allowed to alter the
 %   auxiliary file).
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_before_shipout:
+\cs_new_protected:Npn \@@_before_shipout:
   {
     \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
     \@@_tex_immediate:w \@@_tex_openout:w
@@ -1144,7 +1145,7 @@
 %   operations may reuse the file, so we have to fully parse the file
 %   before moving on.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_after_shipout:
+\cs_new_protected:Npn \@@_after_shipout:
   {
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
@@ -1186,20 +1187,20 @@
 %   additional \tn{aftergroup} is needed to reach a point where we can
 %   use the box saved in \cs{g_@@_shipout_box}.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_shipout:w
+\cs_new_protected:Npn \@@_shipout:w
   {
     \int_gset_eq:NN \g_@@_group_level_int \etex_currentgrouplevel:D
     \tex_afterassignment:D \@@_shipout_i:
     \tex_global:D \tex_setbox:D \g_@@_shipout_box
   }
-\cs_new_protected_nopar:Npn \@@_shipout_i:
+\cs_new_protected:Npn \@@_shipout_i:
   {
     \int_compare:nNnTF { \g_@@_group_level_int }
                      = { \etex_currentgrouplevel:D }
       { \@@_shipout_ii: }
       { \tex_aftergroup:D \@@_shipout_ii: }
   }
-\cs_new_protected_nopar:Npn \@@_shipout_ii:
+\cs_new_protected:Npn \@@_shipout_ii:
   {
     \@@_before_shipout:
     \@@_tex_shipout:w \tex_box:D \g_@@_shipout_box
@@ -1259,7 +1260,7 @@
 % \begin{macro}[aux]{\@@_close_all:}
 %   At the end of the document, close all the files.
 %    \begin{macrocode}
-\cs_new_protected_nopar:Npn \@@_close_all:
+\cs_new_protected:Npn \@@_close_all:
   {
     \prop_map_function:NN \g_@@_write_prop
       \@@_closeout_now:nn
@@ -1340,6 +1341,27 @@
 %    \end{macrocode}
 % \end{macro}
 %
+% \begin{macro}[aux]{\@@_allocate:n}
+%   Raise to |#1| the number of \tn{write} streams allocated to \pkg{morewrites}.
+%    \begin{macrocode}
+\cs_new_protected:Npn \@@_allocate:n #1
+  {
+    \prg_replicate:nn
+      {
+        \int_max:nn { 0 }
+          {
+            (#1) - \seq_count:N \g_@@_write_seq
+            - \prop_count:N \g_@@_write_prop
+          }
+      }
+      {
+        \@@_tex_newwrite:N \l_@@_tstr_token
+        \seq_put_right:NV \g_@@_write_seq \l_@@_tstr_token
+      }
+  }
+%    \end{macrocode}
+% \end{macro}
+%
 % \subsection{User commands and keys}
 %
 % \begin{macro}[added = 2014-07-26]{\morewritessetup}
@@ -1356,6 +1378,7 @@
 %    \begin{macrocode}
 \keys_define:nn { @@ }
   {
+    allocate .code:n = \@@_allocate:n {#1} ,
     file .code:n = \@@_set_file:n {#1} ,
     file .initial:n = \c_sys_jobname_str .mw
   }
