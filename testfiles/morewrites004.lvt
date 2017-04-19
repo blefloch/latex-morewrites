@@ -1,0 +1,25 @@
+%
+% Copyright (C) 2017 `morewrites' maintainer
+%
+
+\input regression-test
+\documentclass{article}
+\usepackage{morewrites}
+
+\ExplSyntaxOn
+\sys_if_engine_luatex:T { \newread\tmp }
+\ExplSyntaxOff
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\TEST { newread }
+  {
+    \newread\test
+    \ifeof\test\TRUE\else\FALSE\fi
+    \openin\test=\jobname.lvt
+    \ifeof\test\TRUE\else\FALSE\fi
+    \closein\test
+  }
+
+\END
