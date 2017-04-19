@@ -35,13 +35,10 @@
 %
 % \section{\pkg{morewrites} documentation}
 %
-% This \LaTeX{} package is a solution for the errors
-% \begin{itemize}
-% \item \enquote{no room for a new \tn{write}},
-% \item \enquote{no room for a new \tn{read}},
-% \end{itemize}
-% which occur when a document reserves too many streams to write data
-% to various auxiliary files or read from them.
+% This \LaTeX{} package is a solution for the error
+% \enquote{no room for a new \tn{write}},
+% which occurs when a document reserves too many streams to write data
+% to various auxiliary files.
 % It is in principle possible to rewrite other packages so that they
 % are less greedy on resources, but that is often unpractical for the
 % end-user.  Instead, \pkg{morewrites} hooks at the lowest level (\TeX{}
@@ -49,7 +46,7 @@
 %
 % Simply add the line |\usepackage{morewrites}| near the beginning of
 % your \LaTeX{} file's preamble: the \enquote{no room for a new
-% \tn{write}/\tn{read}} error should vanish.  If it does not, please
+% \tn{write}} error should vanish.  If it does not, please
 % contact me so that I can correct the problem.  This can be done by
 % posting a question on the \url{tex.stackexchange.com} question and
 % answers website, logging an issue on GitHub
@@ -101,15 +98,14 @@
 %   remaining.
 % \end{function}
 %
-% \begin{function}[updated = 2015-08-01]{\newread, \newwrite}
-%   These macros are redefined by \pkg{morewrites}.
-%   Since \pkg{morewrites} allows more than~$16$ read/write streams, it
-%   removes the corresponding restrictions in \tn{newread} and
-%   \tn{newwrite}.
+% \begin{function}[updated = 2015-08-01]{\newwrite}
+%   This macro is redefined by \pkg{morewrites}.  Since \pkg{morewrites}
+%   allows more than~$16$ write streams, it removes the corresponding
+%   restrictions in \tn{newwrite}.
 %   \begin{texnote}
-%     The revised \tn{newread} and \tn{newwrite} allocate stream
-%     numbers starting at $19$.  This might break some
-%     code that expects stream numbers to be less than $16$.
+%     The revised \tn{newwrite} allocate stream numbers starting at
+%     $19$.  This might break some code that expects stream numbers to
+%     be less than $16$.
 %   \end{texnote}
 % \end{function}
 %
@@ -119,10 +115,10 @@
 %   appropriate action.
 % \end{function}
 %
-% \begin{function}[updated = 2015-08-01]{\openin, \read, \readline, \closein, \openout, \write, \closeout}
-%   These seven primitives are altered by \pkg{morewrites} so that they
+% \begin{function}[updated = 2015-08-01]{\openout, \write, \closeout}
+%   These three primitives are altered by \pkg{morewrites} so that they
 %   accept stream numbers outside the normal range $[0,15]$ and
-%   open/read/write/close files as appropriate.
+%   open/write/close files as appropriate.
 %   \begin{texnote}
 %     System calls using \tn{write}|18| are detected and forwarded to the engine.
 %   \end{texnote}
@@ -180,12 +176,14 @@
 % \subsection{Overview of relevant \TeX{} facts}
 %
 % The aim of the \pkg{morewrites} package is to lift \TeX{}'s
-% restriction of only having $16$ files open for reading at the same
-% time, and the same restriction for writing.  This requires patching
-% the primitives \tn{openin}, \tn{read}, \tn{readline}, \tn{closein},
-% \tn{immediate}, \tn{openout}, \tn{write}, \tn{closeout}, and
-% \tn{shipout}, and the macros \tn{newread} and \tn{newwrite} present
-% in plain \TeX{} and \LaTeXe{}.
+% restriction of only having $16$ files open for writing at the same
+% time.  This requires patching the primitives \tn{immediate},
+% \tn{openout}, \tn{write}, \tn{closeout}, and \tn{shipout}, and the
+% macro \tn{newwrite} present in plain \TeX{} and \LaTeXe{}.
+%
+% Note that doing the same for \tn{read} streams is impossible due to
+% the \tn{ifeof} primitive: that primitive cannot be replaced by a macro
+% without breaking nesting of conditionals.
 %
 % The \pkg{morewrites} package should be loaded as early as possible, so
 % that any package loaded later uses the redefined macros instead of the
@@ -194,27 +192,21 @@
 % \pkg{morewrites}, and their interaction must be carefully monitored.
 %
 % Henceforth, ``\TeX{} stream'' will refer to stream numbers in the
-% range $[0,15]$ provided to \TeX{}'s read/write primitives, while
+% range $[0,15]$ provided to \TeX{}'s write primitives, while
 % ``user stream'' will denote stream numbers in $[0,15]\cup[19,\infty)$
-% manipulated by the redefined \tn{openin}, \tn{read}, \tn{readline},
-% \tn{closein}, \tn{openout}, \tn{write}, \tn{closeout}, \tn{newread},
+% manipulated by the redefined \tn{openout}, \tn{write}, \tn{closeout},
 % and \tn{newwrite}.  A user stream in $[0,15]$ (reserved by \LaTeXe{}
 % or allocated by \pkg{expl3}) is mapped to the same \TeX{} stream
 % number, while a user stream in $[19,\infty)$ is mapped to a \TeX{}
-% stream according to the property lists (with integer keys and values)
-% \cs{l_@@_read_prop} and \cs{l_@@_write_prop}.  Stream numbers $16$,
+% stream according to the property list (with integer keys and values)
+% \cs{l_@@_write_prop}.  Stream numbers $16$,
 % $17$ and $18$ are unused because \tn{write}16 is often used to write
 % to the terminal, and \tn{write}18 sends its argument to a shell.
 %
-% The primitives \tn{openin}, \tn{read}, \tn{readline}, \tn{closein},
-% \tn{openout}, \tn{write}, and \tn{closeout} expect to be followed by
-% an \meta{integer}, normally in the range $[0,15]$, then some further
-% arguments.
+% The primitives \tn{openout}, \tn{write}, and \tn{closeout} expect to
+% be followed by an \meta{integer}, normally in the range $[0,15]$, then
+% some further arguments.
 % \begin{quote}
-%   \tn{openin}     \meta{integer} \meta{equals} \meta{file name}        \\
-%   \tn{read}       \meta{integer} \texttt{to}   \meta{control sequence} \\
-%   \tn{readline}   \meta{integer} \texttt{to}   \meta{control sequence} \\
-%   \tn{closein}    \meta{integer}                                       \\
 %   \tn{openout}    \meta{integer} \meta{equals} \meta{file name}        \\
 %   \tn{write}      \meta{integer} \meta{filler} \meta{general text}     \\
 %   \tn{closeout}   \meta{integer}
@@ -246,29 +238,25 @@
 %   assignment of the form \tn{toks}|0=|\meta{general text}.
 % \end{itemize}
 %
-% The \pkg{morewrites} package redefines these seven control sequences
+% The \pkg{morewrites} package redefines these three control sequences
 % to expect a user stream number rather than a \TeX{} stream number as
 % the \meta{integer}, then map such a user stream to a \TeX{} stream to
 % call the primitive with the appropriate argument.  The primitive
 % \tn{immediate} must also be redefined to detect \tn{openout},
 % \tn{write}, and \tn{closeout} and make them immediate, while still
 % working with other primitives that can be made immediate.  Finally,
-% \tn{newread} and \tn{newwrite} must be patched to allocate stream
-% numbers beyond $15$.
+% \tn{newwrite} must be patched to allocate stream numbers beyond $15$.
 %
 % A few comments on the behaviour of primitives concerning the
-% \meta{integer} (\TeX{} stream).  The primitives \tn{openin} and
-% \tn{openout} trigger errors if the \meta{integer} is not in $[0,15]$.
-% The primitives \tn{read} and \tn{readline} prompt the user for input
-% if the \TeX{} stream is closed or beyond $[0,15]$, with no explicit
-% prompt if the stream number is negative.  The primitive \tn{write}
-% outputs to the log if the \meta{integer} is negative, and to the
-% terminal if the \TeX{} stream is closed or greater than $15$, with the
-% exception of \tn{write}|18| which runs code in a shell.  The
-% primitives \tn{closein} and \tn{closeout} trigger errors if the
-% \meta{integer} is not in $[0,15]$ and silently do nothing if the
-% \TeX{} stream is not open, with the exception of \tn{closeout}|18|
-% which causes a segfault at least in some versions.
+% \meta{integer} (\TeX{} stream).  The \tn{openout} primitive trigger
+% errors if the \meta{integer} is not in $[0,15]$.  The primitive
+% \tn{write} outputs to the log if the \meta{integer} is negative, and
+% to the terminal if the \TeX{} stream is closed or greater than $15$,
+% with the exception of \tn{write}|18| which runs code in a shell.  The
+% \tn{closeout} primitive triggers an error if the \meta{integer} is not
+% in $[0,15]$ and silently do nothing if the \TeX{} stream is not open,
+% with the exception of \tn{closeout}|18| which causes a segfault at
+% least in some versions.
 %
 % By default, \tn{openout}, \tn{write} and \tn{closeout} are recorded in
 % a whatsit node in the current list, and will be performed when the box
@@ -276,19 +264,19 @@
 % \emph{i.e.}, at \enquote{shipout} time.  In particular, the
 % \meta{general text} for the \tn{write} primitive is expanded at
 % shipout time.  This behaviour may be modified by putting
-% \tn{immediate} before any of these three primitives to force
-% \TeX{} to perform the action immediately instead of recording it in a
-% whatsit node.
+% \tn{immediate} before any of these three primitives to force \TeX{} to
+% perform the action immediately instead of recording it in a whatsit
+% node.
 %
 % Since the \tn{openout}, \tn{write}, and \tn{closeout} primitives
 % operate at \tn{shipout} time, we will have to hook into this primitive
 % too.  It expects to be followed by a box specification, for instance
 % \tn{box}\meta{integer} or \tn{hbox}\Arg{material to typeset}.
 %
-% Finally, the \tn{newread} and \tn{newwrite} macros expect one token as
-% their argument, and define this token (with \tn{chardef}) to be an
-% integer corresponding to the first available (\TeX{}) read/write
-% stream.  This must be extended to allocate higher (user) streams.
+% Finally, the \tn{newwrite} macro expects one token as its argument,
+% and defines this token (with \tn{chardef}) to be an integer
+% corresponding to the first available (\TeX{}) write stream.  This must
+% be extended to allocate higher (user) streams.
 %
 % \subsection{Preliminaries}
 %
@@ -300,32 +288,22 @@
 %     \@@_tex_openout:w   ,
 %     \@@_tex_write:w     ,
 %     \@@_tex_closeout:w  ,
-%     \@@_tex_openin:w    ,
-%     \@@_tex_read:w      ,
-%     \@@_tex_readline:w  ,
-%     \@@_tex_closein:w   ,
 %   }
-%   Aliases for the read- and write-related primitives, to avoid
+%   Aliases for the write-related primitives, to avoid
 %   having |:D| throughout the code.
 %    \begin{macrocode}
 \cs_new_eq:NN \@@_tex_immediate:w \tex_immediate:D
 \cs_new_eq:NN \@@_tex_openout:w   \tex_openout:D
 \cs_new_eq:NN \@@_tex_write:w     \tex_write:D
 \cs_new_eq:NN \@@_tex_closeout:w  \tex_closeout:D
-\cs_new_eq:NN \@@_tex_openin:w    \tex_openin:D
-\cs_new_eq:NN \@@_tex_read:w      \tex_read:D
-\cs_new_eq:NN \@@_tex_readline:w  \etex_readline:D
-\cs_new_eq:NN \@@_tex_closein:w   \tex_closein:D
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_tex_newread:N, \@@_tex_newwrite:N}
-%   Copy \tn{newread} and \tn{newwrite} but making sure that they are
-%   not \tn{outer}.  These copies will not be affected by redefinitions
-%   of \tn{newread} and \tn{newwrite} later on.
+% \begin{macro}[aux]{\@@_tex_newwrite:N}
+%   Copy \tn{newwrite} but making sure that it is
+%   not \tn{outer}.  This copy will not be affected by redefinitions
+%   of \tn{newwrite} later on.
 %    \begin{macrocode}
-\exp_args:NNf \cs_new_protected:Npn \@@_tex_newread:N
-  { \exp_args:NNc \exp_after:wN \exp_stop_f: { newread } }
 \exp_args:NNf \cs_new_protected:Npn \@@_tex_newwrite:N
   { \exp_args:NNc \exp_after:wN \exp_stop_f: { newwrite } }
 %    \end{macrocode}
@@ -377,19 +355,17 @@
 % \end{variable}
 %
 % ^^A todo: populate \g_@@_write_seq because we don't use \newwrite; this should be done in \morewritessetup
-% \begin{variable}[aux]{\g_@@_read_seq, \g_@@_write_seq}
+% \begin{variable}[aux]{\g_@@_write_seq}
 %   Keep track of \TeX{} stream numbers managed by \pkg{morewrites} that
 %   are currently not in use as user streams.
 %    \begin{macrocode}
-\seq_new:N \g_@@_read_seq
 \seq_new:N \g_@@_write_seq
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_read_prop, \g_@@_write_prop}
+% \begin{variable}[aux]{\g_@@_write_prop}
 %   Map user streams to \TeX{} streams.
 %    \begin{macrocode}
-\prop_new:N \g_@@_read_prop
 \prop_new:N \g_@@_write_prop
 %    \end{macrocode}
 % \end{variable}
@@ -421,8 +397,7 @@
 % \end{variable}
 %
 % \begin{variable}[aux]{\l_@@_tstr_token}
-%   This token is given as an argument to \cs{@@_tex_newread:N} or
-%   \cs{@@_tex_newwrite:N}.
+%   This token is given as an argument to \cs{@@_tex_newwrite:N}.
 %    \begin{macrocode}
 \cs_new_eq:NN \l_@@_tstr_token ?
 %    \end{macrocode}
@@ -612,11 +587,10 @@
 %   The goal is to go from a user stream \cs{l_@@_user_int} to a \TeX{}
 %   stream \cs{l_@@_tstr_tl} (it defaults to the user stream).  Streams
 %   less than $19$ are not managed by \pkg{morewrites}: actual \TeX{}
-%   streams in $[0,15]$; negative for writing to \texttt{log} and
-%   reading without prompt; $16$, $17$ for writing to terminal and
-%   reading with prompt; $18$ for shell escape.  Larger stream numbers
-%   are looked up in the property list |#1|, either \cs{g_@@_read_prop}
-%   or \cs{g_@@_write_prop}.  If present, use the corresponding value as
+%   streams in $[0,15]$; negative for writing to \texttt{log}; $16$,
+%   $17$ for writing to terminal; $18$ for shell escape.  Larger stream
+%   numbers are looked up in the property list |#1|, namely
+%   \cs{g_@@_write_prop}.  If present, use the corresponding value as
 %   the \TeX{} stream, otherwise run the \texttt{false} branch.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_user_to_tstr:NTF #1
@@ -696,98 +670,16 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \subsection{Reading}
-%
-% \begin{macro}[aux]{\@@_openin:w}
-%   Set \cs{l_@@_user_int} to a user stream then convert it to a \TeX{}
-%   stream \cs{l_@@_tstr_tl} and call the primitive.  If the user stream
-%   is closed (not associated to any \TeX{} stream), the \texttt{false}
-%   branch of \cs{@@_user_to_tstr:NTF} is taken.  Then get a stream from
-%   \cs{g_@@_read_seq} (\TeX{} streams managed by \pkg{morewrites} but
-%   not in use) or use the copy of \tn{newread} as a fallback.  Store
-%   the new mapping from user stream to \TeX{} stream into
-%   \cs{g_@@_read_prop}.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_openin:w
-  {
-    \@@_get_user:n
-      {
-        \@@_user_to_tstr:NTF \g_@@_read_prop { }
-          {
-            \seq_pop:NNF \g_@@_read_seq \l_@@_tstr_tl
-              {
-                \@@_tex_newread:N \l_@@_tstr_token
-                \tl_set:NV \l_@@_tstr_tl \l_@@_tstr_token
-              }
-            \prop_gput:NVV \g_@@_read_prop \l_@@_user_int \l_@@_tstr_tl
-          }
-        \@@_tex_openin:w \l_@@_tstr_tl \exp_stop_f:
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux]{\@@_read:w, \@@_readline:w}
-%   Set \cs{l_@@_user_int} to a user stream and convert it to a \TeX{}
-%   stream \cs{l_@@_tstr_tl} then call the primitive.  Nothing needs to
-%   be done for streams not managed by \pkg{morewrites} or for user
-%   streams that do not correspond to any \TeX{} stream, as the
-%   primitive will simply read user input from the terminal as \TeX{}
-%   would do.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_read:w
-  {
-    \@@_get_user:n
-      {
-        \@@_user_to_tstr:NTF \g_@@_read_prop { } { }
-        \@@_tex_read:w \l_@@_tstr_tl \exp_stop_f:
-      }
-  }
-\cs_new_protected:Npn \@@_readline:w
-  {
-    \@@_get_user:n
-      {
-        \@@_user_to_tstr:NTF \g_@@_read_prop { } { }
-        \@@_tex_readline:w \l_@@_tstr_tl \exp_stop_f:
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
-% \begin{macro}[aux]{\@@_closein:w}
-%   There is slightly more work than for |read| and |readline| because
-%   closing a user stream managed by \pkg{morewrites} means removing it
-%   from the mapping and putting it back in the list of available
-%   streams.  To avoid useless work, only do this if there was indeed a
-%   non-trivial mapping between user and \TeX{} stream.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_closein:w
-  {
-    \@@_get_user:n
-      {
-        \@@_user_to_tstr:NTF \g_@@_read_prop { } { }
-        \int_compare:nNnF { \l_@@_tstr_tl } = { \l_@@_user_int }
-          {
-            \prop_gremove:NV \g_@@_read_prop \l_@@_user_int
-            \seq_gput_left:NV \g_@@_read_seq \l_@@_tstr_tl
-          }
-        \@@_tex_closein:w \l_@@_tstr_tl \exp_stop_f:
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \subsection{Writing}
 %
-% Writing is much harder than reading for several reasons.
+% We can hold on to material while a file is being written and only
+% write it in one go once the file closes, to avoid using a stream
+% throughout.
 %
-% Contrarily to reading, it is possible to hold on to material while a
-% file is being written and only write it in one go once the file
-% closes, to avoid using a stream throughout.  At any given time, each
-% user stream may point to an open \TeX{} stream, given in
-% \cs{g_@@_write_prop} (like we did for reading), or may point to a
-% token list that will eventually be written to a file whose file name
-% is stored in \cs{g_@@_write_file_prop}, or may be closed.
+% At any given time, each user stream may point to an open \TeX{}
+% stream, given in \cs{g_@@_write_prop}, or may point to a token list
+% that will eventually be written to a file whose file name is stored in
+% \cs{g_@@_write_file_prop}, or may be closed.
 %
 % When a user stream points to a token list rather than a \TeX{} stream,
 % any material to be written must be written to our temporary file and
@@ -1292,40 +1184,20 @@
 %
 % \subsubsection{Modified \tn{newwrite}}
 %
-% \begin{variable}[aux]{\g_@@_alloc_read_int, \g_@@_alloc_write_int}
-%   Counters to allocate user streams.  Initialized to $18$ so that the
+% \begin{variable}[aux]{\g_@@_alloc_write_int}
+%   Counter to allocate user streams.  Initialized to $18$ so that the
 %   first user stream allocated by \pkg{morewrites} is $19$.  Indeed,
 %   $18$ is reserved for shell commands and packages may expect $16$ or
 %   $17$ to write to the terminal.
 %    \begin{macrocode}
-\int_new:N \g_@@_alloc_read_int
-\int_set:Nn \g_@@_alloc_read_int { 18 }
 \int_new:N \g_@@_alloc_write_int
 \int_set:Nn \g_@@_alloc_write_int { 18 }
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[aux]{\@@_newread:N}
-%   Reimplementation of \tn{newread} but protected and using a counter
-%   \cs{g_@@_alloc_read_int} instead of what \TeX{}/\LaTeXe{} use.
-%    \begin{macrocode}
-\cs_new_protected:Npn \@@_newread:N #1
-  {
-    \int_gincr:N \g_@@_alloc_read_int
-    \int_set_eq:NN \allocationnumber \g_@@_alloc_read_int
-    \cs_undefine:N #1
-    \int_const:Nn #1 { \allocationnumber }
-    \wlog
-      {
-        \token_to_str:N #1
-        = \token_to_str:N \read \int_use:N \allocationnumber
-      }
-  }
-%    \end{macrocode}
-% \end{macro}
-%
 % \begin{macro}[aux]{\@@_newwrite:N}
-%   Same as for \tn{newread}.
+%   Reimplementation of \tn{newwrite} but protected and using a counter
+%   \cs{g_@@_alloc_write_int} instead of what \TeX{}/\LaTeXe{} use.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_newwrite:N #1
   {
@@ -1387,16 +1259,8 @@
 % \end{macro}
 %
 % \begin{macro}[updated = 2015-08-01]
-%   {
-%     \openin, \read, \readline, \closein, \newread,
-%     \immediate, \openout, \write, \closeout, \newwrite
-%   }
+%   {\immediate, \openout, \write, \closeout, \newwrite}
 %    \begin{macrocode}
-\cs_gset_eq:NN \openin    \@@_openin:w
-\cs_gset_eq:NN \read      \@@_read:w
-\cs_gset_eq:NN \readline  \@@_readline:w
-\cs_gset_eq:NN \closein   \@@_closein:w
-\cs_gset_eq:NN \newread   \@@_newread:N
 \cs_gset_eq:NN \immediate \@@_immediate:w
 \cs_gset_eq:NN \openout   \@@_openout:w
 \cs_gset_eq:NN \write     \@@_write:w
