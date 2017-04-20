@@ -26,7 +26,7 @@
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \tn{write}}
 % \author{Bruno Le Floch}
-% \date{2017/04/10}
+% \date{2017/04/19}
 %
 % \maketitle
 % \tableofcontents
@@ -115,7 +115,7 @@
 %   appropriate action.
 % \end{function}
 %
-% \begin{function}[updated = 2015-08-01]{\openout, \write, \closeout}
+% \begin{function}[updated = 2017-04-19]{\openout, \write, \closeout}
 %   These three primitives are altered by \pkg{morewrites} so that they
 %   accept stream numbers outside the normal range $[0,15]$ and
 %   open/write/close files as appropriate.
@@ -154,7 +154,7 @@
 \RequirePackage {expl3} [2017/03/18]
 \RequirePackage {primargs} [2017/04/10]
 \ProvidesExplPackage
-  {morewrites} {2017/04/10} {} {Always room for a new write}
+  {morewrites} {2017/04/19} {} {Always room for a new write}
 %    \end{macrocode}
 %
 % Quit early under \LuaTeX{}.
@@ -813,17 +813,24 @@
 \cs_new_protected:Npn \@@_openout_now:n #1
   {
     \@@_closeout_now:
-    \seq_pop:NNTF \g_@@_write_seq \l_@@_tstr_tl
+    \int_compare:nNnTF { \l_@@_user_int } < { 19 }
       {
-        \prop_gput:NVV \g_@@_write_prop \l_@@_user_int \l_@@_tstr_tl
-        \@@_tex_immediate:w \@@_tex_openout:w \l_@@_tstr_tl \exp_stop_f:
+        \@@_tex_immediate:w \@@_tex_openout:w \l_@@_user_int
           = \tl_to_str:n {#1} \scan_stop:
       }
       {
-        \@@_empty_file:n {#1}
-        \prop_gput:NVx \g_@@_write_file_prop \l_@@_user_int
-          { \tl_to_str:n {#1} }
-        \tl_gclear_new:c { \@@_user_tl_name:n { \l_@@_user_int } }
+        \seq_gpop:NNTF \g_@@_write_seq \l_@@_tstr_tl
+          {
+            \prop_gput:NVV \g_@@_write_prop \l_@@_user_int \l_@@_tstr_tl
+            \@@_tex_immediate:w \@@_tex_openout:w \l_@@_tstr_tl \exp_stop_f:
+              = \tl_to_str:n {#1} \scan_stop:
+          }
+          {
+            \@@_empty_file:n {#1}
+            \prop_gput:NVx \g_@@_write_file_prop \l_@@_user_int
+              { \tl_to_str:n {#1} }
+            \tl_gclear_new:c { \@@_user_tl_name:n { \l_@@_user_int } }
+          }
       }
   }
 %    \end{macrocode}

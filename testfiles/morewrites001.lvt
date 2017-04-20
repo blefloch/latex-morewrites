@@ -9,6 +9,10 @@
 \START
 \AUTHOR{Bruno Le Floch}
 
+\morewritessetup { allocate = 3 }
+\TYPE { -- }
+\morewritessetup { allocate = 3 }
+
 \TEST {Immediate writing}
   {
     \newwrite \testwrite
