@@ -1,0 +1,41 @@
+%
+% Copyright (C) 2017 `morewrites' maintainer
+%
+
+\input regression-test
+\documentclass{article}
+
+\usepackage{expl3}
+\usepackage{morewrites}
+
+\morewritessetup{allocate=10}
+
+\ExplSyntaxOn
+\ior_new:N \g_test_ior
+\cs_gset:cpn { @@end }
+  {
+    \OMIT
+    \sys_if_engine_luatex:T { \tex_immediate:D \tex_closeout:D \use:c {tf@toc} }
+    \ior_open:Nn \g_test_ior { \c_sys_jobname_str .toc }
+    \TIMO
+    \TYPE { ***toc*** }
+    \ior_map_inline:Nn \g_test_ior { \TYPE { \tl_to_str:n {##1} } }
+    \ior_close:N \g_test_ior
+    \TYPE { ***cot*** }
+    \tex_end:D
+  }
+\ExplSyntaxOff
+
+\begin{document}
+
+\tableofcontents
+------------------------------------------------
+\section{First test}
+Test
+\section{Second test}
+Test2
+
+\START
+\AUTHOR{Bruno Le Floch}
+
+\end{document}

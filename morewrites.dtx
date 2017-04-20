@@ -26,7 +26,7 @@
 % \title{The \textsf{morewrites} package: \\
 %   Always room for a new \tn{write}}
 % \author{Bruno Le Floch}
-% \date{2017/04/19}
+% \date{2017/04/20}
 %
 % \maketitle
 % \tableofcontents
@@ -115,7 +115,7 @@
 %   appropriate action.
 % \end{function}
 %
-% \begin{function}[updated = 2017-04-19]{\openout, \write, \closeout}
+% \begin{function}[updated = 2017-04-20]{\openout, \write, \closeout}
 %   These three primitives are altered by \pkg{morewrites} so that they
 %   accept stream numbers outside the normal range $[0,15]$ and
 %   open/write/close files as appropriate.
@@ -154,7 +154,7 @@
 \RequirePackage {expl3} [2017/03/18]
 \RequirePackage {primargs} [2017/04/10]
 \ProvidesExplPackage
-  {morewrites} {2017/04/19} {} {Always room for a new write}
+  {morewrites} {2017/04/20} {} {Always room for a new write}
 %    \end{macrocode}
 %
 % Quit early under \LuaTeX{}.
@@ -1162,9 +1162,12 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_close_all:
   {
-    \prop_map_function:NN \g_@@_write_prop
-      \@@_closeout_now:nn
+    \prop_map_inline:Nn \g_@@_write_prop
+      { \@@_tex_immediate:w \@@_tex_closeout:w ##2 \scan_stop: }
     \prop_gclear:N \g_@@_write_prop
+    \prop_map_function:NN \g_@@_write_file_prop
+      \@@_closeout_now:nn
+    \prop_gclear:N \g_@@_write_file_prop
   }
 %    \end{macrocode}
 % \end{macro}
