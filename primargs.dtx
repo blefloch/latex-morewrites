@@ -199,7 +199,7 @@
 %   \end{texnote}
 % \end{function}
 %
-% \subsection{Comments and internal functions}
+% \subsection{Comments}
 %
 % This package is not idiomatic \pkg{expl3} and should not be used as an
 % example of good coding practices.  It uses \cs[no-index]{\ldots{}:D}
@@ -217,20 +217,6 @@
 % As a result, \emph{do not take this package as an example of how to
 % code with \pkg{expl3}; go and see Joseph Wright's \pkg{siunitx} for
 % instance.}
-%
-% \begin{function}{\__primargs_get_rhs:NnN, \__primargs_get_rhs:NoN}
-%   \begin{syntax}
-%     \cs{__primargs_get_rhs:NnN} \meta{register} \Arg{register rhs} \meta{function}
-%   \end{syntax}
-%   Use the \meta{register} to find a right-hand side of a valid
-%   assignment for this type of variable, and feed the value found to
-%   the \meta{function}.  The value of the \meta{register} is then
-%   restored using \meta{register} |=| \meta{register rhs}, where the
-%   \meta{register rhs} should be the initial value of the
-%   \meta{register}.  All those assignments are performed within a
-%   group, but some are automatically global, and \tn{globaldefs} may
-%   cause trouble with others.
-% \end{function}
 %
 % Despite large efforts expended to make this package robust against
 % changes to the \tn{globaldefs} parameter, setting it to a non-zero
@@ -271,9 +257,23 @@
 %<@@=primargs>
 %    \end{macrocode}
 %
+% \begin{function}{\__primargs_get_rhs:NnN, \__primargs_get_rhs:NoN}
+%   \begin{syntax}
+%     \cs{__primargs_get_rhs:NnN} \meta{register} \Arg{register rhs} \meta{function}
+%   \end{syntax}
+%   Use the \meta{register} to find a right-hand side of a valid
+%   assignment for this type of variable, and feed the value found to
+%   the \meta{function}.  The value of the \meta{register} is then
+%   restored using \meta{register} |=| \meta{register rhs}, where the
+%   \meta{register rhs} should be the initial value of the
+%   \meta{register}.  All those assignments are performed within a
+%   group, but some are automatically global, and \tn{globaldefs} may
+%   cause trouble with others.
+% \end{function}
+%
 % \subsection{Variables and helpers}
 %
-% \begin{macro}[aux]{\g_@@_code_tl}
+% \begin{macro}{\g_@@_code_tl}
 %   Used to contain temporary code.
 %    \begin{macrocode}
 \tl_new:N \g_@@_code_tl
@@ -289,7 +289,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[aux]{\@@_safe:}
+% \begin{macro}{\@@_safe:}
 %   This function, which must be called in a group, cancels any
 %   \tn{afterassignment} token and makes the \tn{globaldefs} parameter
 %   non-negative.  This ensures that assignments prefixed with
@@ -338,7 +338,7 @@
 % to see how \tn{next} changes from \tn{relax} to becoming a macro.
 %
 % \begin{macro}{\primargs_read_x_token:N}
-% \begin{macro}[aux]
+% \begin{macro}
 %   {
 %     \@@_read_x_token:N, \@@_read_x_token_aux:N,
 %     \@@_read_x_token_std:N, \@@_read_x_token_file:N
@@ -427,7 +427,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_one_optional_space:N}
-% \begin{macro}[aux]{\@@_remove_one_optional_space:}
+% \begin{macro}{\@@_remove_one_optional_space:}
 %   Start a group: we will insert the \meta{function} at its end.
 %    \begin{macrocode}
 \cs_new_protected:Npn \primargs_remove_one_optional_space:N #1
@@ -449,7 +449,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_optional_spaces:N}
-% \begin{macro}[aux]
+% \begin{macro}
 %   {\@@_remove_optional_spaces:, \@@_remove_optional_spaces_aux:}
 %   Start a group, make assignments safe, then recursively expand tokens
 %   and remove any token with catcode~$10$ (space).  Once another token
@@ -478,7 +478,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_equals:N}
-% \begin{macro}[aux]{\@@_remove_equals:, \@@_remove_equals_aux:NN}
+% \begin{macro}{\@@_remove_equals:, \@@_remove_equals_aux:NN}
 %   Remove \meta{optional spaces}, then test for an explicit~|=|, both
 %   in \tn{meaning} and as a token list: once we know its \tn{meaning},
 %   we can grab it safely.
@@ -503,7 +503,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_remove_filler:N}
-% \begin{macro}[aux]
+% \begin{macro}
 %   {
 %     \@@_remove_filler:,
 %     \@@_remove_filler_aux:,
@@ -659,7 +659,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_get_general_text:N}
-% \begin{macro}[aux]
+% \begin{macro}
 %   {\@@_get_general_text:, \@@_get_general_text_error:n}
 %   Getting a \meta{general text} is more tricky, as an assignment to
 %   \tn{errhelp} (for instance) would also allow constructions such as
@@ -730,7 +730,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_get_file_name_test:}
+% \begin{macro}{\@@_get_file_name_test:}
 %   The token read is in \cs{g_primargs_token}, and is non-expandable.
 %   If it is a control sequence, end the \meta{file name}.  Spaces are
 %   special (quotes too, but that is treated elsewhere).  Otherwise,
@@ -750,7 +750,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_get_file_name_end:}
+% \begin{macro}{\@@_get_file_name_end:}
 %   When the end of the file name is reached, reinstate the original
 %   definition of |read_x_token| so as to make \tn{input} expandable
 %   again, then end the group, after
@@ -765,7 +765,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_get_file_name_space:}
+% \begin{macro}{\@@_get_file_name_space:}
 %   We have already removed the space from the input stream.  If
 %   there is an odd number of quotes so far, add a space to the
 %   file name and continue.  Otherwise the file name ends.
@@ -782,8 +782,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_get_file_name_char:}
-% \begin{macro}[aux, EXP]
+% \begin{macro}{\@@_get_file_name_char:}
+% \begin{macro}[EXP]
 %   {\@@_get_file_name_char_ii:w, \@@_get_file_name_char_iii:w}
 %   Check for a quote, which switches \cs{g_@@_file_name_level_tl}
 %   from $0$ to $1$ or back.
@@ -820,7 +820,7 @@
 % \end{macro}
 %
 % \begin{macro}{\primargs_get_input_file_name:N}
-% \begin{macro}[aux]
+% \begin{macro}
 %   {
 %     \@@_get_input_file_name_first:,
 %     \@@_get_input_file_name_loop:, \@@_get_input_file_name_test:,

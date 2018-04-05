@@ -282,7 +282,7 @@
 %
 % \subsubsection{Copying some commands}
 %
-% \begin{macro}[aux]
+% \begin{macro}
 %   {
 %     \@@_tex_immediate:w ,
 %     \@@_tex_openout:w   ,
@@ -299,7 +299,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_tex_newwrite:N}
+% \begin{macro}{\@@_tex_newwrite:N}
 %   Copy \tn{newwrite} but making sure that it is
 %   not \tn{outer}.  This copy will not be affected by redefinitions
 %   of \tn{newwrite} later on.
@@ -311,7 +311,7 @@
 %
 % \subsubsection{Variants}
 %
-% \begin{macro}[aux]{\prop_gpop:NVNT, \prop_gput:NVx, \tl_gput_right:Nv}
+% \begin{macro}{\prop_gpop:NVNT, \prop_gput:NVx, \tl_gput_right:Nv}
 %   We need these variants.
 %    \begin{macrocode}
 \cs_generate_variant:Nn \prop_gpop:NnNT { NV }
@@ -329,14 +329,14 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\@@_tmp:w}
+% \begin{variable}{\@@_tmp:w}
 %   Used for temporary definitions.
 %    \begin{macrocode}
 \cs_new_eq:NN \@@_tmp:w ?
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_later_int}
+% \begin{variable}{\g_@@_later_int}
 %   The integer \cs{g_@@_later_int} labels the various
 %   non-immediate operations in the order in which they appear in the
 %   source.  We can never reuse a number because there is no way to know
@@ -355,7 +355,7 @@
 % \end{variable}
 %
 % ^^A todo: populate \g_@@_write_seq because we don't use \newwrite; this should be done in \morewritessetup
-% \begin{variable}[aux]{\g_@@_write_seq}
+% \begin{variable}{\g_@@_write_seq}
 %   Keep track of \TeX{} stream numbers managed by \pkg{morewrites} that
 %   are currently not in use as user streams.
 %    \begin{macrocode}
@@ -363,21 +363,21 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_write_prop}
+% \begin{variable}{\g_@@_write_prop}
 %   Map user streams to \TeX{} streams.
 %    \begin{macrocode}
 \prop_new:N \g_@@_write_prop
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_write_file_prop}
+% \begin{variable}{\g_@@_write_file_prop}
 %   Map user streams with no associated \TeX{} streams to file names.
 %    \begin{macrocode}
 \prop_new:N \g_@@_write_file_prop
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\l_@@_code_tl}
+% \begin{variable}{\l_@@_code_tl}
 %   Stores the code to run after finding a user stream, in
 %   \cs{@@_get_user:n}.
 %    \begin{macrocode}
@@ -385,7 +385,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\l_@@_user_int, \l_@@_tstr_tl}
+% \begin{variable}{\l_@@_user_int, \l_@@_tstr_tl}
 %   The user stream number following redefined primitives is stored in
 %   \cs{l_@@_user_int} (see \cs{@@_get_user:N}).  The corresponding
 %   \TeX{} stream number is eventually stored in \cs{l_@@_tstr_tl} (a
@@ -396,26 +396,26 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\l_@@_tstr_token}
+% \begin{variable}{\l_@@_tstr_token}
 %   This token is given as an argument to \cs{@@_tex_newwrite:N}.
 %    \begin{macrocode}
 \cs_new_eq:NN \l_@@_tstr_token ?
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[aux]{\s_@@}
+% \begin{macro}{\s_@@}
 %   A recognizable version of \cs{scan_stop:}.  This is inspired
 %   by\footnote{Historically, this might have happened the other way
 %     around, since the author of this package is also on the \LaTeX3
 %     Team.} scan marks (see the \pkg{l3quark} module of \LaTeX3), but
-%   \cs{__scan_new:N} is not used directly, since it is currently
-%   internal to \LaTeX3.
+%   \cs{scan_new:N} is not used directly, since it is has been made
+%   available in \LaTeX3 too recently.
 %    \begin{macrocode}
 \cs_new_eq:NN \s_@@ \scan_stop:
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{variable}[aux]{\g_@@_iow, \g_@@_ior}
+% \begin{variable}{\g_@@_iow, \g_@@_ior}
 %   The expansion that \tn{write} performs is impossible to emulate (in \XeTeX{} at least) with
 %   anything else than \tn{write}.  We will write on the stream
 %   \cs{g_@@_iow} to the file \cs{g_@@_tmp_file_tl} and read back from
@@ -428,7 +428,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_tmp_file_tl, \g_@@_tmp_file_bool}
+% \begin{variable}{\g_@@_tmp_file_tl, \g_@@_tmp_file_bool}
 %   Temporary file used to do the correct expansion for each \tn{write}.
 %   Boolean indicating whether we have already checked that the file can
 %   be used by \pkg{morewrites}: before using a file, the
@@ -441,7 +441,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_group_level_int}
+% \begin{variable}{\g_@@_group_level_int}
 %   The group level when \tn{shipout} is called: this is used to
 %   distinguish between explicit boxes and box registers.
 %    \begin{macrocode}
@@ -449,7 +449,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{variable}[aux]{\g_@@_shipout_box}
+% \begin{variable}{\g_@@_shipout_box}
 %   The page to be shipped out.
 %    \begin{macrocode}
 \box_new:N \g_@@_shipout_box
@@ -471,7 +471,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_empty_file:n}
+% \begin{macro}{\@@_empty_file:n}
 %   Empties the file \cs{g_@@_tmp_file_tl} by opening it and closing it
 %   right away.  This is used when performing \tn{immediate}
 %   \tn{openout}.  It is also used to ensure the file used by
@@ -488,7 +488,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux,TF]{\@@_if_file_trivial:n}
+% \begin{macro}[TF]{\@@_if_file_trivial:n}
 %   True if the file does not exist, or if it is empty.
 %   Only the \texttt{TF} variant is defined.  We set
 %   \cs{@@_tmp:w} to \cs{prg_return_true:} or \cs{prg_return_false:}
@@ -520,7 +520,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_chk_file:}
+% \begin{macro}{\@@_chk_file:}
 %   Check that the file \cs{g_@@_tmp_file_tl} does not exist or is blank.
 %   If not, try the file name obtained by adding |.mw|.
 %   This avoids clobbering files that the user would not want to lose.
@@ -553,7 +553,7 @@
 %
 % \subsubsection{Parsing and other helpers}
 %
-% \begin{macro}[aux]{\@@_equals_file:N}
+% \begin{macro}{\@@_equals_file:N}
 %   Most of the parsing for primitive arguments is done using
 %   \pkg{primargs}, except for one case we care about: after its
 %   \meta{number} argument, the \tn{openout} primitive expects an
@@ -569,7 +569,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_get_user:n}
+% \begin{macro}{\@@_get_user:n}
 %   \pkg{primargs} commands only take \texttt{N}-type arguments, but we
 %   often need to find an integer, save it in \cs{l_@@_user_int}, and
 %   run some code |#1|.  This is analogous to \cs{primargs_get_number:N}.
@@ -583,7 +583,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_user_to_tstr:NTF}
+% \begin{macro}{\@@_user_to_tstr:NTF}
 %   The goal is to go from a user stream \cs{l_@@_user_int} to a \TeX{}
 %   stream \cs{l_@@_tstr_tl} (it defaults to the user stream).  Streams
 %   less than $19$ are not managed by \pkg{morewrites}: actual \TeX{}
@@ -603,8 +603,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{variable}[aux]{\l_@@_collect_next_int}
-% \begin{macro}[aux]
+% \begin{variable}{\l_@@_collect_next_int}
+% \begin{macro}
 %   {
 %     \@@_collect:x, \@@_collect_aux:Nn,
 %     \@@_collect_aux:cf, \@@_collect_gput_right:N, \@@_collect_gput_right:c
@@ -661,7 +661,7 @@
 % \end{macro}
 % \end{variable}
 %
-% \begin{macro}[aux, EXP]{\@@_user_tl_name:n}
+% \begin{macro}[EXP]{\@@_user_tl_name:n}
 %   The name of a global token list variable holding the text of a given
 %   user stream.
 %    \begin{macrocode}
@@ -714,8 +714,8 @@
 % action} instead of the \meta{code for delayed action} which is run by
 % default.  In both cases, any \meta{further code} is run.
 %
-% \begin{macro}[aux, updated = 2012-12-05]{\@@_immediate:w}
-% \begin{macro}[aux]{\@@_immediate_auxii:, \@@_immediate_auxiii:N}
+% \begin{macro}[updated = 2012-12-05]{\@@_immediate:w}
+% \begin{macro}{\@@_immediate_auxii:, \@@_immediate_auxiii:N}
 %   \TeX{}'s \tn{immediate} primitive raises a flag which is cancelled
 %   after \TeX{} sees a non-expandable token.  We use
 %   \cs{primargs_read_x_token:N} to find the next non-expandable token
@@ -746,7 +746,7 @@
 % either delayed or immediate.  In all cases they begin by looking for a
 % user stream.  Here, we implement the immediate versions only.
 %
-% \begin{macro}[aux]{\@@_closeout:w, \@@_closeout_now:, \@@_closeout_now:nn}
+% \begin{macro}{\@@_closeout:w, \@@_closeout_now:, \@@_closeout_now:nn}
 %   In the immediate case \cs{@@_closeout_now:}, there are three cases.
 %   The stream may point to a \TeX{} stream, in which case it is closed,
 %   removed from \cs{g_@@_write_prop}, and put back in the list of
@@ -796,7 +796,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_openout:w, \@@_openout_now:n}
+% \begin{macro}{\@@_openout:w, \@@_openout_now:n}
 %   In the immediate case find a file name, then allocate a \TeX{}
 %   stream if possible, and otherwise point the user stream to a token
 %   list.  In all cases, close the stream to avoid losing any material
@@ -836,7 +836,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_write:w, \@@_write_now:w, \@@_write_now:n}
+% \begin{macro}{\@@_write:w, \@@_write_now:w, \@@_write_now:n}
 %   In the immediate case we use \cs{@@_write_now_open:n} if the stream
 %   points to a token list, and otherwise use the primitive, with the
 %   dummy stream $16$ if closed (the text is then written to the
@@ -864,8 +864,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_write_now_open:n}
-% \begin{macro}[aux]{\@@_write_now_loop:}
+% \begin{macro}{\@@_write_now_open:n}
+% \begin{macro}{\@@_write_now_loop:}
 %   Only \tn{write} itself can emulate how \tn{write} expands tokens,
 %   because |#| don't have to be doubled, and because the
 %   \tn{newlinechar} has to be changed to new lines.  Hence, we start by
@@ -918,7 +918,7 @@
 %
 % \subsubsection{Delayed actions}
 %
-% \begin{macro}[aux]{\@@_later:n, \@@_later_do:n}
+% \begin{macro}{\@@_later:n, \@@_later_do:n}
 %   Store the action to be done at shipout in a token list, and
 %   non-immediately write the label \cs{g_@@_later_int} of the
 %   output operation to the temporary file.
@@ -945,7 +945,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_closeout_later:}
+% \begin{macro}{\@@_closeout_later:}
 %   If the user stream is a \TeX{} stream, use the primitive, otherwise
 %   save \cs{@@_closeout_now:} for later.
 %    \begin{macrocode}
@@ -958,7 +958,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_openout_later:w, \@@_openout_later:n}
+% \begin{macro}{\@@_openout_later:w, \@@_openout_later:n}
 %   If the user stream is a \TeX{} stream use the primitive, otherwise
 %   find a file name and call \cs{@@_openout_now:n} later.
 %    \begin{macrocode}
@@ -973,7 +973,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_write_later:w, \@@_write_later:n, \@@_write_later_aux:n}
+% \begin{macro}{\@@_write_later:w, \@@_write_later:n, \@@_write_later_aux:n}
 %   For \TeX{} streams use the primitive, otherwise find a general text
 %   and save it for later; the auxiliary is very similar to
 %   \cs{@@_write_now:w}.
@@ -1011,7 +1011,7 @@
 % on the left (then \cs{tex_newlinechar:D} cannot be equal to the
 % delimiter), and at least one non-digit character on the right.
 %
-% \begin{macro}[aux]{\@@_before_shipout:}
+% \begin{macro}{\@@_before_shipout:}
 %   Immediately before the shipout, we must open the writing stream
 %   \cs{g_@@_iow} (after making sure we are allowed to alter the
 %   auxiliary file).
@@ -1025,8 +1025,8 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_after_shipout:}
-% \begin{macro}[aux, rEXP]{\@@_after_shipout_loop:ww}
+% \begin{macro}{\@@_after_shipout:}
+% \begin{macro}[rEXP]{\@@_after_shipout_loop:ww}
 %   Immediately after all the \tn{write}s are performed, close the file,
 %   then read the file with \tn{endlinechar} set to
 %   \tn{newlinechar}\footnote{Note that the \tn{newlinechar} used by
@@ -1076,8 +1076,8 @@
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_shipout:w}
-% \begin{macro}[aux]{\@@_shipout_i:, \@@_shipout_ii:}
+% \begin{macro}{\@@_shipout:w}
+% \begin{macro}{\@@_shipout_i:, \@@_shipout_ii:}
 %   Grab the shipped out box using \tn{setbox} and regain control using
 %   \tn{afterassignment}.  There are two cases: either the box is given
 %   as \tn{box} or \tn{copy} followed by a number, in which case
@@ -1109,7 +1109,7 @@
 % \end{macro}
 % \end{macro}
 %
-% \begin{macro}[aux]{\shipout, \@@_tex_shipout:w}
+% \begin{macro}{\shipout, \@@_tex_shipout:w}
 %   The task is now to locate the shipout primitive, which may have been
 %   renamed and hooked into by many different packages loaded before
 %   \pkg{morewrites}.  Any of those control sequences which are equal to
@@ -1157,7 +1157,7 @@
 %
 % \subsubsection{Hook at the very end}
 %
-% \begin{macro}[aux]{\@@_close_all:}
+% \begin{macro}{\@@_close_all:}
 %   At the end of the document, close all the files.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_close_all:
@@ -1172,7 +1172,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_close_all_at_end:nw}
+% \begin{macro}{\@@_close_all_at_end:nw}
 %   At the end of the run, we try very hard to put some material at the
 %   \tn{@@end}, just in case some other very late code writes to files
 %   that are not yet closed.  This is tried at most $5$~times, to avoid
@@ -1194,7 +1194,7 @@
 %
 % \subsubsection{Modified \tn{newwrite}}
 %
-% \begin{variable}[aux]{\g_@@_alloc_write_int}
+% \begin{variable}{\g_@@_alloc_write_int}
 %   Counter to allocate user streams.  Initialized to $18$ so that the
 %   first user stream allocated by \pkg{morewrites} is $19$.  Indeed,
 %   $18$ is reserved for shell commands and packages may expect $16$ or
@@ -1205,7 +1205,7 @@
 %    \end{macrocode}
 % \end{variable}
 %
-% \begin{macro}[aux]{\@@_newwrite:N}
+% \begin{macro}{\@@_newwrite:N}
 %   Reimplementation of \tn{newwrite} but protected and using a counter
 %   \cs{g_@@_alloc_write_int} instead of what \TeX{}/\LaTeXe{} use.
 %    \begin{macrocode}
@@ -1224,7 +1224,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{macro}[aux]{\@@_allocate:n}
+% \begin{macro}{\@@_allocate:n}
 %   Raise to |#1| the number of \tn{write} streams allocated to \pkg{morewrites}.
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_allocate:n #1
