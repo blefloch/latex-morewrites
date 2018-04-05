@@ -6,6 +6,9 @@
 \documentclass{article}
 
 \usepackage{expl3}
+\ExplSyntaxOn
+\debug_on:n { check-expressions , deprecation }
+\ExplSyntaxOff
 \usepackage{morewrites}
 
 \morewritessetup{allocate=10}

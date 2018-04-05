@@ -14,7 +14,7 @@
     \int_new:N \l_testc_int
     \int_new:N \l_testd_int
   }
-\deprecation_error:
+\debug_on:n { check-expressions , deprecation }
 \ExplSyntaxOff
 
 \START

@@ -7,6 +7,7 @@
 \usepackage{morewrites}
 
 \ExplSyntaxOn
+\debug_on:n { check-expressions , deprecation }
 \sys_if_engine_luatex:T { \newread\tmp }
 \ExplSyntaxOff
 
