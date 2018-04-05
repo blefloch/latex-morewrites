@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2014,2017 `primargs' maintainer
+% Copyright (C) 2014,2017,2018 `primargs' maintainer
 %
 
 \input regression-test
@@ -7,7 +7,6 @@
 \RequirePackage{primargs}
 
 \START
-\AUTHOR{Bruno Le Floch}
 
 \ExplSyntaxOn
 

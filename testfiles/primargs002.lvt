@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2014,2017 `primargs' maintainer
+% Copyright (C) 2014,2017,2018 `primargs' maintainer
 %
 
 \input regression-test
@@ -7,7 +7,6 @@
 \RequirePackage{primargs}
 
 \START
-\AUTHOR{Bruno Le Floch}
 
 \ExplSyntaxOn
 
@@ -24,7 +23,7 @@
     \primargs_get_number:N \test:nw \scan_stop:
     \primargs_get_number:N \test:nw + \scan_stop:
     \primargs_get_number:N \test:nw + ~ -0123~sp plus 1fil \scan_stop:
-    \primargs_get_number:N \test:nw \tex_count:D 123 ~ 9 \scan_stop:
+    \primargs_get_number:N \test:nw \tex_count:D 234 ~ 9 \scan_stop:
     \primargs_get_number:N \test:nw
       \etex_dimexpr:D 1pt + 4.5pt * 2 \scan_stop: minus 1fil \scan_stop:
     \primargs_get_number:N \test:nw \l_tmpa_int 9 \scan_stop:
@@ -37,7 +36,7 @@
     \primargs_get_dimen:N \test:nw \scan_stop:
     \primargs_get_dimen:N \test:nw + \scan_stop:
     \primargs_get_dimen:N \test:nw + ~ -0123~sp plus 1fil \scan_stop:
-    \primargs_get_dimen:N \test:nw \tex_count:D 123 ~ 9 \scan_stop:
+    \primargs_get_dimen:N \test:nw \tex_count:D 234 ~ 9 \scan_stop:
     \primargs_get_dimen:N \test:nw
       \etex_dimexpr:D 1pt + 4.5pt * 2 \scan_stop: minus 1fil \scan_stop:
     \primargs_get_dimen:N \test:nw \l_tmpa_int 9 \scan_stop:
@@ -50,7 +49,7 @@
     \primargs_get_glue:N \test:nw \scan_stop:
     \primargs_get_glue:N \test:nw + \scan_stop:
     \primargs_get_glue:N \test:nw + ~ -0123~sp plus 1fil \scan_stop:
-    \primargs_get_glue:N \test:nw \tex_count:D 123 ~ 9 \scan_stop:
+    \primargs_get_glue:N \test:nw \tex_count:D 234 ~ 9 \scan_stop:
     \primargs_get_glue:N \test:nw
       \etex_dimexpr:D 1pt + 4.5pt * 2 \scan_stop: minus 1fil \scan_stop:
     \primargs_get_glue:N \test:nw \l_tmpa_int 9 \scan_stop:
@@ -63,7 +62,7 @@
     \primargs_get_mudimen:N \test:nw \scan_stop:
     \primargs_get_mudimen:N \test:nw + \scan_stop:
     \primargs_get_mudimen:N \test:nw + ~ -0123~mu plus 1fil \scan_stop:
-    \primargs_get_mudimen:N \test:nw \tex_count:D 123 ~ 9 \scan_stop:
+    \primargs_get_mudimen:N \test:nw \tex_count:D 234 ~ 9 \scan_stop:
     \primargs_get_mudimen:N \test:nw
       \etex_dimexpr:D 1pt + 4.5pt * 2 \scan_stop: minus 1fil \scan_stop:
     \primargs_get_mudimen:N \test:nw \l_tmpa_int 9 \scan_stop:
@@ -76,7 +75,7 @@
     \primargs_get_muglue:N \test:nw \scan_stop:
     \primargs_get_muglue:N \test:nw + \scan_stop:
     \primargs_get_muglue:N \test:nw + ~ -0123~mu plus 1fil \scan_stop:
-    \primargs_get_muglue:N \test:nw \tex_count:D 123 ~ 9 \scan_stop:
+    \primargs_get_muglue:N \test:nw \tex_count:D 234 ~ 9 \scan_stop:
     \primargs_get_muglue:N \test:nw
       \etex_dimexpr:D 1pt + 4.5pt * 2 \scan_stop: minus 1fil \scan_stop:
     \primargs_get_muglue:N \test:nw \l_tmpa_int 9 \scan_stop:

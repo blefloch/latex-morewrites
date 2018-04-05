@@ -1,11 +1,10 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-Author: Bruno Le Floch
  -- 
 ============================================================
 TEST 1: Immediate writing
 ============================================================
-\testwrite=\write3
+\testwrite=\write...
 (tmp.tmp
 This is written to the file \par `tmp.tmp'.
 Trying out \noexpand ...
@@ -19,9 +18,9 @@ File tmp.tmp again.
 ============================================================
 TEST 2: Delayed writing
 ============================================================
-\firstwrite=\write4
-\secondwrite=\write5
-\thirdwrite=\write6
+\firstwrite=\write...
+\secondwrite=\write...
+\thirdwrite=\write...
 [1
 \TYPE {Third!}
 ] [1
@@ -38,22 +37,22 @@ Third again.
 ============================================================
 TEST 3: Many write streams in parallel
 ============================================================
-\Aw=\write7
-\Bw=\write8
-\Cw=\write9
-\Dw=\write10
-\Ew=\write11
-\Fw=\write12
-\Gw=\write13
-\Hw=\write14
-\Iw=\write15
-\Jw=\write16
-\Kw=\write17
-\Lw=\write19
-\Mw=\write19
-\Nw=\write20
-\Ow=\write21
-\Pw=\write22
+\Aw=\write...
+\Bw=\write...
+\Cw=\write...
+\Dw=\write...
+\Ew=\write...
+\Fw=\write...
+\Gw=\write...
+\Hw=\write...
+\Iw=\write...
+\Jw=\write...
+\Kw=\write...
+\Lw=\write...
+\Mw=\write...
+\Nw=\write...
+\Ow=\write...
+\Pw=\write...
 (A.tmp
 A
 ) (B.tmp
@@ -76,8 +75,9 @@ I
 J
 ) (K.tmp
 K
-) (L.tmp) (M.tmp
+) (L.tmp
 L
+) (M.tmp
 M
 ) (N.tmp
 N

@@ -1,6 +1,6 @@
 % \iffalse meta-comment
 %
-%% File: morewrites.dtx Copyright (C) 2011-2017 Bruno Le Floch
+%% File: morewrites.dtx Copyright (C) 2011-2018 Bruno Le Floch
 %%
 %% It may be distributed and/or modified under the conditions of the
 %% LaTeX Project Public License (LPPL), either version 1.3c of this
@@ -1201,7 +1201,7 @@
 %   $17$ to write to the terminal.
 %    \begin{macrocode}
 \int_new:N \g_@@_alloc_write_int
-\int_set:Nn \g_@@_alloc_write_int { 18 }
+\int_gset:Nn \g_@@_alloc_write_int { 18 }
 %    \end{macrocode}
 % \end{variable}
 %
@@ -1239,7 +1239,7 @@
       }
       {
         \@@_tex_newwrite:N \l_@@_tstr_token
-        \seq_put_right:NV \g_@@_write_seq \l_@@_tstr_token
+        \seq_gput_right:NV \g_@@_write_seq \l_@@_tstr_token
       }
   }
 %    \end{macrocode}

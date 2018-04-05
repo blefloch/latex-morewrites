@@ -1,5 +1,5 @@
 %
-% Copyright (C) 2014,2017 `morewrites' maintainer
+% Copyright (C) 2014,2017,2018 `morewrites' maintainer
 %
 
 \input regression-test
@@ -18,7 +18,6 @@
 \ExplSyntaxOff
 
 \START
-\AUTHOR{Bruno Le Floch}
 
 \RequirePackage{morewrites}
 

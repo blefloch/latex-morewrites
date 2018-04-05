@@ -1,6 +1,5 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
-Author: Bruno Le Floch
 ============================================================
 TEST 1: Change temporary file
 ============================================================
@@ -17,7 +16,7 @@ Some more in `tmp.tmp'
 ============================================================
 TEST 2: Change newlinechar
 ============================================================
-\g__file_internal_ior=\read1
+\g__file_internal_ior=\read...
 |Foo|
 |bar*ba
 z|
