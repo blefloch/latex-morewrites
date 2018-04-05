@@ -282,7 +282,7 @@
 %    \end{macrocode}
 % \end{macro}
 %
-% \begin{variable}[int]{\g_@@_file_name_tl, \g_@@_file_name_level_tl}
+% \begin{variable}{\g_@@_file_name_tl, \g_@@_file_name_level_tl}
 %   Token list used to build a file name, one character at a time.
 %   Token list holding the level of nesting in quotes or braces.
 %    \begin{macrocode}
@@ -568,7 +568,7 @@
 % automatically assigned globally, and we revert it to its previous
 % value afterwards.
 %
-% \begin{macro}[int]{\@@_get_rhs:NnN, \@@_get_rhs:NoN}
+% \begin{macro}{\@@_get_rhs:NnN, \@@_get_rhs:NoN}
 %   The last two lines of this function are the key: assign to |#1|,
 %   then take control using \tn{afterassignment}.  After the assignment,
 %   we expand the value found, |\tex_the:D #1|, within a brace group,
