@@ -4,10 +4,11 @@
 
 \input regression-test
 \documentclass{article}
+\usepackage[enable-debug]{expl3}
 \usepackage{morewrites}
 
 \ExplSyntaxOn
-\debug_on:n { check-expressions , deprecation }
+\debug_on:n { check-declarations , check-expressions , deprecation , log-functions }
 \sys_if_engine_luatex:T { \newread\tmp }
 \ExplSyntaxOff
 

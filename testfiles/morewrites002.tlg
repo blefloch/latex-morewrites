@@ -3,19 +3,17 @@ Don't change this file in any respect.
 ============================================================
 TEST 1: Change temporary file
 ============================================================
+Defining \g__morewrites_iow_19_tl on line ...
+Defining \l__morewrites_0_tl on line ...
 (tmp.tmp
 This is in `tmp.tmp'
 Some more in `tmp.tmp'
 )  No error yet! 
-*************************************************
-* morewrites warning: "file-exists"
-* 
-* File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
-*************************************************
+Package morewrites Warning: File 'tmp.tmp' exists, using 'tmp.tmp.mw' instead.
 [1
 \TYPE {Log}
 ] (tmp.tmp.mw)
- (tmp.tmp
+(tmp.tmp
 This is in `tmp.tmp'
 Some more in `tmp.tmp'
 ) (tmp.tmp.mw)
@@ -23,7 +21,8 @@ Some more in `tmp.tmp'
 ============================================================
 TEST 2: Change newlinechar
 ============================================================
-\g__file_internal_ior=\read...
+Defining \l__morewrites_1_tl on line ...
+Defining \l_test_ior on line ...
 |Foo|
 |bar*ba
 z|

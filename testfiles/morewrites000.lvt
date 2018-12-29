@@ -4,7 +4,7 @@
 
 \input regression-test
 
-\RequirePackage[check-declarations,log-functions]{expl3}
+\RequirePackage[enable-debug]{expl3}
 \RequirePackage{primargs}
 \ExplSyntaxOn
 \sys_if_engine_xetex:T
@@ -14,7 +14,7 @@
     \int_new:N \l_testc_int
     \int_new:N \l_testd_int
   }
-\debug_on:n { check-expressions , deprecation }
+\debug_on:n { check-declarations , check-expressions , deprecation , log-functions }
 \ExplSyntaxOff
 
 \START

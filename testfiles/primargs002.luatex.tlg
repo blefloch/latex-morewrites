@@ -161,11 +161,7 @@ two letters. (See Chapter 27 of The TeXbook.)
 ============================================================
 TEST 4: Get mu dimen
 ============================================================
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
@@ -182,11 +178,7 @@ To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 |0.0mu||
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Missing number, treated as zero.
 <to be read again> 
 \scan_stop: 
@@ -203,17 +195,9 @@ To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 |0.0mu||
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 |-123.0mu plus 1.0fil||
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
@@ -223,21 +207,13 @@ To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 |0.0mu|9|
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Incompatible glue units.
 <recently read> \scan_stop: 
 l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |10.0mu minus 1.0fil||
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Illegal unit of measure (mu inserted).
 <to be read again> 
 9
@@ -247,22 +223,14 @@ To recover gracefully from this error, it's best to
 delete the erroneous units; e.g., type `2' to delete
 two letters. (See Chapter 27 of The TeXbook.)
 |122.0mu|9|
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Incompatible glue units.
 <argument> ...: \primargs_get_mudimen:N \test:nw \l_tmpa_dim 
                                                   minus1fil\scan_stop: \prim...
 l. ...  }
 I'm going to assume that 1mu=1pt when they're mixed.
 |100.0mu minus 1.0fil||
-*************************************************
-* primargs warning: "get-mudimen"
-* 
-* The \primargs_get_mudimen:N function is buggy.
-*************************************************
+Package primargs Warning: The \primargs_get_mudimen:N function is buggy.
 ! Incompatible glue units.
 <argument> ... \primargs_get_mudimen:N \test:nw \l_tmpa_skip 
                                                   minus1fil\scan_stop: 

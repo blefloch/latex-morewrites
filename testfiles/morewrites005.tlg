@@ -2,9 +2,10 @@ This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 [1
 ] (morewrites005.mw)
- (morewrites005.aux
+(morewrites005.aux
+Defining \l__morewrites_0_tl on line ...
 )
 ***toc***
-\contentsline {section}{\numberline {1}First test}{1} 
-\contentsline {section}{\numberline {2}Second test}{1} 
+\contentsline {section}{\numberline {1}First test}{1}
+\contentsline {section}{\numberline {2}Second test}{1}
 ***cot***

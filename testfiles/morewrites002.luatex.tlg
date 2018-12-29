@@ -16,7 +16,7 @@ Some more in `tmp.tmp'
 ============================================================
 TEST 2: Change newlinechar
 ============================================================
-\g__file_internal_ior=\read...
+Defining \l_test_ior on line ...
 |Foo|
 |bar*ba
 z|

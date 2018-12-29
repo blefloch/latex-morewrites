@@ -1,11 +1,8 @@
 This is a generated file for the l3build validation system.
 Don't change this file in any respect.
 (morewrites.sty
+Package: morewrites ....-..-.. Always room for a new write
 Defining \morewritessetup on line ...
 Defining message morewrites/luatex on line ...
-*************************************************
-* morewrites warning: "luatex"
-* 
-* The morewrites package is unnecessary in LuaTeX.
-*************************************************
+Package morewrites Warning: The morewrites package is unnecessary in LuaTeX.
 )

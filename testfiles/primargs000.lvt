@@ -4,9 +4,9 @@
 
 \input regression-test
 
-\RequirePackage[check-declarations,log-functions]{expl3}
+\RequirePackage[enable-debug]{expl3}
 \ExplSyntaxOn
-\debug_on:n { check-expressions , deprecation }
+\debug_on:n { check-declarations , check-expressions , deprecation , log-functions }
 \ExplSyntaxOff
 
 \START
