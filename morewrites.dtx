@@ -508,7 +508,7 @@
         \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
       \else:
         \int_set:Nn \tex_endlinechar:D { -1 }
-        \etex_readline:D \g_@@_ior to \l_@@_internal_tl
+        \tex_readline:D \g_@@_ior to \l_@@_internal_tl
         \if_eof:w \g_@@_ior
           \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
         \else:
@@ -902,7 +902,7 @@
   }
 \cs_new_protected:Npn \@@_write_now_loop:
   {
-    \etex_readline:D \g_@@_ior to \l_@@_internal_tl
+    \tex_readline:D \g_@@_ior to \l_@@_internal_tl
     \ior_if_eof:NF \g_@@_ior
       {
         \@@_collect:x
@@ -1055,7 +1055,7 @@
       \char_set_catcode_other:n { \tex_endlinechar:D }
       \tl_map_inline:nn { `(0123456789) }
         { \char_set_catcode_other:n {`##1} }
-      \etex_everyeof:D { `() \exp_not:N }
+      \tex_everyeof:D { `() \exp_not:N }
       \tl_set:Nx \l_@@_internal_tl
         {
           \exp_after:wN \@@_after_shipout_loop:ww
@@ -1090,14 +1090,14 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_shipout:w
   {
-    \int_gset_eq:NN \g_@@_group_level_int \etex_currentgrouplevel:D
+    \int_gset_eq:NN \g_@@_group_level_int \tex_currentgrouplevel:D
     \tex_afterassignment:D \@@_shipout_i:
     \tex_global:D \tex_setbox:D \g_@@_shipout_box
   }
 \cs_new_protected:Npn \@@_shipout_i:
   {
     \int_compare:nNnTF { \g_@@_group_level_int }
-                     = { \etex_currentgrouplevel:D }
+                     = { \tex_currentgrouplevel:D }
       { \@@_shipout_ii: }
       { \tex_aftergroup:D \@@_shipout_ii: }
   }
@@ -1144,7 +1144,7 @@
     \shipout
   }
   {
-    \str_if_eq_x:nnT
+    \str_if_eq:eeT
       { \cs_meaning:N #1 }
       { \token_to_str:N \shipout }
       { \@@_tmp:w #1 }
@@ -1183,7 +1183,7 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_close_all_at_end:nw #1#2 \@@@@end
   {
-    \int_compare:nNnTF {#1} > \c_zero
+    \int_compare:nNnTF {#1} > 0
       { #2 \@@_close_all_at_end:nw { #1 - 1 } }
       { \@@_close_all: #2 }
     \@@@@end

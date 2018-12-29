@@ -696,7 +696,7 @@
 \cs_new_protected:Npn \@@_get_general_text_error:n #1
   {
     \exp_after:wN \group_end:
-    \etex_unexpanded:D \if_int_compare:w `{ = \c_zero \fi: #1 }
+    \tex_unexpanded:D \if_int_compare:w `{ = \c_zero_int \fi: #1 }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -895,7 +895,7 @@
       }
     \cs_new_protected:Npn \@@_get_input_file_name_aux:N #1
       {
-        \exp_after:wN \str_if_eq_x:nnT
+        \exp_after:wN \str_if_eq:eeT
         \exp_after:wN { \token_to_str:N #1 } { \token_to_str:N \par }
           { \use_none:nnn }
         \tex_xdef:D \g_@@_file_name_tl
