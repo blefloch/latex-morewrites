@@ -4,6 +4,7 @@ Don't change this file in any respect.
 ] (morewrites006.mw)
 (morewrites006.aux)
 ***toc***
-\contentsline {section}{\numberline {1}First test}{1}
-\contentsline {section}{\numberline {2}Second test}{1}
+\contentsline {section}{\numberline {1}First test}{1}{}
+\contentsline {section}{\numberline {2}Second test}{1}{}
 ***cot***
+ ) 
