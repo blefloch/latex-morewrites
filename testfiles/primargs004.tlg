@@ -24,12 +24,12 @@ of your error message was never \def'ed. If you have
 misspelled it (e.g., `\hobx'), type `I' and the correct
 spelling (e.g., `I\hbox'). Otherwise just continue,
 and I'll forget about whatever was undefined.
-||\scan_stop: |
+|||
 |===}{#$&^...||
 |===}{#$&^...||
 |{abc||
-||\scan_stop: {abc }|
-|{ab{cd}ef{gh}ij}||
+|abc ||
+|ab{cd}ef{gh}ij||
 ============================================================
 ============================================================
 TEST 2: Get file name input

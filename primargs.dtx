@@ -167,17 +167,19 @@
 %   argument.
 % \end{function}
 %
-% \begin{function}[updated = 2017-04-10, tested = primargs004]{\primargs_get_file_name:N, \primargs_get_input_file_name:N}
+% \begin{function}[updated = 2024-01-05, tested = primargs004]{\primargs_get_file_name:N, \primargs_get_input_file_name:N}
 %   \begin{syntax}
 %     \cs{primargs_get_file_name:N} \meta{function}
 %     \cs{primargs_get_input_file_name:N} \meta{function}
 %   \end{syntax}
 %   Reads a \meta{file name} following the \meta{function} and calls the
 %   \meta{function} with this \meta{file name} as a braced argument.
-%   The two functions are identical except in the \LuaTeX{} engine where
-%   \cs{primargs_get_input_file_name:N} allows braced file names:
-%   \LuaTeX{} allows such braced file names for some primitives (\tn{input}
-%   and \tn{openin}) but not others (\tn{openout}).
+%   The first function only allows for the historical unbraced file
+%   names that plain \TeX{} supports.  The second one also allows braced
+%   file names.  Historically this was first supported in \LuaTeX{} for
+%   \tn{input} and related primitives, hence the name.  Now all main
+%   engines (in \TeX{}Live at least) support both syntaxes for all
+%   primitives that take file names.
 %   \begin{texnote}
 %     When braced file names are disallowed, the file name is obtained
 %     by discarding \meta{optional spaces} then repeatedly doing the
@@ -828,8 +830,11 @@
 %     \@@_get_input_file_name_loop:, \@@_get_input_file_name_test:,
 %     \@@_get_input_file_name_brace:, \@@_get_input_file_name_aux:N
 %   }
-%   For most engines this is an alias of \cs{primargs_get_file_name:N}.
-%   In \LuaTeX{} we test for a catcode $1$ token (after a filler) then
+%   In addition to file names detected by \cs{primargs_get_file_name:N}
+%   this allows for braced file names.  The weird indentation is because
+%   historically we had to distinguish \LuaTeX{}, allowing braced file
+%   names, from other engines.
+%   We test for a catcode $1$ token (after a filler) then
 %   expand and collect tokens (turned to strings) one by one, counting
 %   begin-group and end-group tokens in \cs{g_@@_file_name_level_tl}.
 %   The control sequence \tn{par} is ignored.  After removing a filler
@@ -837,8 +842,6 @@
 %   the tests are safe.  We use primitives to cope with outer macro
 %   hidden by \tn{noexpand} upon first expansion.
 %    \begin{macrocode}
-\sys_if_engine_luatex:TF
-  {
     \cs_new_protected:Npn \primargs_get_input_file_name:N #1
       {
         \group_begin:
@@ -905,8 +908,6 @@
           }
         \@@_get_input_file_name_loop:
       }
-  }
-  { \cs_new_eq:NN \primargs_get_input_file_name:N \primargs_get_file_name:N }
 %    \end{macrocode}
 % \end{macro}
 % \end{macro}
