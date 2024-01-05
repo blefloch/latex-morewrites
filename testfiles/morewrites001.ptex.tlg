@@ -46,9 +46,9 @@ Defining \c__morewrites_later_10_tl on line ...
 \TYPE {Second again.}
 (tmp.tmp
 First!
-) (tmp2.tmp
+) (tmp 2.tmp
 Second!
-) (tmp3.tmp
+) (tmp 3.tmp
 Third again.
 )
 ============================================================

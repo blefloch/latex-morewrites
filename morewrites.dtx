@@ -483,7 +483,7 @@
 \cs_new_protected:Npn \@@_empty_file:n #1
   {
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow = #1 \scan_stop:
+      \g_@@_iow = {#1} \scan_stop:
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
   }
@@ -503,7 +503,7 @@
 \prg_new_conditional:Npnn \@@_if_file_trivial:n #1 { TF }
   {
     \group_begin:
-      \tex_openin:D \g_@@_ior = #1 \scan_stop:
+      \tex_openin:D \g_@@_ior = {#1}
       \if_eof:w \g_@@_ior
         \cs_gset_eq:NN \@@_tmp:w \prg_return_true:
       \else:
@@ -564,7 +564,7 @@
 \cs_new_protected:Npn \@@_equals_file:N #1
   {
     \group_begin:
-      \tex_aftergroup:D \primargs_get_file_name:N
+      \tex_aftergroup:D \primargs_get_input_file_name:N
       \tex_aftergroup:D #1
       \primargs_remove_equals:N \group_end:
   }
@@ -787,7 +787,7 @@
   }
 \cs_new_protected:Npn \@@_closeout_now:nn #1#2
   {
-    \@@_tex_immediate:w \@@_tex_openout:w \g_@@_iow = #2 \scan_stop:
+    \@@_tex_immediate:w \@@_tex_openout:w \g_@@_iow = {#2}
     \group_begin:
       \int_set:Nn \tex_newlinechar:D { -1 }
       \tl_use:c { \@@_user_tl_name:n {#1} }
@@ -818,14 +818,14 @@
     \int_compare:nNnTF { \l_@@_user_int } < { 19 }
       {
         \@@_tex_immediate:w \@@_tex_openout:w \l_@@_user_int
-          = \tl_to_str:n {#1} \scan_stop:
+          = { \tl_to_str:n {#1} }
       }
       {
         \seq_gpop:NNTF \g_@@_write_seq \l_@@_tstr_tl
           {
             \prop_gput:NVV \g_@@_write_prop \l_@@_user_int \l_@@_tstr_tl
             \@@_tex_immediate:w \@@_tex_openout:w \l_@@_tstr_tl \exp_stop_f:
-              = \tl_to_str:n {#1} \scan_stop:
+              = { \tl_to_str:n {#1} }
           }
           {
             \@@_empty_file:n {#1}
@@ -861,7 +861,7 @@
   {
     \prop_get:NVNTF \g_@@_write_file_prop \l_@@_user_int \l_@@_internal_tl
       { \@@_write_now_open:n }
-      { \@@_tex_immediate:w \@@_tex_write:w 16 }
+      { \@@_tex_immediate:w \@@_tex_write:w 16 \exp_stop_f: }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -885,14 +885,14 @@
   {
     \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow = \g_@@_tmp_file_tl \scan_stop:
+      \g_@@_iow = { \g_@@_tmp_file_tl }
     \@@_tex_immediate:w \@@_tex_write:w
       \g_@@_iow {#1}
     \@@_tex_immediate:w \@@_tex_closeout:w
       \g_@@_iow
     \group_begin:
       \int_set:Nn \tex_endlinechar:D { -1 }
-      \tex_openin:D \g_@@_ior = \g_@@_tmp_file_tl \scan_stop:
+      \tex_openin:D \g_@@_ior = { \g_@@_tmp_file_tl }
       \@@_write_now_loop:
       \tex_closein:D \g_@@_ior
       \@@_collect_gput_right:c
@@ -1022,7 +1022,7 @@
   {
     \bool_if:NF \g_@@_tmp_file_bool { \@@_chk_file: }
     \@@_tex_immediate:w \@@_tex_openout:w
-      \g_@@_iow = \g_@@_tmp_file_tl \scan_stop:
+      \g_@@_iow = { \g_@@_tmp_file_tl }
   }
 %    \end{macrocode}
 % \end{macro}
@@ -1059,7 +1059,7 @@
       \tl_set:Nx \l_@@_internal_tl
         {
           \exp_after:wN \@@_after_shipout_loop:ww
-          \tex_input:D \g_@@_tmp_file_tl \c_space_tl
+          \tex_input:D { \g_@@_tmp_file_tl }
         }
       \@@_empty_file:n { \g_@@_tmp_file_tl }
       \exp_args:NNo

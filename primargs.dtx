@@ -803,7 +803,7 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_get_file_name_char:
   {
-    \token_if_eq_charcode:NNT " \g_primargs_token
+    \token_if_eq_charcode:NNT " \g_primargs_token % "
       {
         \tl_gset:Nx \g_@@_file_name_level_tl
           { \int_eval:n { 1 - \g_@@_file_name_level_tl } }
