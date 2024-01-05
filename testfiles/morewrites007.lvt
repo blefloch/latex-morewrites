@@ -1,0 +1,50 @@
+%
+% Copyright (C) `morewrites' maintainer
+%
+
+\input regression-test
+\documentclass{article}
+
+\usepackage[enable-debug]{expl3}
+\ExplSyntaxOn
+\debug_on:n { check-declarations , check-expressions , deprecation , log-functions }
+\ExplSyntaxOff
+\usepackage{morewrites}
+
+\begin{document}
+
+\START
+
+
+\ExplSyntaxOn
+
+\newwrite\foo
+
+\TEST {Existing~file}
+  {
+    \morewritessetup { file = \jobname.lvt }
+    \immediate\openout\foo{test.mw} % this should use \jobname.lvt.mw as a temp file
+    \immediate\write\foo{\string\TRUE}
+    \immediate\closeout\foo\relax
+    \input{test.mw}
+    \shipout\vbox{}
+
+    % at this stage test.mw exists
+    \morewritessetup { file = test.mw }
+    \immediate\openout\foo{foo015.mw} % this should use test1.mw as a temp file
+    \immediate\write\foo{\string\TRUE}
+    \immediate\closeout\foo\relax
+    \immediate\openout\foo{foo16.mw}
+    \immediate\write\foo{\string\FALSE}
+    \immediate\closeout\foo\relax
+    \input{foo015.mw}\input{foo16.mw}
+    \shipout\vbox{}
+
+    \morewritessetup { file = foo015.mw }
+    \immediate\openout\foo{test.txt} % this should use foo17.mw as a temp file
+    \immediate\write\foo{}
+    \immediate\closeout\foo\relax
+    \shipout\vbox{}
+  }
+
+\END

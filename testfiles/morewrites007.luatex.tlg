@@ -1,0 +1,16 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+\foo=\write...
+============================================================
+TEST 1: Existing file
+============================================================
+(test.mw
+TRUE
+) [1]
+(foo015.mw
+TRUE
+) (foo16.mw
+FALSE
+) [1]
+[1]
+============================================================

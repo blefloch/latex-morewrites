@@ -1,0 +1,26 @@
+This is a generated file for the l3build validation system.
+Don't change this file in any respect.
+Defining \foo on line ...
+\foo=\write...
+============================================================
+TEST 1: Existing file
+============================================================
+Defining \g__morewrites_iow_19_tl on line ...
+Package morewrites Warning: File 'morewrites007.lvt' exists, using
+(morewrites)                'morewrites007.lvt.mw' instead.
+Defining \l__morewrites_0_tl on line ...
+(test.mw
+TRUE
+)
+[1] (morewrites007.lvt.mw)
+Package morewrites Warning: File 'test.mw' exists, using 'test1.mw' instead.
+(foo015.mw
+TRUE
+) (foo16.mw
+FALSE
+)
+[1] (test1.mw)
+Package morewrites Warning: File 'foo015.mw' exists, using 'foo16.mw' instead.
+Package morewrites Warning: File 'foo16.mw' exists, using 'foo17.mw' instead.
+[1] (foo17.mw)
+============================================================
