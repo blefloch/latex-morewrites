@@ -789,7 +789,7 @@
       { \@@_immediate_auxiii:N }
       {
         \@@_verbose:n
-          { \iow_char:N\\immediate \token_to_meaning:N \g_primargs_token }
+          { \tl_to_str:n { \immediate } \token_to_meaning:N \g_primargs_token }
         \@@_tex_immediate:w
       }
   }
@@ -928,10 +928,14 @@
   {
     \@@_user_to_tstr:NTF \g_@@_write_prop
       {
-        \@@_verbose:n
+        \int_compare:nNnT \l_@@_user_int = { 18 } { \use_iii:nnn }
+        \int_compare:nT { -1 < \l_@@_user_int < 16 }
           {
-            \tl_to_str:n { \immediate \write }
-            \int_use:N \l_@@_user_int
+            \@@_verbose:n
+              {
+                \tl_to_str:n { \immediate \write }
+                \int_use:N \l_@@_user_int
+              }
           }
         \@@_tex_immediate:w \@@_tex_write:w \l_@@_tstr_tl \exp_stop_f:
       }
