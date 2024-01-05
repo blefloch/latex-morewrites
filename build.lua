@@ -1,7 +1,8 @@
-#!/usr/bin/env texlua
+#!/usr/bin/env l3build
 -- Build script for morewrites
 bundle = ""
 module = "morewrites"
+typesetruns = 3
 packtdszip  = false
 checkengines = {"pdftex", "luatex", "xetex", "ptex", "uptex"}
 uploadconfig = {
