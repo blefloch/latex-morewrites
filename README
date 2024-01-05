@@ -10,6 +10,4 @@ responsible for writing to files to lift the restriction on
 the number of files open at the same time (16). Load the package
 with "\usepackage{morewrites}" as early as possible.
 
-This package uses the l3kernel bundle.
-
 This is work in progress, all suggestions/comments/bug reports are welcome!
