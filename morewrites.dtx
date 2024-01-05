@@ -116,7 +116,7 @@
 %   restrictions in \tn{newwrite}.
 %   \begin{texnote}
 %     The revised \tn{newwrite} allocate stream numbers starting at
-%     $19$.  This might break some code that expects stream numbers to
+%     $129$.  This might break some code that expects stream numbers to
 %     be less than $16$.
 %   \end{texnote}
 % \end{function}
@@ -204,15 +204,18 @@
 %
 % Henceforth, ``\TeX{} stream'' will refer to stream numbers in the
 % range $[0,15]$ provided to \TeX{}'s write primitives, while
-% ``user stream'' will denote stream numbers in $[0,15]\cup[19,\infty)$
+% ``user stream'' will denote stream numbers in $[0,15]\cup[129,\infty)$
 % manipulated by the redefined \tn{openout}, \tn{write}, \tn{closeout},
 % and \tn{newwrite}.  A user stream in $[0,15]$ (reserved by \LaTeXe{}
 % or allocated by \pkg{expl3}) is mapped to the same \TeX{} stream
-% number, while a user stream in $[19,\infty)$ is mapped to a \TeX{}
+% number, while a user stream in $[129,\infty)$ is mapped to a \TeX{}
 % stream according to the property list (with integer keys and values)
 % \cs{l_@@_write_prop}.  Stream numbers $16$,
 % $17$ and $18$ are unused because \tn{write}16 is often used to write
 % to the terminal, and \tn{write}18 sends its argument to a shell.
+% The stream number $128$ is also often used like $16$ to avoid
+% distinguishing \LuaTeX{}.  Rather than special-casing it we skip
+% directly to larger stream numbers.
 %
 % The primitives \tn{openout}, \tn{write}, and \tn{closeout} expect to
 % be followed by an \meta{integer}, normally in the range $[0,15]$, then
@@ -637,9 +640,9 @@
 % \begin{macro}{\@@_user_to_tstr:NTF}
 %   The goal is to go from a user stream \cs{l_@@_user_int} to a \TeX{}
 %   stream \cs{l_@@_tstr_tl} (it defaults to the user stream).  Streams
-%   less than $19$ are not managed by \pkg{morewrites}: actual \TeX{}
+%   less than $129$ are not managed by \pkg{morewrites}: actual \TeX{}
 %   streams in $[0,15]$; negative for writing to \texttt{log}; $16$,
-%   $17$ for writing to terminal; $18$ for shell escape.  Larger stream
+%   $17$, $128$ for writing to terminal; $18$ for shell escape.  Larger stream
 %   numbers are looked up in the property list |#1|, namely
 %   \cs{g_@@_write_prop}.  If present, use the corresponding value as
 %   the \TeX{} stream, otherwise run the \texttt{false} branch.
@@ -647,7 +650,7 @@
 \cs_new_protected:Npn \@@_user_to_tstr:NTF #1
   {
     \tl_set:NV \l_@@_tstr_tl \l_@@_user_int
-    \int_compare:nNnTF { \l_@@_user_int } < { 19 }
+    \int_compare:nNnTF { \l_@@_user_int } < { 129 }
       { \use_i:nn }
       { \prop_get:NVNTF #1 \l_@@_user_int \l_@@_tstr_tl }
   }
@@ -885,7 +888,7 @@
 \cs_new_protected:Npn \@@_openout_now_silent:n #1
   {
     \@@_closeout_now_silent:
-    \int_compare:nNnTF { \l_@@_user_int } < { 19 }
+    \int_compare:nNnTF { \l_@@_user_int } < { 129 }
       {
         \@@_tex_immediate:w \@@_tex_openout:w \l_@@_user_int
           = { \tl_to_str:n {#1} }
@@ -1047,7 +1050,7 @@
 \cs_new_protected:Npn \@@_closeout_later:
   {
     \@@_verbose:n { \tl_to_str:n { \closeout (later) ~ } \int_use:N \l_@@_user_int }
-    \int_compare:nNnTF \l_@@_user_int < { 19 }
+    \int_compare:nNnTF \l_@@_user_int < { 129 }
       { \@@_tex_closeout:w \l_@@_user_int }
       { \@@_later:n { \@@_closeout_now_silent: } }
   }
@@ -1060,7 +1063,7 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_openout_later:w
   {
-    \int_compare:nNnTF \l_@@_user_int < { 19 }
+    \int_compare:nNnTF \l_@@_user_int < { 129 }
       {
         \@@_verbose:n { \tl_to_str:n { \openout (later) ~ } \int_use:N \l_@@_user_int }
         \@@_tex_openout:w \l_@@_user_int
@@ -1087,7 +1090,7 @@
 %    \begin{macrocode}
 \cs_new_protected:Npn \@@_write_later:w
   {
-    \int_compare:nNnTF \l_@@_user_int < { 19 }
+    \int_compare:nNnTF \l_@@_user_int < { 129 }
       {
         \@@_verbose:n { \tl_to_str:n { \write (later)~ } \int_use:N \l_@@_user_int }
         \@@_tex_write:w \l_@@_user_int
@@ -1320,13 +1323,16 @@
 % \subsubsection{Modified \tn{newwrite}}
 %
 % \begin{variable}{\g_@@_alloc_write_int}
-%   Counter to allocate user streams.  Initialized to $18$ so that the
-%   first user stream allocated by \pkg{morewrites} is $19$.  Indeed,
-%   $18$ is reserved for shell commands and packages may expect $16$ or
-%   $17$ to write to the terminal.
+%   Counter to allocate user streams.  We used to initialize it to $18$
+%   so that the first user stream allocated by \pkg{morewrites} was
+%   $19$.  Indeed, $18$ is reserved for shell commands and packages may
+%   expect $16$ or $17$ to write to the terminal.  This is now changed
+%   to start allocation at $129$, since some packages that do not want
+%   to distinguish \LuaTeX{} from other engines simply use $128$ as a
+%   never-open stream.
 %    \begin{macrocode}
 \int_new:N \g_@@_alloc_write_int
-\int_gset:Nn \g_@@_alloc_write_int { 18 }
+\int_gset:Nn \g_@@_alloc_write_int { 128 }
 %    \end{macrocode}
 % \end{variable}
 %
