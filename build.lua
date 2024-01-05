@@ -3,6 +3,7 @@
 bundle = ""
 module = "morewrites"
 packtdszip  = false
+checkengines = {"pdftex", "luatex", "xetex", "ptex", "uptex"}
 uploadconfig = {
   author       = "Bruno Le Floch",
   ctanPath     = "/macros/latex/contrib/morewrites",
