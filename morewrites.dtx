@@ -908,6 +908,16 @@
           }
       }
   }
+\sys_if_engine_xetex:T
+  {
+    \cs_new_eq:NN \@@_openout_now_silent_aux:n \@@_openout_now_silent:n
+    \cs_gset_protected:Npn \@@_openout_now_silent:n #1
+      {
+        \tl_set:Nn \l_@@_internal_tl {#1}
+        \tl_remove_all:Nn \l_@@_internal_tl { " } % { " }
+        \exp_args:No \@@_openout_now_silent_aux:n \l_@@_internal_tl
+      }
+  }
 %    \end{macrocode}
 % \end{macro}
 %

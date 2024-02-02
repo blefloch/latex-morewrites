@@ -43,15 +43,6 @@
 % for plain TeX.  Instead, we build pages from some boxes and ship them
 % out directly.
 %
-% Xe(La)TeX has an inconsistent treatment of quotes so we do something
-% weird to avoid the bug while still testing other engines.
-\OMIT
-\ExplSyntaxOn
-\cs_new:Npn \testinput
-  { \sys_if_engine_xetex:TF { \tex_input:D } { \input } }
-\ExplSyntaxOff
-\TIMO
-%
 \TEST {Delayed writing}
   {
     \newwrite \firstwrite
@@ -79,7 +70,7 @@
     }
     \input tmp.tmp %
     \input{tmp 2.tmp}%
-    \testinput {"tmp 3.tmp"}%
+    \input{"tmp 3.tmp"}%
   }
 
 % We use a csname construction for newwrite because it is outer in
