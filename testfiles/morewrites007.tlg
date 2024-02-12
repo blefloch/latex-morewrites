@@ -6,8 +6,7 @@ Defining \foo on line ...
 TEST 1: Existing file
 ============================================================
 Defining \g__morewrites_iow_129_tl on line ...
-Package morewrites Warning: File 'morewrites007.lvt' exists, using
-(morewrites)                'morewrites007.lvt.mw' instead.
+Package morewrites Warning: File 'morewrites007.lvt' exists, using 'morewrites007.lvt.mw' instead.
 Defining \l__morewrites_0_tl on line ...
 (test.mw
 TRUE
